@@ -18,7 +18,10 @@ const props = defineProps({
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <p class="dark:text-white">Hello world</p>
+                    <p v-if="lists.length < 1">No wishlists</p>
+                    <ul v-else v-for="l in lists.data">
+                        <li>{{l.title}}</li>
+                    </ul>
                 </div>
             </div>
         </div>
