@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Wishlist;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,7 +17,14 @@ class DatabaseSeeder extends Seeder
         // Create the admin
         $this->call(AdminSeeder::class);
         // Create 10 users
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::factory()->count(5)->create()->each(function ($u){
+
+            Wishlist::create([
+              'title' => 'My wishlist',
+              'user_id' => $u->id
+            ]);
+            
+        });
 
     }
 }

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text("comment")->nullable();
             $table->text("image")->nullable();
             $table->integer("needs")->default(1);
-            $table->boolean("purchased")->default(false);
+            $table->integer("has")->default(0);
         });
     }
 

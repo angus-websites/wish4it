@@ -1,5 +1,10 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+
+const props = defineProps({
+    lists: Object,
+})
+
 </script>
 
 <template>

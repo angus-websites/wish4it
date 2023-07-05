@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->text("title");
-            $table->text("visiblity");
+            $table->boolean("public")->default(true);
             $table->foreignId('user_id')->constrained("users")
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
