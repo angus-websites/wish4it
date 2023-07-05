@@ -19,7 +19,7 @@ class WishlistPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Wishlist $wishlist): bool
+    public function view(User $user, Wishlist $wishlist)
     {
         return $user->id === $wishlist->user()->id
             ? Response::allow()

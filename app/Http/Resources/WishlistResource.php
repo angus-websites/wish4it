@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class WishlistResource extends JsonResource
 {
-    
+
     /**
      * Transform the resource into an array.
      *
@@ -16,6 +16,7 @@ class WishlistResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'public' => $this->public,
         ];

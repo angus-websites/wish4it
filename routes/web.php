@@ -33,7 +33,8 @@ Route::middleware([
 ])->group(function () {
 
     // Wishlist home page
-    Route::get('/lists', [WishlistController::class, 'index'])->name('lists');
+    Route::resource('wishlist', WishlistController::class);
+
 
     // Friends page
     Route::get('/friends', function () {
