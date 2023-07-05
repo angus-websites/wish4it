@@ -33,6 +33,11 @@ class AdminSeeder extends Seeder
           'user_id' => $admin->id,
         ]);
 
+        Wishlist::create([
+          'title' => 'Birthday list',
+          'user_id' => $admin->id,
+        ]);
+
 
 
       }
