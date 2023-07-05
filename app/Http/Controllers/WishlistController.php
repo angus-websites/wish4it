@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Http\Resources\WishlistResource;
 
 class WishlistController extends Controller
 {
@@ -13,7 +14,7 @@ class WishlistController extends Controller
      */
     public function index(Request $request){
         return Inertia::render('Lists', [
-            'lists' => Auth::user()->wishlists()
+            'lists' => WishlistResource::collection(Auth::user()->wishlists()->get())
         ]);
     }
 }
