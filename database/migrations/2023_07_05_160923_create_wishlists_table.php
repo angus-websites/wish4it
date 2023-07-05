@@ -14,6 +14,13 @@ return new class extends Migration
         Schema::create('wishlists', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+
+            $table->text("title");
+            $table->text("visiblity");
+            $table->foreignId('user_id')->constrained("users")
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
         });
     }
 
