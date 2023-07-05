@@ -26,6 +26,11 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route('logout'));
 };
+
+let navigation = [
+    { name: 'My Lists', href: route('lists'), current: route().current('lists') },
+    { name: 'Friends', href: route('friends'), current: route().current('friends') },
+]
 </script>
 
 <template>
@@ -44,11 +49,8 @@ const logout = () => {
 
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                            <NavLink :href="route('lists')" :active="route().current('lists')">
-                                My Lists
-                            </NavLink>
-                            <NavLink :href="route('friends')" :active="route().current('friends')">
-                                Friends
+                            <NavLink v-for="item in navigation" :href="item.href" :active="item.current">
+                                {{ item.name }}
                             </NavLink>
                         </div>
                     </div>
@@ -192,8 +194,8 @@ const logout = () => {
             <!-- Responsive Navigation Menu -->
             <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                 <div class="pt-2 pb-3 space-y-1">
-                    <ResponsiveNavLink :href="route('lists')" :active="route().current('lists')">
-                        Dashboard
+                    <ResponsiveNavLink v-for="item in navigation" :href="item.href" :active="item.current">
+                        {{ item.name }}
                     </ResponsiveNavLink>
                 </div>
 
