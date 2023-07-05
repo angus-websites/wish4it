@@ -17,24 +17,24 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Outfit', ...defaultTheme.fontFamily.sans],
+                serif: ['Comic Neue', ...defaultTheme.fontFamily.serif],
             },
 
             colors: {
                 primary: {
-                    light2: "#BBF48A",
-                    light: "#91DC52",
-                    DEFAULT: "#62b31e",
-                    dark: "#559B1B",
-                    dark2: "#4D861E",
+                    light2: "#745CB4",
+                    light: "#6147A9",
+                    DEFAULT: "#543E90",
+                    dark: "#4A387A",
+                    dark2: "#453964",
                 },
 
                 accent: {
-                    light2: "#7DBFF0",
-                    light: "#509ED8",
-                    DEFAULT: "#3087C7",
-                    dark: "#347CB1",
-                    dark2: "#2C6A98",
+                    light2: "#8EF645",
+                    light: "#75E626",
+                    DEFAULT: "#58D500",
+                    dark: "#51BD04",
+                    dark2: "#48A109",
                 },
 
                 dark: {
