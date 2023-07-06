@@ -5,9 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WishlistResource extends JsonResource
+class WishlistItemResource extends JsonResource
 {
-
     /**
      * Transform the resource into an array.
      *
@@ -17,9 +16,14 @@ class WishlistResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'wishlist_id' => $this->wishlist_id,
             'title' => $this->title,
-            'public' => $this->public,
-            'items' => WishlistItemResource::collection($this->getItems()->get()),
+            'price' => $this->price,
+            'url' => $this->url,
+            'comment' => $this->comment,
+            'image' => $this->image,
+            'needs' => $this->needs,
+            'has' => $this->has,
         ];
     }
 }

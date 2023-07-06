@@ -12,7 +12,7 @@ const props = defineProps({
     <AppLayout title="My Lists">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ list.data.title }}
+                {{ list.title }}
             </h2>
         </template>
 

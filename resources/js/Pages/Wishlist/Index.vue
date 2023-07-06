@@ -21,7 +21,7 @@ const props = defineProps({
                     <h2 v-if="lists.length < 1">No wishlists</h2>
 
                     <div v-else class="flex flex-col gap-y-5">
-                        <Link :href="route('wishlist.show', list.id)" v-for="list in lists.data" class="h2 text-blue-600 dark:text-blue-500 hover:underline">{{list.title}}</Link>
+                        <Link :href="route('wishlist.show', list.id)" v-for="list in lists" class="h2 text-blue-600 dark:text-blue-500 hover:underline">{{list.title}}</Link>
                     </div>
                 </div>
             </div>
