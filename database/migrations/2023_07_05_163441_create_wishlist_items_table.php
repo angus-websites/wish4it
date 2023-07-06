@@ -19,7 +19,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->text("title");
-            $table->text("price");
+            $table->text("price")->nullable();
             $table->text("url")->nullable();
             $table->text("comment")->nullable();
             $table->text("image")->nullable();
