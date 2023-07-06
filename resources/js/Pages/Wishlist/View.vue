@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-
+import WishlistGrid from '@/Components/wishlist/WishlistGrid.vue'
 const props = defineProps({
     list: Object,
     can: Object
@@ -18,9 +18,7 @@ const props = defineProps({
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="overflow-hidden shadow-xl sm:rounded-lg">
-                    <p>Content here </p>
-                </div>
+                <WishlistGrid />
             </div>
         </div>
     </AppLayout>
