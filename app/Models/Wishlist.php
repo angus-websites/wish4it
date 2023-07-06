@@ -21,7 +21,7 @@ class Wishlist extends Model
     /**
      * Get the items for this wishlist
      */
-    public function getItems()
+    public function items()
     {
         return $this->hasMany(WishlistItem::class);
     }

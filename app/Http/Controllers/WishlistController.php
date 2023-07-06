@@ -31,6 +31,10 @@ class WishlistController extends Controller
      */
     public function show(Wishlist $wishlist){
 
+        // Load the items of this wishlist
+        $wishlist->load('items');
+
+        // Convert to an API resource
         $list = new WishlistResource($wishlist);
 
         return Inertia::render('Wishlist/View', [
