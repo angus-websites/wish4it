@@ -1,21 +1,7 @@
-<!--
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/aspect-ratio'),
-    ],
-  }
-  ```
--->
 <template>
-  <div class="bg-white">
+  <div class="bg-white dark:bg-[#2a3748]">
     <h2 class="sr-only">Products</h2>
-    <div class="grid grid-cols-2 border-l border-gray-200 sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
+    <div class="grid grid-cols-2 border-l border-gray-200 dark:border-[#2a3748] sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
       <WishlistItem v-for="product in products" :item="product" />
     </div>
   </div>
