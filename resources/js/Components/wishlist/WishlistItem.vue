@@ -25,16 +25,15 @@
 
       <!-- Buttons -->
       <div class="flex flex-col gap-y-3">
-        <SecondaryButton size="s">Visit</SecondaryButton>
-
-        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Mark as purchased</a>
+        <PrimaryButton size="s">Visit</PrimaryButton>
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup>
-import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
+import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 
 const props = defineProps({
     item: Object,
