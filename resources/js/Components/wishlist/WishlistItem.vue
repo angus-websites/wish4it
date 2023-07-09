@@ -22,12 +22,13 @@
       <div class="p-3">
         <p class="text-base font-medium text-gray-900 dark:text-slate-200">{{ item.price }}</p>
       </div>
-
-      <!-- Buttons -->
-      <div class="flex flex-col gap-y-3">
-        <PrimaryButton size="s">Visit</PrimaryButton>
-      </div>
     </div>
+
+    <!-- Buttons -->
+    <div class="mt-auto">
+      <PrimaryButton size="s">Visit</PrimaryButton>
+    </div>
+
   </div>
 
 </template>
