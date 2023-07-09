@@ -21,7 +21,7 @@ defineExpose({ focus: () => input.value.focus() });
 
 <template>
   <div>
-    <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{label}}</label>
+    <label for="message" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{{label}}</label>
     <div class="mt-2">
       <textarea 
       :value="modelValue"

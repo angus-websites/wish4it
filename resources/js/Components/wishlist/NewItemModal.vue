@@ -76,14 +76,35 @@
                       />
                   </div>
 
+                  <!-- URL -->
+                  <div>
+                      <InputLabel for="url2" value="Url" />
+                      <TextInput
+                          id="url2"
+                          type="url"
+                          class="w-full mt-1"
+                      />
+                  </div>
+
                   <!-- Comments -->
                   <TextArea label="Comments" />
-                  
+
+                  <!-- Quantity -->
+                  <div>
+                      <InputLabel for="quantity" value="Quantity needed" />
+                      <TextInput
+                          id="quantity"
+                          type="number"
+                          value="1"
+                          class="w-full mt-1"
+                      />
+                  </div>
+
                 </div>
 
                 <!-- Buttons -->
                 <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3">
-                  <SecondaryButton>Cancel</SecondaryButton>
+                  <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
                   <PrimaryButton>Save</PrimaryButton>
                 </div>
 
