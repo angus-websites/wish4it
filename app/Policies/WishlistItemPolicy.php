@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Wishlist;
+use App\Models\WishlistItem;
 use Illuminate\Auth\Access\Response;
 
-class WishlistPolicy
+class WishlistItemPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,11 +19,9 @@ class WishlistPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Wishlist $wishlist)
+    public function view(User $user, WishlistItem $wishlistItem): bool
     {
-        return $user->id === $wishlist->user()->id
-            ? Response::allow()
-            : Response::deny('You cannot view this wishlist');
+        return true;
     }
 
     /**
@@ -37,17 +35,17 @@ class WishlistPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Wishlist $wishlist): bool
+    public function update(User $user, WishlistItem $wishlistItem): bool
     {
-        return $user->id === $wishlist->user()->id;
+        return $user->id === $item->wishlist->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Wishlist $wishlist): bool
+    public function delete(User $user, WishlistItem $wishlistItem): bool
     {
-        return $user->id === $wishlist->user()->id;
+        return $user->id === $item->wishlist->user_id;
     }
 
 }
