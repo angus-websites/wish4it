@@ -39,6 +39,8 @@
 
               <!-- Details screen -->
               <div v-else>
+
+                {{ form.errors }}
                 
                 <!-- Form -->
                 <form @submit.prevent="submitForm">
@@ -56,6 +58,7 @@
                             required
                             autofocus
                         />
+                        <InputError v-if="form.errors.name" :message="form.errors.name" class="mt-1"/>
                     </div>
 
                     <!-- Brand-->
@@ -67,6 +70,8 @@
                             type="text"
                             class="w-full mt-1"
                         />
+                        <InputError v-if="form.errors.brand" :message="form.errors.brand" class="mt-1"/>
+
                     </div>
 
                     <!-- Price-->
@@ -75,10 +80,11 @@
                         <TextInput
                             v-model="form.price"
                             id="price"
-                            type="number"
+                            type="text"
                             class="w-full mt-1"
                             placeholder="5"
                         />
+                        <InputError v-if="form.errors.price" class="mt-1" :message="form.errors.price" />
                     </div>
 
                     <!-- URL -->
@@ -90,21 +96,27 @@
                             type="url"
                             class="w-full mt-1"
                         />
+                        <InputError v-if="form.errors.url" class="mt-1" :message="form.errors.url" />
                     </div>
 
                     <!-- Comments -->
-                    <TextArea v-model="form.comment" label="Comments" name="comment" id="comment" />
+                    <div>
+                      <TextArea v-model="form.comment" label="Comments" name="comment" id="comment" />
+                      <InputError v-if="form.errors.comment" class="mt-1" :message="form.errors.comment" />
+                    </div>
 
                     <!-- Quantity -->
                     <div>
-                        <InputLabel for="quantity" value="Quantity needed" />
+                        <InputLabel for="needs" value="Quantity needed" />
                         <TextInput
-                            v-model="form.quantity"
-                            id="quantity"
+                            v-model="form.needs"
+                            id="needs"
                             type="number"
                             class="w-full mt-1"
                         />
+                        <InputError v-if="form.errors.needs" class="mt-1" :message="form.errors.needs" />
                     </div>
+
                   </div>
             
                   <!-- Buttons -->
@@ -135,6 +147,8 @@ import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
 import InputLabel from "@/Components/form/InputLabel.vue"
 import TextInput from "@/Components/form/TextInput.vue"
 import TextArea from "@/Components/form/TextArea.vue"
+import InputError from "@/Components/form/InputError.vue"
+
 import {useForm} from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -148,7 +162,7 @@ const form = useForm({
   price: null,
   url: null,
   comments: null,
-  quantity: 1
+  needs: 1
 })
 
 let isOpen = ref(props.open)
@@ -166,10 +180,17 @@ function closeModal() {
   emit('update:open', false)
 }
 
+function reset(){
+  form.reset();
+  closeModal();
+}
+
 function submitForm()
 {
   form.post(route('wishlists.items.store', 1), {
     preserveScroll: true,
+
+    onSuccess: () => reset(),
   })
 }
 

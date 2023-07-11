@@ -33,6 +33,11 @@ class WishlistItemController extends Controller
         // Validate the incoming request data.
         $data = $request->validate([
             'name' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'price' => 'nullable|numeric|min:0',
+            'url' => 'nullable|url',
+            'comment' => 'nullable|string|max:500',
+            'needs' => 'required|integer|min:1',
         ]);
 
         // Save
