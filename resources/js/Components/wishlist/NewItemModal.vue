@@ -40,75 +40,80 @@
               <!-- Details screen -->
               <div v-else>
                 
-                <!-- Form elements -->
-                <div class="flex flex-col gap-y-3">
+                <!-- Form -->
+                <form @submit.prevent="submitForm">
+                  <!-- Form elements -->
+                  <div class="flex flex-col gap-y-3">
 
-                  <!-- Product name -->
-                  <div>
-                      <InputLabel for="email" value="Name of product" />
-                      <TextInput
-                          id="email"
-                          type="email"
-                          class="w-full mt-1"
-                          required
-                          autofocus
-                      />
+                    <!-- Product name -->
+                    <div>
+                        <InputLabel for="name" value="Name of product" />
+                        <TextInput
+                            v-model="form.name"
+                            id="name"
+                            type="text"
+                            class="w-full mt-1"
+                            required
+                            autofocus
+                        />
+                    </div>
+
+                    <!-- Brand-->
+                    <div>
+                        <InputLabel for="brand" value="Brand" />
+                        <TextInput
+                            v-model="form.brand"
+                            id="brand"
+                            type="text"
+                            class="w-full mt-1"
+                        />
+                    </div>
+
+                    <!-- Price-->
+                    <div>
+                        <InputLabel for="price" value="Price (£)" />
+                        <TextInput
+                            v-model="form.price"
+                            id="price"
+                            type="number"
+                            class="w-full mt-1"
+                            placeholder="5"
+                        />
+                    </div>
+
+                    <!-- URL -->
+                    <div>
+                        <InputLabel for="url2" value="Url" />
+                        <TextInput
+                            v-model="form.url"
+                            id="url2"
+                            type="url"
+                            class="w-full mt-1"
+                        />
+                    </div>
+
+                    <!-- Comments -->
+                    <TextArea v-model="form.comment" label="Comments" name="comment" id="comment" />
+
+                    <!-- Quantity -->
+                    <div>
+                        <InputLabel for="quantity" value="Quantity needed" />
+                        <TextInput
+                            v-model="form.quantity"
+                            id="quantity"
+                            type="number"
+                            class="w-full mt-1"
+                        />
+                    </div>
+                  </div>
+            
+                  <!-- Buttons -->
+                  <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3">
+                    <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
+                    <PrimaryButton :disabled="form.processing" type="submit">Save</PrimaryButton>
                   </div>
 
-                  <!-- Brand-->
-                  <div>
-                      <InputLabel for="brand" value="Brand" />
-                      <TextInput
-                          id="brand"
-                          type="text"
-                          class="w-full mt-1"
-                      />
-                  </div>
-
-                  <!-- Price-->
-                  <div>
-                      <InputLabel for="price" value="Price (£)" />
-                      <TextInput
-                          id="price"
-                          type="number"
-                          class="w-full mt-1"
-                          placeholder="5"
-                      />
-                  </div>
-
-                  <!-- URL -->
-                  <div>
-                      <InputLabel for="url2" value="Url" />
-                      <TextInput
-                          id="url2"
-                          type="url"
-                          class="w-full mt-1"
-                      />
-                  </div>
-
-                  <!-- Comments -->
-                  <TextArea label="Comments" />
-
-                  <!-- Quantity -->
-                  <div>
-                      <InputLabel for="quantity" value="Quantity needed" />
-                      <TextInput
-                          id="quantity"
-                          type="number"
-                          value="1"
-                          class="w-full mt-1"
-                      />
-                  </div>
-
-                </div>
-
-                <!-- Buttons -->
-                <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3">
-                  <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
-                  <PrimaryButton>Save</PrimaryButton>
-                </div>
-
-
+                </form>
 
               </div>
 
@@ -130,10 +135,20 @@ import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
 import InputLabel from "@/Components/form/InputLabel.vue"
 import TextInput from "@/Components/form/TextInput.vue"
 import TextArea from "@/Components/form/TextArea.vue"
+import {useForm} from '@inertiajs/vue3';
 
 const props = defineProps({
     open: Boolean,
 
+})
+
+const form = useForm({
+  name: null,
+  brand: null,
+  price: null,
+  url: null,
+  comments: null,
+  quantity: 1
 })
 
 let isOpen = ref(props.open)
@@ -148,9 +163,14 @@ watchEffect(() => {
 
 
 function closeModal() {
-  // Hide the details screen and close the modal
   emit('update:open', false)
-  showDetails.value = false;
+}
+
+function submitForm()
+{
+  form.post(route('wishlists.items.store', 1), {
+    preserveScroll: true,
+  })
 }
 
 </script>

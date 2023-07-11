@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\WishlistController;
+use \App\Http\Controllers\WishlistItemController;
 
 use Inertia\Inertia;
 
@@ -32,9 +33,9 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    // Wishlist home page
-    Route::resource('wishlist', WishlistController::class);
-
+    // Wishlists
+    Route::resource('wishlists', WishlistController::class);
+    Route::resource('wishlists.items', WishlistItemController::class);
 
     // Friends page
     Route::get('/friends', function () {

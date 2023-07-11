@@ -28,7 +28,7 @@ const logout = () => {
 };
 
 let navigation = [
-    { name: 'My Lists', href: route('wishlist.index'), current: route().current('wishlist.index') },
+    { name: 'My Lists', href: route('wishlists.index'), current: route().current('wishlists.index') },
     { name: 'Friends', href: route('friends'), current: route().current('friends') },
 ]
 </script>
@@ -42,7 +42,7 @@ let navigation = [
                     <div class="flex">
                         <!-- Logo -->
                         <div class="shrink-0 flex items-center">
-                            <Link :href="route('wishlist.index')">
+                            <Link :href="route('wishlists.index')">
                                 <ApplicationLogo class="block h-9 w-auto" />
                             </Link>
                         </div>
