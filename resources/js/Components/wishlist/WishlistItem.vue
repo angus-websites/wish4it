@@ -9,7 +9,7 @@
       <div>
         <p class="text-sm text-gray-500">Amazon</p>
         <h3 class="mt-1 font-semibold text-gray-900 dark:text-gray-100">
-          {{ item.title }}
+          {{ item.name }}
         </h3>
       </div>
 

@@ -9,6 +9,8 @@ class Wishlist extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id', 'user_id'];
+
     /**
      * Fetch the user
      * that this wishlist belongs

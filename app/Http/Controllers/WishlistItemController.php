@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
+use Illuminate\Support\Facades\Redirect;
 
 class WishlistItemController extends Controller
 {
@@ -28,7 +29,16 @@ class WishlistItemController extends Controller
      */
     public function store(Request $request, Wishlist $wishlist)
     {
-        return "hi";
+        
+        // Validate the incoming request data.
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        // Save
+        $wishlist->items()->create($data);
+
+        return Redirect::route('wishlists.show', $wishlist)->with('success', 'Item added');
     }
 
     /**

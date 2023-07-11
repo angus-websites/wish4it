@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('wishlist_id')->constrained("wishlists")
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->text("title");
+            $table->text("name");
             $table->text("brand")->nullable();
             $table->text("price")->nullable();
             $table->text("url")->nullable();

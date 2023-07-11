@@ -35,13 +35,13 @@ class AdminSeeder extends Seeder
         ]);
 
         WishlistItem::create([
-          'title' => "Air force 1",
+          'name' => "Air force 1",
           'price' => "£100",
           'wishlist_id' => $christmas->id
         ]);
 
         WishlistItem::create([
-          'title' => "Puppy",
+          'name' => "Puppy",
           'wishlist_id' => $christmas->id
         ]);
 
@@ -53,7 +53,7 @@ class AdminSeeder extends Seeder
         ]);
 
         WishlistItem::create([
-          'title' => "iMac",
+          'name' => "iMac",
           'price' => "£1,200",
           'wishlist_id' => $birthday->id
         ]);
