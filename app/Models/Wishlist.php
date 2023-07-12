@@ -27,4 +27,12 @@ class Wishlist extends Model
     {
         return $this->hasMany(WishlistItem::class);
     }
+
+    /**
+     * Is this wishlist public or not
+     */
+    public function isPublic()
+    {
+        return $this->public;
+    }
 }

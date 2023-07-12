@@ -21,7 +21,15 @@ class WishlistPolicy
      */
     public function view(User $user, Wishlist $wishlist)
     {
-        return true;
+
+        // If the wishlist is public
+        if ($wishlist->isPublic()){
+            return Response::allow();
+        }
+
+        return $user->id === $wishlist->user_id
+            ? Response::allow()
+            : Response::deny('You cannot view this wishlist');
     }
 
     /**
@@ -35,9 +43,12 @@ class WishlistPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Wishlist $wishlist): bool
+    public function update(User $user, Wishlist $wishlist)
     {
-        return true;
+        Response::deny('You cannot update this wishlist');
+        return $user->id === $wishlist->user_id
+            ? Response::allow()
+            : Response::deny('You cannot update this wishlist');
     }
 
     /**
@@ -45,7 +56,9 @@ class WishlistPolicy
      */
     public function delete(User $user, Wishlist $wishlist): bool
     {
-        return true;
+        return $user->id === $wishlist->user_id
+            ? Response::allow()
+            : Response::deny('You cannot delete this wishlist');
     }
 
 }

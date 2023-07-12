@@ -52,10 +52,8 @@ class WishlistItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Wishlist $wishlist, WishlistItem $wishlistItem)
+    public function update(Request $request, Wishlist $wishlist, WishlistItem $item)
     {
-
-        $this->authorize('update', [$wishlistItem, $wishlist]);
 
         // Validate the incoming request data.
         $data = $request->validate([
@@ -67,7 +65,10 @@ class WishlistItemController extends Controller
             'needs' => 'required|integer|min:1',
         ]);
 
-        $wishlistItem->fill($data)->save();
+        // Save
+        $item->fill($data);
+        $item->wishlist_id=$wishlist->id;
+        $item->save();
 
         // If we pass validation
         return Redirect::back()->with('success', 'Item updated');
