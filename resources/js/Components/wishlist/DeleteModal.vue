@@ -72,7 +72,10 @@ function closeModal() {
 function deleteItem()
 {
   console.log("deleting: "+props.itemToDelete.id+" Route: "+route("wishlists.items.destroy", [props.wishlistId, props.itemToDelete.id]))
-  router.delete(route("wishlists.items.destroy", [props.wishlistId, props.itemToDelete.id]))
+  router.delete(
+    route("wishlists.items.destroy", [props.wishlistId, props.itemToDelete.id]),
+    {onFinish: closeModal(), preserveScroll: true}
+    )
 }
 
 
