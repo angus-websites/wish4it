@@ -21,9 +21,7 @@ class WishlistPolicy
      */
     public function view(User $user, Wishlist $wishlist)
     {
-        return $user->id === $wishlist->user()->id
-            ? Response::allow()
-            : Response::deny('You cannot view this wishlist');
+        return true;
     }
 
     /**
@@ -39,7 +37,7 @@ class WishlistPolicy
      */
     public function update(User $user, Wishlist $wishlist): bool
     {
-        return $user->id === $wishlist->user_id;
+        return true;
     }
 
     /**
@@ -47,7 +45,7 @@ class WishlistPolicy
      */
     public function delete(User $user, Wishlist $wishlist): bool
     {
-        return $user->id === $wishlist->user_id;
+        return true;
     }
 
 }

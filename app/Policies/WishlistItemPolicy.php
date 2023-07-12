@@ -37,9 +37,9 @@ class WishlistItemPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, WishlistItem $wishlistItem): bool
+    public function update(User $user, WishlistItem $wishlistItem, Wishlist $wishlist): bool
     {
-        return $user->id === $wishlistItem->wishlist->user_id;
+       return true;
     }
 
     /**
@@ -47,7 +47,7 @@ class WishlistItemPolicy
      */
     public function delete(User $user, WishlistItem $wishlistItem): bool
     {
-        return $user->id === $wishlistItem->wishlist->user_id;
+        return true;
     }
 
 }

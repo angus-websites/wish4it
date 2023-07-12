@@ -13,7 +13,9 @@ class WishlistItemController extends Controller
     public function __construct()
     {
         $this->middleware('auth:sanctum');
-        $this->authorizeResource(WishlistItem::class);
+
+        // Authorize everyting through the parent wishlist
+        $this->authorizeResource(Wishlist::class);
     }
 
     /**
@@ -53,8 +55,7 @@ class WishlistItemController extends Controller
     public function update(Request $request, Wishlist $wishlist, WishlistItem $wishlistItem)
     {
 
-        // Authenticate the wishlist first
-        $this->authorize('update', $wishlist);
+        $this->authorize('update', [$wishlistItem, $wishlist]);
 
         // Validate the incoming request data.
         $data = $request->validate([
@@ -66,7 +67,7 @@ class WishlistItemController extends Controller
             'needs' => 'required|integer|min:1',
         ]);
 
-        $item->fill($data)->save();
+        $wishlistItem->fill($data)->save();
 
         // If we pass validation
         return Redirect::back()->with('success', 'Item updated');
