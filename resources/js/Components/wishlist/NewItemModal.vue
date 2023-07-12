@@ -150,6 +150,7 @@ import InputError from "@/Components/form/InputError.vue"
 import {useForm} from '@inertiajs/vue3';
 
 const props = defineProps({
+    wishlistId: String,
     open: Boolean,
     itemToEdit: {
       type: Object,
@@ -200,13 +201,17 @@ function reset(){
 
 function submitForm()
 {
+  // Edit mode
   if (props.itemToEdit) {
     form.put(route('wishlists.items.update', props.itemToEdit.id), {
       preserveScroll: true,
       onSuccess: () => reset(),
     })
-  } else {
-    form.post(route('wishlists.items.store', 1), {
+  } 
+
+  // Create mode
+  else {
+    form.post(route('wishlists.items.store', wishlistId), {
       preserveScroll: true,
       onSuccess: () => reset(),
     })

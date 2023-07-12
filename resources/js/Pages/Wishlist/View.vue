@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <NewItemModal :open="open" :itemToEdit="itemToEdit" @update:open="handleModal" />
+        <NewItemModal :wishlistId="list.id" :open="open" :itemToEdit="itemToEdit" @update:open="handleModal" />
     </AppLayout>
 </template>
 
@@ -34,6 +34,8 @@ const props = defineProps({
 
 function createNewItem()
 {
+    // Ensure we dont keep the current edit item
+    itemToEdit.value = null;
     open.value = true;
 }
 
