@@ -46,20 +46,30 @@ class WishlistItemController extends Controller
         return Redirect::route('wishlists.show', $wishlist)->with('success', 'Item added');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Wishlist $wishlist, WishlistItem $wishlistItem)
     {
-        //
+
+        // Authenticate the wishlist first
+        $this->authorize('update', $wishlist);
+
+        // Validate the incoming request data.
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'brand' => 'nullable|string|max:255',
+            'price' => 'nullable|numeric|min:0',
+            'url' => 'nullable|url',
+            'comment' => 'nullable|string|max:500',
+            'needs' => 'required|integer|min:1',
+        ]);
+
+        $item->fill($data)->save();
+
+        // If we pass validation
+        return Redirect::back()->with('success', 'Item updated');
     }
 
     /**

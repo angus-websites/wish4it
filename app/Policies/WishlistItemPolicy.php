@@ -4,6 +4,8 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\WishlistItem;
+use App\Models\Wishlist;
+
 use Illuminate\Auth\Access\Response;
 
 class WishlistItemPolicy
@@ -37,7 +39,7 @@ class WishlistItemPolicy
      */
     public function update(User $user, WishlistItem $wishlistItem): bool
     {
-        return $user->id === $item->wishlist->user_id;
+        return $user->id === $wishlistItem->wishlist->user_id;
     }
 
     /**
@@ -45,7 +47,7 @@ class WishlistItemPolicy
      */
     public function delete(User $user, WishlistItem $wishlistItem): bool
     {
-        return $user->id === $item->wishlist->user_id;
+        return $user->id === $wishlistItem->wishlist->user_id;
     }
 
 }

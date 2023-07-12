@@ -39,7 +39,7 @@ class WishlistPolicy
      */
     public function update(User $user, Wishlist $wishlist): bool
     {
-        return $user->id === $wishlist->user()->id;
+        return $user->id === $wishlist->user_id;
     }
 
     /**
@@ -47,7 +47,7 @@ class WishlistPolicy
      */
     public function delete(User $user, Wishlist $wishlist): bool
     {
-        return $user->id === $wishlist->user()->id;
+        return $user->id === $wishlist->user_id;
     }
 
 }

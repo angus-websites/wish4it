@@ -203,7 +203,7 @@ function submitForm()
 {
   // Edit mode
   if (props.itemToEdit) {
-    form.put(route('wishlists.items.update', props.itemToEdit.id), {
+    form.put(route('wishlists.items.update', [props.wishlistId,props.itemToEdit.id]), {
       preserveScroll: true,
       onSuccess: () => reset(),
     })
@@ -211,7 +211,7 @@ function submitForm()
 
   // Create mode
   else {
-    form.post(route('wishlists.items.store', wishlistId), {
+    form.post(route('wishlists.items.store', props.wishlistId), {
       preserveScroll: true,
       onSuccess: () => reset(),
     })
