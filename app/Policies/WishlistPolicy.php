@@ -53,7 +53,7 @@ class WishlistPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Wishlist $wishlist): bool
+    public function delete(User $user, Wishlist $wishlist)
     {
         return $user->id === $wishlist->user_id
             ? Response::allow()

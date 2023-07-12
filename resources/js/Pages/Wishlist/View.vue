@@ -60,7 +60,6 @@ function editItem(item) {
 function deleteItem(item) {
     itemToDelete.value = item;
     deleteModalOpen.value = true;
-  console.log("READY TO DELETE "+item.id)
 }
 
 

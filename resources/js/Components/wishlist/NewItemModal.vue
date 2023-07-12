@@ -54,6 +54,7 @@
                             type="text"
                             class="w-full mt-1"
                             required
+                            autocomplete="off"
                             autofocus
                         />
                         <InputError v-if="form.errors.name" :message="form.errors.name" class="mt-1"/>

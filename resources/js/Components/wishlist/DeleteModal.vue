@@ -15,14 +15,20 @@
                       <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                       </svg>
-                      <p class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-200">Are you sure you want to delete this product?</p>
+
+                      
+                      <p class="mb-2 text-lg font-normal text-gray-500 dark:text-gray-200">Are you sure you want to delete this product?</p>
+
+                      <div class="my-3 text-gray-400 dark:text-gray-300">
+                        <p> {{ itemToDelete.name }} </p>
+                      </div>
 
                       <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3 justify-center">
-                        <DangerButton>Delete</DangerButton>
+                        <DangerButton @click="deleteItem">Delete</DangerButton>
                         <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
                       </div>
 
-                      
+
                   </div>
               </div>
             </DialogPanel>
@@ -34,12 +40,11 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onBeforeUpdate } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import DangerButton from "@/Components/buttons/DangerButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
-
-import {useForm} from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
     wishlistId: String,
@@ -62,6 +67,12 @@ watchEffect(() => {
 
 function closeModal() {
   emit('update:open', false)
+}
+
+function deleteItem()
+{
+  console.log("deleting: "+props.itemToDelete.id+" Route: "+route("wishlists.items.destroy", [props.wishlistId, props.itemToDelete.id]))
+  router.delete(route("wishlists.items.destroy", [props.wishlistId, props.itemToDelete.id]))
 }
 
 
