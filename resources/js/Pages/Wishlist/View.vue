@@ -9,11 +9,11 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <PrimaryButton @click="createNewItem" class="mb-5">New item</PrimaryButton>
-                <WishlistGrid :items="list.items" />
+                <WishlistGrid :items="list.items" @edit="editItem"/>
             </div>
         </div>
 
-        <NewItemModal :open="open" @update:open="handleModal" />
+        <NewItemModal :open="open" :itemToEdit="itemToEdit" @update:open="handleModal" />
     </AppLayout>
 </template>
 
@@ -25,6 +25,7 @@ import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import { ref } from 'vue'
 
 let open = ref(false)
+let itemToEdit = ref(null);
 
 const props = defineProps({
     list: Object,
@@ -38,6 +39,11 @@ function createNewItem()
 
 function handleModal(value) {
     open.value = value;
+}
+
+function editItem(item) {
+  itemToEdit.value = item;
+  open.value = true;
 }
 
 

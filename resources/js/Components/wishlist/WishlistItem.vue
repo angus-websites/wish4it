@@ -26,7 +26,7 @@
 
     <!-- Buttons -->
     <div class="mt-auto">
-      <PrimaryButton size="s">Visit</PrimaryButton>
+      <PrimaryButton @click="editItem" size="s">Edit</PrimaryButton>
     </div>
 
   </div>
@@ -35,9 +35,16 @@
 
 <script setup>
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
-
+import { defineEmits } from 'vue';
 const props = defineProps({
     item: Object,
 })
+
+const emit = defineEmits(['edit']);
+
+function editItem() {
+  emit('edit', props.item);
+}
+
 
 </script>

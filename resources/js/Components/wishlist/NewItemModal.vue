@@ -39,8 +39,6 @@
 
               <!-- Details screen -->
               <div v-else>
-
-                {{ form.errors }}
                 
                 <!-- Form -->
                 <form @submit.prevent="submitForm">
@@ -153,6 +151,10 @@ import {useForm} from '@inertiajs/vue3';
 
 const props = defineProps({
     open: Boolean,
+    itemToEdit: {
+      type: Object,
+      default: null
+    },
 
 })
 
@@ -167,6 +169,17 @@ const form = useForm({
 
 let isOpen = ref(props.open)
 let showDetails = ref(false)
+
+
+onBeforeUpdate(() => {
+  if (props.itemToEdit) {
+    Object.assign(form, props.itemToEdit);
+    showDetails.value=true;
+  } else {
+    form.reset();
+  }
+})
+
 
 const emit = defineEmits(['update:open'])
 
@@ -187,11 +200,17 @@ function reset(){
 
 function submitForm()
 {
-  form.post(route('wishlists.items.store', 1), {
-    preserveScroll: true,
-
-    onSuccess: () => reset(),
-  })
+  if (props.itemToEdit) {
+    form.put(route('wishlists.items.update', props.itemToEdit.id), {
+      preserveScroll: true,
+      onSuccess: () => reset(),
+    })
+  } else {
+    form.post(route('wishlists.items.store', 1), {
+      preserveScroll: true,
+      onSuccess: () => reset(),
+    })
+  }
 }
 
 </script>
