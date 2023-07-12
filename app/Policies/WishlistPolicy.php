@@ -44,8 +44,7 @@ class WishlistPolicy
      * Determine whether the user can update the model.
      */
     public function update(User $user, Wishlist $wishlist)
-    {
-        Response::deny('You cannot update this wishlist');
+    {        
         return $user->id === $wishlist->user_id
             ? Response::allow()
             : Response::deny('You cannot update this wishlist');

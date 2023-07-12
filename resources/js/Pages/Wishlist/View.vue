@@ -9,11 +9,12 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <PrimaryButton @click="createNewItem" class="mb-5">New item</PrimaryButton>
-                <WishlistGrid :items="list.items" @edit="editItem"/>
+                <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem"/>
             </div>
         </div>
 
-        <NewItemModal :wishlistId="list.id" :open="open" :itemToEdit="itemToEdit" @update:open="handleModal" />
+        <NewItemModal :wishlistId="list.id" :open="newModalOpen" :itemToEdit="itemToEdit" @update:open="handleModal" />
+        <DeleteModal :wishlistId="list.id" :open="deleteModalOpen" :itemToDelete="itemToDelete" @update:open="handleDeleteModal" />
     </AppLayout>
 </template>
 
@@ -22,10 +23,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import WishlistGrid from '@/Components/wishlist/WishlistGrid.vue'
 import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
 import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
+import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
+
 import { ref } from 'vue'
 
-let open = ref(false)
+let newModalOpen = ref(false)
+let deleteModalOpen = ref(false)
 let itemToEdit = ref(null);
+let itemToDelete = ref(null);
 
 const props = defineProps({
     list: Object,
@@ -36,16 +41,26 @@ function createNewItem()
 {
     // Ensure we dont keep the current edit item
     itemToEdit.value = null;
-    open.value = true;
+    newModalOpen.value = true;
 }
 
 function handleModal(value) {
-    open.value = value;
+    newModalOpen.value = value;
+}
+
+function handleDeleteModal(value) {
+    deleteModalOpen.value = value;
 }
 
 function editItem(item) {
   itemToEdit.value = item;
-  open.value = true;
+  newModalOpen.value = true;
+}
+
+function deleteItem(item) {
+    itemToDelete.value = item;
+    deleteModalOpen.value = true;
+  console.log("READY TO DELETE "+item.id)
 }
 
 

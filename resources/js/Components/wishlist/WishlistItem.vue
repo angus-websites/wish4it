@@ -27,6 +27,7 @@
     <!-- Buttons -->
     <div class="mt-auto">
       <PrimaryButton @click="editItem" size="s">Edit</PrimaryButton>
+      <SecondaryButton @click="deleteItem" size="s">Delete</SecondaryButton>
     </div>
 
   </div>
@@ -35,15 +36,21 @@
 
 <script setup>
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
+import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
+
 import { defineEmits } from 'vue';
 const props = defineProps({
     item: Object,
 })
 
-const emit = defineEmits(['edit']);
+const emit = defineEmits(['edit', "delete"]);
 
 function editItem() {
   emit('edit', props.item);
+}
+
+function deleteItem() {
+  emit('delete', props.item);
 }
 
 
