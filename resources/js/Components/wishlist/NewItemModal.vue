@@ -150,7 +150,7 @@ import InputError from "@/Components/form/InputError.vue"
 import {useForm} from '@inertiajs/vue3';
 
 const props = defineProps({
-    wishlistId: String,
+    wishlistId: [String, Number],
     open: Boolean,
     itemToEdit: {
       type: Object,

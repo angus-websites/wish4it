@@ -47,7 +47,7 @@ import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
 import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
-    wishlistId: String,
+    wishlistId: [String, Number],
     open: Boolean,
     itemToDelete: {
       type: Object,

@@ -7,7 +7,10 @@
         </template>
 
         <div class="py-12">
+
+
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <FlashMessages class="mb-5" />
                 <PrimaryButton @click="createNewItem" class="mb-5">New item</PrimaryButton>
                 <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem"/>
             </div>
@@ -24,6 +27,7 @@ import WishlistGrid from '@/Components/wishlist/WishlistGrid.vue'
 import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
 import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
+import FlashMessages from '@/Components/FlashMessages.vue'
 
 import { ref } from 'vue'
 
