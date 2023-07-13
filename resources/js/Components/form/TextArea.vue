@@ -2,7 +2,9 @@
 import { onMounted, ref } from 'vue';
 
 defineProps({
-    modelValue: String,
+    modelValue: {
+      requied: true
+    },
     label: String,
     id: String,
     name: String

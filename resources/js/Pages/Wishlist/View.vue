@@ -1,14 +1,15 @@
 <template>
     <AppLayout title="My Lists">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ list.title }}
-            </h2>
+            <div class="flex flex-row justify-between items-center">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ list.title }}
+                </h2>
+                <PrimaryOutlineButton size="s">Edit List</PrimaryOutlineButton>
+            </div>
         </template>
 
         <div class="py-12">
-
-
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <FlashMessages class="mb-5" />
                 <PrimaryButton @click="createNewItem" class="mb-5">New item</PrimaryButton>
@@ -25,6 +26,8 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import WishlistGrid from '@/Components/wishlist/WishlistGrid.vue'
 import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
+import PrimaryOutlineButton from '@/Components/buttons/PrimaryOutlineButton.vue'
+
 import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
