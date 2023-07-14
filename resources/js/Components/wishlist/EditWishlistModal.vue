@@ -55,11 +55,11 @@
 
                 <!-- Public-->
                 <div>
-                  <ToggleSwitch v-model="form.public" title="Public" description="Should this wishlist be visible to the public?"/>
+                  <ToggleSwitch v-model="form.public" title="Public list" description="Should this wishlist be visible to the public?"/>
 
                   <!-- Status -->
                   <p class="mt-2">
-                  <span class="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300"><span v-if="form.public">Public</span><span v-else>Private</span></span>
+                    <DefaultBadge><span v-if="form.public">Public</span><span v-else>Private</span></DefaultBadge>
                   </p>
                 </div>
         
@@ -91,6 +91,7 @@ import { CheckIcon } from '@heroicons/vue/24/outline'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
 import DangerButton from "@/Components/buttons/DangerButton.vue"
+import DefaultBadge from "@/Components/badges/DefaultBadge.vue"
 
 import InputLabel from "@/Components/form/InputLabel.vue"
 import TextInput from "@/Components/form/TextInput.vue"

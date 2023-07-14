@@ -27,7 +27,7 @@
 
                 <!-- Manual button -->
                 <div class="mb-6 text-center">
-                  <p class="text-gray-200"> Or </p>
+                  <p class="dark:text-gray-200 text-gray-500"> Or </p>
                   <button @click="showDetails = true" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Enter manually</button>
                 </div>
 
