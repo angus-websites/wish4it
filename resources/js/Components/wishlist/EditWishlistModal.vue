@@ -29,10 +29,15 @@
                     <InputError v-if="form.errors.title" :message="form.errors.title" class="mt-1"/>
                 </div>
 
-                {{ form }}
-
                 <!-- Public-->
-                <ToggleSwitch v-model="form.public" title="Public" description="Should this wishlist be visible to the public?"/>
+                <div>
+                  <ToggleSwitch v-model="form.public" title="Public" description="Should this wishlist be visible to the public?"/>
+
+                  <!-- Status -->
+                  <p class="mt-2">
+                  <span class="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300"><span v-if="form.public">Public</span><span v-else>Private</span></span>
+                  </p>
+                </div>
         
               <!-- Buttons -->
               <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3">
