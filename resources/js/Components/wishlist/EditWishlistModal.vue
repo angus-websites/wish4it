@@ -157,7 +157,7 @@ function submitForm()
 {
 
   // Edit mode
-  if (props.itemToEdit) {
+  if (props.wishlist) {
     form.put(route('wishlists.update', [props.wishlist.id]), {
       preserveScroll: true,
       onSuccess: () => reset(),

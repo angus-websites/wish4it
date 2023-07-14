@@ -14,7 +14,14 @@
                     <p>Friends: </p>
                     <div class="prose text-gray-200">
                       <ul class="my-5">    
-                        <li v-for="friend in friends">{{friend.name}}</li>
+                        <li v-for="friend in friends">
+                        {{friend.name}}
+                            <ul>
+                                <li v-for="wishlist in friend.wishlists">
+                                    <Link :href="route('wishlists.show',wishlist.id)">{{wishlist.title}}</Link>
+                                </li>
+                            </ul>
+                        </li>
                       </ul>
                     </div>
                 </div>
