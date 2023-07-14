@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\FriendResource;
 
 
 class FriendController extends Controller
@@ -16,7 +17,7 @@ class FriendController extends Controller
     public function index()
     {
         return Inertia::render('Friends/Index', [
-            'friends' => Auth::user()->friends()->get()
+            'friends' => FriendResource::collection(Auth::user()->friends()->get())
         ]);
     }
 }

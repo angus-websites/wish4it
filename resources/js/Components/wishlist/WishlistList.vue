@@ -1,5 +1,5 @@
 <template>
-  <ul role="list" class="divide-y divide-gray-600/5 bg-white dark:bg-dark rounded-lg p-3">
+  <ul role="list" class="divide-y divide-gray-600/5 dark:divide-gray-200/5 bg-white dark:bg-dark rounded-lg p-3">
     <li v-for="list in lists" :key="lists.id" class="relative flex items-center space-x-4 py-4">
       <div class="min-w-0 flex-auto">
         <div class="flex items-center gap-x-3">
