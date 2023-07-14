@@ -19,6 +19,7 @@ class WishlistResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'public' => boolval($this->public),
+            'itemCount' => $this->items()->count(),
             'items' => WishlistItemResource::collection($this->whenLoaded('items')),
         ];
     }
