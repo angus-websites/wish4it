@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import FlashMessages from '@/Components/FlashMessages.vue'
 
 const props = defineProps({
     lists: Object,
@@ -18,6 +19,9 @@ const props = defineProps({
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
+
+                    <FlashMessages class="mb-5" />
+
                     <h2 v-if="lists.length < 1">No wishlists</h2>
 
                     <div v-else class="flex flex-col gap-y-5">
