@@ -13,8 +13,8 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <FlashMessages class="mb-5" :hideErrors="true" />
 
-
-                <div class="flex flex-row justify-between items-center mx-3 sm:mx-0">
+                <!-- Button row-->
+                <div class="flex flex-row justify-between items-center mx-3 sm:mx-0 my-5">
                     <!-- Breadcrumb -->
                     <nav class="flex" aria-label="Breadcrumb">
                       <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -33,7 +33,7 @@
                         </li>
                       </ol>
                     </nav>
-                    <PrimaryButton @click="createNewItem" class="my-5">New item</PrimaryButton>
+                    <PrimaryButton @click="createNewItem">New item</PrimaryButton>
                 </div>
                 <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem"/>
             </div>

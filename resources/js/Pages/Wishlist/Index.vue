@@ -20,11 +20,10 @@ const props = defineProps({
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden sm:rounded-lg">
-
                     <FlashMessages class="mb-5" />
 
-                    <!-- Create button -->
-                    <div class="flex flex-row justify-end items-center my-3">
+                    <!-- Button row -->
+                    <div class="flex flex-row justify-end items-center mx-3 sm:mx-0 my-5">
                         <PrimaryButton>New List</PrimaryButton>
                     </div>
                     <h2 v-if="lists.length < 1">No wishlists</h2>
