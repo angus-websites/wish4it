@@ -160,14 +160,14 @@ function submitForm()
   if (props.wishlist) {
     form.put(route('wishlists.update', [props.wishlist.id]), {
       preserveScroll: true,
-      onSuccess: () => reset(),
+      onFinish: () => reset(),
     })
   }
   // Create mode
   else{
     form.post(route('wishlists.store'), {
       preserveScroll: true,
-      onSuccess: () => reset(),
+      onFinish: () => reset(),
     })
   }
 }
