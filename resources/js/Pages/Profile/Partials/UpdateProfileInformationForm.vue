@@ -6,7 +6,8 @@ import FormSection from '@/Components/form/FormSection.vue';
 import InputError from '@/Components/form/InputError.vue';
 import InputLabel from '@/Components/form/InputLabel.vue';
 import PrimaryButton from '@/Components/buttons/PrimaryButton.vue';
-import SecondaryButton from '@/Components/buttons/SecondaryButton.vue';import TextInput from '@/Components/form/TextInput.vue';
+import SecondaryButton from '@/Components/buttons/SecondaryButton.vue';
+import TextInput from '@/Components/form/TextInput.vue';
 
 const props = defineProps({
     user: Object,
@@ -16,6 +17,7 @@ const form = useForm({
     _method: 'PUT',
     name: props.user.name,
     email: props.user.email,
+    username: props.user.username,
     photo: null,
 });
 
@@ -171,6 +173,20 @@ const clearPhotoFileInput = () => {
                     </div>
                 </div>
             </div>
+
+            <!-- Username -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="username" value="Username" />
+                <TextInput
+                    id="username"
+                    v-model="form.username"
+                    type="text"
+                    class="mt-1 block w-full"
+                    autocomplete="username"
+                />
+                <InputError :message="form.errors.username" class="mt-2" />
+            </div>
+
         </template>
 
         <template #actions>
