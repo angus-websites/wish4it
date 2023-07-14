@@ -101,7 +101,10 @@ import ToggleSwitch from "@/Components/form/ToggleSwitch.vue"
 import {useForm, router} from '@inertiajs/vue3';
 
 const props = defineProps({
-    wishlist: Object,
+    wishlist: {
+      type: Object,
+      default: null
+    },
     open: Boolean,
 })
 
