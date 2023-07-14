@@ -59,13 +59,13 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    /**
+     * Get the role for this
+     * user, Note: the field
+     * is nullable so not all users
+     * will have a role
+     */
     private function role() {
-        /**
-         * Get the role for this
-         * user, Note: the field
-         * is nullable so not all users
-         * will have a role
-         */
         return $this->belongsTo(Role::class)->first();
     }
 
@@ -73,15 +73,23 @@ class User extends Authenticatable
         return $this->role();
     }
 
+    /**
+     * Is this user admin or super admin?
+     */
     public function isAdmin($super=false){
-        /**
-         * Is this user admin or super admin?
-         */
-
+        
         // Check this user actually has a role
         if ($this->role()){
             return $super ? $this->role()->name == "Super Admin" :  in_array($this->role()->name, ["Admin", "Super Admin"]);
         }
         return false;
+    }
+
+    /**
+     * Get the wishlists for this user
+     */
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
     }
 }

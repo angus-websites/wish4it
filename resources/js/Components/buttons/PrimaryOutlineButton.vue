@@ -24,7 +24,7 @@ export default {
         sizeClass() {
             switch (this.size){
                 case "l":
-                    return "px-3 py-2 md:py-3 md:px-5 text-md"
+                    return "px-3 py-2 md:py-4 md:px-5 text-md"
                 case "s":
                     return "px-2 py-1 text-sm"
                 default:
@@ -33,7 +33,7 @@ export default {
         },
 
         baseClasses(){
-            return "rounded-md bg-primary font-semibold text-white shadow-sm hover:bg-primary-dark";
+            return "rounded-md bg-inherit border-primary border-2 font-semibold text-inherit dark:text-white shadow-sm hover:bg-primary hover:text-white";
         }
 
     }
