@@ -10,6 +10,8 @@
         <link rel="icon" type="image/png" href="{{ asset('assets/images/core/favicon.png') }}">
 
         <!-- Scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.js"></script>
+
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead

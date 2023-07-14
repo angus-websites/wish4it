@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('friend_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
+            $table->unique(['user_id', 'friend_id']); // make the combination of user_id and friend_id unique
+
         });
     }
 

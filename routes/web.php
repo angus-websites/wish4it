@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\WishlistController;
 use \App\Http\Controllers\WishlistItemController;
+use \App\Http\Controllers\FriendController;
 
 use Inertia\Inertia;
 
@@ -38,9 +39,8 @@ Route::middleware([
     Route::resource('wishlists.items', WishlistItemController::class);
 
     // Friends page
-    Route::get('/friends', function () {
-        return Inertia::render('Friends');
-    })->name('friends');
+    Route::get('/friends', [FriendController::class, 'index'])->name('friends');
+
 });
 
 
