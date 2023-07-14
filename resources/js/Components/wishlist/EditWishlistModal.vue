@@ -67,10 +67,10 @@
               <div class="mt-5 flex flex-row justify-between items-center">
                 <div class="flex flex-col gap-y-3 sm:flex-row gap-x-3">
                   <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
-                  <PrimaryButton :disabled="form.processing" type="submit">Save</PrimaryButton>
+                  <PrimaryButton :disabled="form.processing" type="submit"><span v-if="props.wishlist">Save</span><span v-else>Create</span></PrimaryButton>
                 </div>
                 <div>
-                  <DangerButton @click="deleteClicked" type="button">Delete list</DangerButton>
+                  <DangerButton v-if="props.wishlist" @click="deleteClicked" type="button">Delete list</DangerButton>
                 </div>
               </div>
             </div>
@@ -110,7 +110,7 @@ const props = defineProps({
 
 const form = useForm({
   title: null,
-  public: null,
+  public: false,
 })
 
 let isOpen = ref(props.open)
@@ -125,8 +125,13 @@ watch(isOpen, () => {
     form.clearErrors();
     // Ensure delete page is closed
     showDeleteConfirmation.value = false;
-    form.title = props.wishlist.title
-    form.public = props.wishlist.public
+
+    // Populate with data (Edit mode only)
+    if (props.wishlist){
+      form.title = props.wishlist.title
+      form.public = props.wishlist.public
+    }
+    
   }
 });
 
@@ -150,10 +155,21 @@ function reset(){
 
 function submitForm()
 {
-  form.put(route('wishlists.update', [props.wishlist.id]), {
-    preserveScroll: true,
-    onSuccess: () => reset(),
-  })
+
+  // Edit mode
+  if (props.itemToEdit) {
+    form.put(route('wishlists.update', [props.wishlist.id]), {
+      preserveScroll: true,
+      onSuccess: () => reset(),
+    })
+  }
+  // Create mode
+  else{
+    form.post(route('wishlists.store'), {
+      preserveScroll: true,
+      onSuccess: () => reset(),
+    })
+  }
 }
 
 function deleteClicked()
@@ -182,7 +198,7 @@ function deleteWishlist()
   router.delete(
     route("wishlists.destroy", [props.wishlist.id]),
     {onFinish: reset(), preserveScroll: true}
-    )
+  )
   
 }
 

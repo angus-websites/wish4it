@@ -32,7 +32,19 @@ class WishlistController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate the incoming request data.
+        $data = $request->validate([
+            'title' => 'required|string|max:30',
+            'public' => 'required|boolean',
+        ]);
+
+        // Save
+        $new_wishlist = new Wishlist();
+        $new_wishlist->fill($data);
+        $new_wishlist->user_id = Auth::user()->id;
+        $new_wishlist->save();
+
+        return Redirect::route('wishlists.index')->with('success', 'Wishlist created');
     }
 
 
