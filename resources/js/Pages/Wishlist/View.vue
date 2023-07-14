@@ -5,7 +5,7 @@
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                     {{ list.title }}
                 </h2>
-                <PrimaryOutlineButton size="s">Edit List</PrimaryOutlineButton>
+                <PrimaryOutlineButton @click="editList" size="s">Edit List</PrimaryOutlineButton>
             </div>
         </template>
 
@@ -19,6 +19,7 @@
 
         <NewItemModal :wishlistId="list.id" :open="newModalOpen" :itemToEdit="itemToEdit" @update:open="handleModal" />
         <DeleteModal :wishlistId="list.id" :open="deleteModalOpen" :itemToDelete="itemToDelete" @update:open="handleDeleteModal" />
+        <EditWishlistModal :wishlist="list" :open="editListModalOpen" @update:open="handleEditListModal"  />
     </AppLayout>
 </template>
 
@@ -30,12 +31,16 @@ import PrimaryOutlineButton from '@/Components/buttons/PrimaryOutlineButton.vue'
 
 import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
+import EditWishlistModal from '@/Components/wishlist/EditWishlistModal.vue'
+
 import FlashMessages from '@/Components/FlashMessages.vue'
 
 import { ref } from 'vue'
 
 let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)
+let editListModalOpen = ref(false)
+
 let itemToEdit = ref(null);
 let itemToDelete = ref(null);
 
@@ -59,6 +64,10 @@ function handleDeleteModal(value) {
     deleteModalOpen.value = value;
 }
 
+function handleEditListModal(value){
+    editListModalOpen.value = value
+}
+
 function editItem(item) {
   itemToEdit.value = item;
   newModalOpen.value = true;
@@ -67,6 +76,11 @@ function editItem(item) {
 function deleteItem(item) {
     itemToDelete.value = item;
     deleteModalOpen.value = true;
+}
+
+function editList()
+{
+    editListModalOpen.value = true;
 }
 
 
