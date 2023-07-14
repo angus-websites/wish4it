@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import FlashMessages from '@/Components/FlashMessages.vue'
 import WishlistList from '@/Components/wishlist/WishlistList.vue'
-
+import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 const props = defineProps({
     lists: Object,
 })
@@ -23,6 +23,10 @@ const props = defineProps({
 
                     <FlashMessages class="mb-5" />
 
+                    <!-- Create button -->
+                    <div class="flex flex-row justify-end items-center my-3">
+                        <PrimaryButton>New List</PrimaryButton>
+                    </div>
                     <h2 v-if="lists.length < 1">No wishlists</h2>
 
                     <WishlistList v-else :lists="lists"/>
