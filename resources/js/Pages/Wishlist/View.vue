@@ -11,7 +11,7 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <FlashMessages class="mb-5" />
+                <FlashMessages class="mb-5" :hideErrors="true" />
                 <PrimaryButton @click="createNewItem" class="mb-5">New item</PrimaryButton>
                 <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem"/>
             </div>

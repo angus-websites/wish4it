@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onBeforeUpdate } from 'vue'
+import { ref, watchEffect, onMounted, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
@@ -80,10 +80,16 @@ const form = useForm({
 
 let isOpen = ref(props.open)
 
-onBeforeUpdate(() => {
-  form.title = props.wishlist.title
-  form.public = props.wishlist.public
-})
+watch(isOpen, () => {
+
+  // Only reset when the modal opens
+  if (isOpen.value){
+    form.reset();
+    form.clearErrors();
+    form.title = props.wishlist.title
+    form.public = props.wishlist.public
+  }
+});
 
 
 const emit = defineEmits(['update:open'])
@@ -99,12 +105,16 @@ function closeModal() {
 
 function reset(){
   form.reset();
+  form.clearErrors();
   closeModal();
 }
 
 function submitForm()
 {
-  console.log("Ready to submit")
+  form.put(route('wishlists.update', [props.wishlist.id]), {
+    preserveScroll: true,
+    onSuccess: () => reset(),
+  })
 }
 
 </script>

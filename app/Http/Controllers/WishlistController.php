@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Http\Resources\WishlistResource;
 use App\Models\Wishlist;
+use Illuminate\Support\Facades\Redirect;
 
 class WishlistController extends Controller
 {
@@ -58,9 +59,20 @@ class WishlistController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Wishlist $wishlist)
     {
-        //
+        // Validate the incoming request data.
+        $data = $request->validate([
+            'title' => 'required|string|max:30',
+            'public' => 'required|boolean',
+        ]);
+
+        // Save
+        $wishlist->fill($data);
+        $wishlist->save();
+
+        // If we pass validation
+        return Redirect::back()->with('success', 'Wishlist updated');
     }
 
     /**

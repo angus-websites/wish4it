@@ -22,7 +22,7 @@
     </div>
 
     <!-- Error flash messages -->
-    <div v-if="($page.props.flash.error || Object.keys($page.props.errors).length > 0) && show" class="rounded-md bg-red-50 p-4">
+    <div v-if="($page.props.flash.error || Object.keys($page.props.errors).length > 0) && show && !hideErrors" class="rounded-md bg-red-50 p-4">
       <div class="flex">
         <div class="flex-shrink-0">
           <XCircleIcon class="h-5 w-5 text-red-400" aria-hidden="true" />
@@ -67,6 +67,13 @@
 <script>
 import { CheckCircleIcon, XMarkIcon, XCircleIcon, InformationCircleIcon } from '@heroicons/vue/20/solid'
 export default {
+
+  props: {
+    hideErrors: {
+          type: Boolean,
+          default: false
+        }
+  },
   components: {
     CheckCircleIcon, XMarkIcon, XCircleIcon, InformationCircleIcon
   },
