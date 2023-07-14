@@ -2,9 +2,13 @@
     <AppLayout title="My Lists">
         <template #header>
             <div class="flex flex-row justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ list.title }}
-                </h2>
+                <div>
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        {{ list.title }} 
+                    </h2>
+                    <small v-if="$page.props.auth.user.id !== list.owner.id" class="text-sm">{{list.owner.name}}</small>
+                </div>
+
                 <PrimaryOutlineButton @click="editList" size="s">Edit List</PrimaryOutlineButton>
             </div>
         </template>

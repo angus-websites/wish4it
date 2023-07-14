@@ -48,6 +48,11 @@ class HandleInertiaRequests extends Middleware
             // Should the main login button be visible
             'showLogin' => config('app.show_login_button'),
 
+            // Lazily
+            'auth.user' => fn () => $request->user()
+                ? $request->user()->only('id', 'name', 'email', 'username')
+                : null,
+
             // Flash messages
             'flash' => function () use ($request) {
                 return [
