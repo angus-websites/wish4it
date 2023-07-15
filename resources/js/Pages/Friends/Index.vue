@@ -18,7 +18,7 @@
                         {{friend.name}}
                             <ul>
                                 <li v-for="wishlist in friend.wishlists">
-                                    <Link :href="route('wishlists.show',wishlist.id)">{{wishlist.title}}</Link>
+                                    <Link class="text-blue-200" :href="route('wishlists.show',wishlist.id)">{{wishlist.title}}</Link>
                                 </li>
                             </ul>
                         </li>
