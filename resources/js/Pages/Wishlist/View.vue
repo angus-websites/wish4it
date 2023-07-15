@@ -9,14 +9,14 @@
                     <small v-if="$page.props.auth.user.id !== list.owner.id" class="text-sm">{{list.owner.name}}</small>
                 </div>
 
-                <PrimaryOutlineButton @click="editList" size="s">Edit List</PrimaryOutlineButton>
+                <PrimaryOutlineButton v-if="can.editList" @click="editList" size="s">Edit List</PrimaryOutlineButton>
             </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <FlashMessages class="mb-5" :hideErrors="true" />
-
+                
                 <!-- Button row-->
                 <div class="flex flex-row justify-between items-center mx-3 sm:mx-0 my-5">
                     <!-- Breadcrumb -->
@@ -37,7 +37,7 @@
                         </li>
                       </ol>
                     </nav>
-                    <PrimaryButton @click="createNewItem">New item</PrimaryButton>
+                    <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
                 <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem"/>
             </div>

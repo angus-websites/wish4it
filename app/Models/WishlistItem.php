@@ -10,4 +10,8 @@ class WishlistItem extends Model
     use HasFactory;
 
     protected $guarded = ['id', 'wishlist_id'];
+
+    public function wishlist(){
+        return $this->belongsTo(Wishlist::class)->firstOrFail();
+    }
 }

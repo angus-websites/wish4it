@@ -10,7 +10,6 @@ class WishlistItemResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
@@ -25,6 +24,10 @@ class WishlistItemResource extends JsonResource
             'image' => $this->image,
             'needs' => $this->needs,
             'has' => $this->has,
+            'can' => [
+                'update' => $request->user()->can("update", $this->wishlist()),
+                'delete' => $request->user()->can("delete", $this->wishlist())
+            ]
         ];
     }
 }
