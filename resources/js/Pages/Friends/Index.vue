@@ -55,7 +55,6 @@ function handleAddFriendModal(value){
 }
 
 function launchAddFriendModal(){
-    console.log("LAUNCH")
     addFriendModalOpen.value=true;
 }
 

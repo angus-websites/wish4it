@@ -26,6 +26,7 @@
                     <InputLabel for="username" value="Username" />
                     <TextInput
                         v-model="form.username"
+                        @input="onInput"
                         id="username"
                         type="text"
                         class="w-full mt-1"
@@ -36,7 +37,7 @@
                     <InputError v-if="form.errors.username" :message="form.errors.username" class="mt-1"/>
                 </div>
 
-      
+
               <!-- Buttons -->
               <div class="flex flex-col gap-y-3 sm:flex-row gap-x-3">
                 <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
@@ -53,19 +54,18 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, watch} from 'vue'
+import { ref, watchEffect, watch, onBeforeUnmount} from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
-import DangerButton from "@/Components/buttons/DangerButton.vue"
-import DefaultBadge from "@/Components/badges/DefaultBadge.vue"
 
 import InputLabel from "@/Components/form/InputLabel.vue"
 import TextInput from "@/Components/form/TextInput.vue"
 import InputError from "@/Components/form/InputError.vue"
 
 import {useForm, router} from '@inertiajs/vue3';
+import { debounce } from 'lodash';
 
 const props = defineProps({
     open: Boolean,
@@ -92,7 +92,9 @@ function submitForm(){
   console.log("Hello");
 }
 
-
+const onInput = debounce((event) => {
+  console.log('Input value:', form.username);
+}, 500); 
 
 
 </script>
