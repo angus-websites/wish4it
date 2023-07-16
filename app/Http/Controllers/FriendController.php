@@ -32,7 +32,8 @@ class FriendController extends Controller
         if (empty($search)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Query parameter is missing.'
+                'errorTitle' => 'No input',
+                'message' => 'Please enter something'
             ]);
         }
 
@@ -43,7 +44,8 @@ class FriendController extends Controller
         if(strcasecmp($currentUser->username, $search) == 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'You cannot search for yourself.'
+                'errorTitle' => 'That is sad',
+                'message' => 'You cannot add yourself as a friend'
             ]);
         }
 
@@ -54,7 +56,8 @@ class FriendController extends Controller
         if(is_null($user)) {
             return response()->json([
                 'success' => false,
-                'message' => 'No user found with this username.'
+                'errorTitle' => 'User not found',
+                'message' => 'A user with that username was not found'
             ]);
         }
 
@@ -63,7 +66,8 @@ class FriendController extends Controller
         if ($friends->contains($user->id)) {
             return response()->json([
                 'success' => false,
-                'message' => 'This user is already your friend.'
+                'errorTitle' => 'Friend exists',
+                'message' => 'This user is already your friend'
             ]);
         }
 

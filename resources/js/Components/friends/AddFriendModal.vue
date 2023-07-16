@@ -46,6 +46,13 @@
                     <span class="sr-only">Loading...</span>
                 </div>
 
+                <!-- General error-->
+                <div v-if="generalError" class="flex flex-col gap-y-3">
+                  <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                    <span class="font-bold">Error</span> An error occoured on the server
+                  </div>
+                </div>
+
                 <!-- Success -->
                 <div v-if="isSuccess === true" class="flex flex-col gap-y-3">
                   <div class="p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
@@ -57,9 +64,11 @@
                 <!-- Unsuccessful -->
                 <div v-if="isSuccess === false" class="flex flex-col gap-y-3">
                   <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-                    <span class="font-bold">Error!</span> {{ otherError }}
+                    <span class="font-bold">{{errorTitle}}:</span> {{ errorMessage }}
                   </div>
                 </div>
+
+
 
               <!-- Buttons -->
               <div class="flex flex-col gap-y-3 sm:flex-row gap-x-3">
@@ -99,11 +108,13 @@ const props = defineProps({
 let isOpen = ref(props.open)
 let isLoading = ref(false)
 let loadingTimeoutId = ref(null);
-let otherError = ref(null);
+
+let errorTitle = ref(null);
+let errorMessage = ref(null);
 
 // Status
 let isSuccess = ref(null)
-
+let generalError = ref(null)
 
 const emit = defineEmits(['update:open'])
 
@@ -128,6 +139,8 @@ function submitForm(){
 const onInput = debounce(async (event) => {
 
     isSuccess.value = null;
+    generalError.value = null;
+    
     // Set a timeout to change isLoading after 1 second
     loadingTimeoutId.value = setTimeout(() => {
         isLoading.value = true;
@@ -140,12 +153,14 @@ const onInput = debounce(async (event) => {
           let data = response.data
           isSuccess.value = data["success"]
           if (!isSuccess.value){
-            otherError.value = data["message"]
+            errorTitle.value = data["errorTitle"]
+            errorMessage.value = data["message"]
           }
 
         })
         .catch((error) => {
           console.error(error);
+          generalError.value=true;
         })
         .finally(() => {
           // Clear the timeout and set isLoading back to false
