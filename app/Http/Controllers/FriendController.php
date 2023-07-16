@@ -26,7 +26,6 @@ class FriendController extends Controller
      */
     public function search(Request $request)
     {
-        //sleep(2);
         $search = $request->get('query');
 
         // Validate for empty searches
@@ -36,14 +35,45 @@ class FriendController extends Controller
                 'message' => 'Query parameter is missing.'
             ]);
         }
-        
+
+        // Get the currently authenticated user
+        $currentUser = Auth::user();
+
+        // If the authenticated user searches for themselves
+        if(strcasecmp($currentUser->username, $search) == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot search for yourself.'
+            ]);
+        }
+
         // Attempt to find a user matching the search
         $user = User::where('username', 'like', $search)->first();
-        $friend = $user ? new FriendResource($user) : null;
+        
+        // If the user doesn't exist
+        if(is_null($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No user found with this username.'
+            ]);
+        }
+
+        // Check if the found user is already a friend
+        $friends = $currentUser->friends;
+        if ($friends->contains($user->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This user is already your friend.'
+            ]);
+        }
+
+        // If the user is not already a friend, return their details
+        $friend = new FriendResource($user);
 
         return response()->json([
-            'success' => isset($user),
+            'success' => true,
             'friend' => $friend
         ]);
     }
+
 }

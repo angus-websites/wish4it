@@ -57,11 +57,9 @@
                 <!-- Unsuccessful -->
                 <div v-if="isSuccess === false" class="flex flex-col gap-y-3">
                   <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-                    <span class="font-bold">User not found!</span> This user was not found, try another username
+                    <span class="font-bold">Error!</span> {{ otherError }}
                   </div>
-                  
                 </div>
-
 
               <!-- Buttons -->
               <div class="flex flex-col gap-y-3 sm:flex-row gap-x-3">
@@ -101,6 +99,7 @@ const props = defineProps({
 let isOpen = ref(props.open)
 let isLoading = ref(false)
 let loadingTimeoutId = ref(null);
+let otherError = ref(null);
 
 // Status
 let isSuccess = ref(null)
@@ -140,6 +139,9 @@ const onInput = debounce(async (event) => {
 
           let data = response.data
           isSuccess.value = data["success"]
+          if (!isSuccess.value){
+            otherError.value = data["message"]
+          }
 
         })
         .catch((error) => {
