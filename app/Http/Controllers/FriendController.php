@@ -16,8 +16,12 @@ class FriendController extends Controller
      */
     public function index()
     {
+
+        // Eager load the wishlists for the resource
+        $friends = Auth::user()->friends()->with('wishlists')->get();
+
         return Inertia::render('Friends/Index', [
-            'friends' => FriendResource::collection(Auth::user()->friends()->get())
+            'friends' => FriendResource::collection($friends)
         ]);
     }
 
