@@ -58,7 +58,7 @@
                   <div class="p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
                     <span class="font-bold">User found!</span> Click the button below to add them to your friends
                   </div>
-                  <button type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-bold rounded-lg text-sm px-5 py-2.5 text-center mr-2">Add "user1" as a friend</button>
+                  <button @click="addFriend" type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-bold rounded-lg text-sm px-5 py-2.5 text-center mr-2">Add "{{friendToAdd.username}}" as a friend</button>
                 </div>
 
                 <!-- Unsuccessful -->
@@ -109,12 +109,16 @@ let isOpen = ref(props.open)
 let isLoading = ref(false)
 let loadingTimeoutId = ref(null);
 
+// Error metadata
 let errorTitle = ref(null);
 let errorMessage = ref(null);
 
 // Status
 let isSuccess = ref(null)
 let generalError = ref(null)
+
+// Friend to add
+let friendToAdd = ref(null)
 
 const emit = defineEmits(['update:open'])
 
@@ -131,8 +135,8 @@ function closeModal() {
   emit('update:open', false)
 }
 
-function submitForm(){
-  console.log("Hello");
+function addFriend(){
+  console.log("Hello, ready to add: "+friendToAdd.value.username);
 }
 
 
@@ -140,7 +144,7 @@ const onInput = debounce(async (event) => {
 
     isSuccess.value = null;
     generalError.value = null;
-    
+
     // Set a timeout to change isLoading after 1 second
     loadingTimeoutId.value = setTimeout(() => {
         isLoading.value = true;
@@ -152,9 +156,16 @@ const onInput = debounce(async (event) => {
 
           let data = response.data
           isSuccess.value = data["success"]
+
+          // If username not found
           if (!isSuccess.value){
             errorTitle.value = data["errorTitle"]
             errorMessage.value = data["message"]
+          }
+          // Username is found
+          else{
+            friendToAdd.value = data["friend"];
+            console.log(data["friend"])
           }
 
         })
