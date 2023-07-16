@@ -26,19 +26,23 @@ class FriendController extends Controller
      */
     public function search(Request $request)
     {
-        sleep(2);
+        //sleep(2);
         $search = $request->get('query');
-        $user = User::where('username', 'like', $search)->first();
-        if ($user) {
-            $friend = new FriendResource($user);
-            $success = true;
-        } else {
-            $friend = null;
-            $success = false;
+
+        // Validate for empty searches
+        if (empty($search)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Query parameter is missing.'
+            ]);
         }
+        
+        // Attempt to find a user matching the search
+        $user = User::where('username', 'like', $search)->first();
+        $friend = $user ? new FriendResource($user) : null;
 
         return response()->json([
-            'success' => $success,
+            'success' => isset($user),
             'friend' => $friend
         ]);
     }

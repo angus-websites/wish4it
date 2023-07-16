@@ -47,7 +47,7 @@
                 </div>
 
                 <!-- Success -->
-                <div v-if="isSuccess == true" class="flex flex-col gap-y-3">
+                <div v-if="isSuccess === true" class="flex flex-col gap-y-3">
                   <div class="p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
                     <span class="font-bold">User found!</span> Click the button below to add them to your friends
                   </div>
@@ -55,7 +55,7 @@
                 </div>
 
                 <!-- Unsuccessful -->
-                <div v-if="isSuccess == false" class="flex flex-col gap-y-3">
+                <div v-if="isSuccess === false" class="flex flex-col gap-y-3">
                   <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                     <span class="font-bold">User not found!</span> This user was not found, try another username
                   </div>
@@ -127,6 +127,8 @@ function submitForm(){
 
 
 const onInput = debounce(async (event) => {
+
+    isSuccess.value = null;
     // Set a timeout to change isLoading after 1 second
     loadingTimeoutId.value = setTimeout(() => {
         isLoading.value = true;
