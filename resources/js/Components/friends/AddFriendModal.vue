@@ -91,6 +91,7 @@ import InputError from "@/Components/form/InputError.vue"
 
 import {useForm, router} from '@inertiajs/vue3';
 import { debounce } from 'lodash';
+import axios from 'axios';
 
 const props = defineProps({
     open: Boolean,
@@ -99,6 +100,7 @@ const props = defineProps({
 
 let isOpen = ref(props.open)
 let isLoading = ref(false)
+let loadingTimeoutId = ref(null);
 
 const emit = defineEmits(['update:open'])
 
@@ -121,11 +123,24 @@ function submitForm(){
 
 
 const onInput = debounce(async (event) => {
-    isLoading.value = true
-    console.log('Input value:', form.username);
-    // Make your AJAX request here. For example:
-    // await axios.post('/api/search', { query: form.username })
-    //isLoading.value = false
+    // Set a timeout to change isLoading after 1 second
+    loadingTimeoutId.value = setTimeout(() => {
+        isLoading.value = true;
+    }, 1000);  
+
+    axios.post(route('friends.search'), { query: form.username })
+        .then((response) => {
+          console.log(response.data); // this will be your user data
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          // Clear the timeout and set isLoading back to false
+          clearTimeout(loadingTimeoutId.value);
+          isLoading.value = false;
+        });
+    
   }, 500); 
 
 

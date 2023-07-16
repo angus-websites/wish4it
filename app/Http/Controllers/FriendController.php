@@ -20,4 +20,15 @@ class FriendController extends Controller
             'friends' => FriendResource::collection(Auth::user()->friends()->get())
         ]);
     }
+
+    /**
+     * Search for users by username
+     */
+    public function search(Request $request)
+    {
+        sleep(5);
+        $search = $request->get('query');
+        $users = User::where('username', 'like', $search)->get();
+        return response()->json($users);
+    }
 }
