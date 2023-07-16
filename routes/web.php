@@ -43,6 +43,7 @@ Route::middleware([
     // Friends page
     Route::get('/friends', [FriendController::class, 'index'])->name('friends');
     Route::post('/friends/search', [FriendController::class, 'search'])->name('friends.search');
+    Route::post('/friends/add', [FriendController::class, 'addFriend'])->name('friends.add');
 
 });
 

@@ -26,6 +26,56 @@ class FriendController extends Controller
     }
 
     /**
+     * Add a friend
+     */
+    public function addFriend(Request $request)
+    {
+        sleep(4);
+
+        $username = $request->get('username');
+        return "hi";
+
+        // Get the currently authenticated user
+        $currentUser = Auth::user();
+        
+        // Attempt to find a user with the given username
+        $user = User::where('username', $username)->first();
+
+        // If the user doesn't exist, return an error
+        if(!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
+        
+        // If the user is the current user, return an error
+        if($currentUser->id == $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot add yourself as a friend.'
+            ], 400);
+        }
+
+        // If the user is already a friend, return a message
+        if($currentUser->friends()->where('friend_id', $user->id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This user is already your friend.'
+            ], 400);
+        }
+
+        // Add the user as a friend
+        $currentUser->friends()->attach($user->id);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Friend added successfully.'
+        ], 200);
+    }
+
+
+    /**
      * Search for users by username
      */
     public function search(Request $request)
