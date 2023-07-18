@@ -9,7 +9,6 @@
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
             <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white dark:bg-dark px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-            
             <div v-if="showDeleteConfirmation">
               <div class="relative w-full max-w-md max-h-full">
                   <div class="p-6 text-center">
@@ -34,48 +33,60 @@
               </div>
             </div>
             <!-- Form -->
-            <form v-else @submit.prevent="submitForm">
-              <!-- Form elements -->
-              <div class="flex flex-col gap-y-5">
-
-                <!-- Wishlist name -->
-                <div>
-                    <InputLabel for="title" value="Wishlist name" />
-                    <TextInput
-                        v-model="form.title"
-                        id="title"
-                        type="text"
-                        class="w-full mt-1"
-                        required
-                        autocomplete="off"
-                        autofocus
-                    />
-                    <InputError v-if="form.errors.title" :message="form.errors.title" class="mt-1"/>
+            <div v-else>
+              <DialogTitle class="text-center mb-2">
+                <div v-if="props.wishlist">
+                  <p class="text-lg text-gray-700 dark:text-gray-200 font-bold ">Edit wishlist</p>
+                  <p class="text-sm  text-gray-600 dark:text-gray-300">Update the details of this wishlist</p>
                 </div>
 
-                <!-- Public-->
-                <div>
-                  <ToggleSwitch v-model="form.public" title="Public list" description="Should this wishlist be visible to the public?"/>
+                <div v-else>
+                  <p class="text-lg text-gray-700 dark:text-gray-200 font-bold ">New wishlist</p>
+                  <p class="text-sm  text-gray-600 dark:text-gray-300">Create a new wishlist</p>
+                </div>
+              </DialogTitle>
+              <form @submit.prevent="submitForm">
+                <!-- Form elements -->
+                <div class="flex flex-col gap-y-5">
 
-                  <!-- Status -->
-                  <p class="mt-2">
-                    <DefaultBadge><span v-if="form.public">Public</span><span v-else>Private</span></DefaultBadge>
-                  </p>
+                  <!-- Wishlist name -->
+                  <div>
+                      <InputLabel for="title" value="Wishlist name" />
+                      <TextInput
+                          v-model="form.title"
+                          id="title"
+                          type="text"
+                          class="w-full mt-1"
+                          required
+                          autocomplete="off"
+                          autofocus
+                      />
+                      <InputError v-if="form.errors.title" :message="form.errors.title" class="mt-1"/>
+                  </div>
+
+                  <!-- Public-->
+                  <div>
+                    <ToggleSwitch v-model="form.public" title="Public list" description="Should this wishlist be visible to the public?"/>
+
+                    <!-- Status -->
+                    <p class="mt-2">
+                      <DefaultBadge><span v-if="form.public">Public</span><span v-else>Private</span></DefaultBadge>
+                    </p>
+                  </div>
+          
+                  <!-- Buttons -->
+                  <div class="mt-5 flex flex-row justify-between items-center">
+                    <div class="flex flex-col gap-y-3 sm:flex-row gap-x-3">
+                      <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
+                      <PrimaryButton :disabled="form.processing" type="submit"><span v-if="props.wishlist">Save</span><span v-else>Create</span></PrimaryButton>
+                    </div>
+                    <div>
+                      <DangerButton v-if="props.wishlist" @click="deleteClicked" type="button">Delete list</DangerButton>
+                    </div>
+                  </div>
                 </div>
-        
-              <!-- Buttons -->
-              <div class="mt-5 flex flex-row justify-between items-center">
-                <div class="flex flex-col gap-y-3 sm:flex-row gap-x-3">
-                  <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
-                  <PrimaryButton :disabled="form.processing" type="submit"><span v-if="props.wishlist">Save</span><span v-else>Create</span></PrimaryButton>
-                </div>
-                <div>
-                  <DangerButton v-if="props.wishlist" @click="deleteClicked" type="button">Delete list</DangerButton>
-                </div>
-              </div>
+              </form>
             </div>
-            </form>
-
             </DialogPanel>
           </TransitionChild>
         </div>
