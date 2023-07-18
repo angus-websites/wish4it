@@ -16,11 +16,9 @@
                     </div>
                     <p>Friends: </p>
 
-                    <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
-                        <li v-for="friend in friends" :key="friend.id">
-                          <Friend :friend="friend" />
-                        </li>
-                    </ul>
+                    <div class="flex flex-col space-y-5 py-4">
+                        <Friend v-for="friend in friends" :key="friend.id" :friend="friend" />
+                    </div>
                 </div>
             </div>
         </div>
