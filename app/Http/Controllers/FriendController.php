@@ -30,13 +30,10 @@ class FriendController extends Controller
      */
     public function addFriend(Request $request)
     {
-        sleep(4);
+        sleep(5);
 
+        // Extract the username from the request
         $username = $request->get('username');
-        return "hi";
-
-        // Get the currently authenticated user
-        $currentUser = Auth::user();
         
         // Attempt to find a user with the given username
         $user = User::where('username', $username)->first();
@@ -48,6 +45,9 @@ class FriendController extends Controller
                 'message' => 'User not found.'
             ], 404);
         }
+
+        // Get the currently authenticated user
+        $currentUser = Auth::user();
         
         // If the user is the current user, return an error
         if($currentUser->id == $user->id) {
