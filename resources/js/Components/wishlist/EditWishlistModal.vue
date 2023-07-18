@@ -81,7 +81,7 @@
                       <PrimaryButton :disabled="form.processing" type="submit"><span v-if="props.wishlist">Save</span><span v-else>Create</span></PrimaryButton>
                     </div>
                     <div>
-                      <DangerButton v-if="props.wishlist" @click="deleteClicked" type="button">Delete list</DangerButton>
+                      <DangerButton v-if="props.wishlist && canDelete" @click="deleteClicked" type="button">Delete list</DangerButton>
                     </div>
                   </div>
                 </div>
@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onMounted, watch } from 'vue'
+import { ref, watchEffect, onMounted, watch, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
@@ -115,6 +115,10 @@ const props = defineProps({
     wishlist: {
       type: Object,
       default: null
+    },
+    canDelete: {
+      type: Boolean,
+      default: false
     },
     open: Boolean,
 })

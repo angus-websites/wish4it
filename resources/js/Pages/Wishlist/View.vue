@@ -52,7 +52,7 @@
 
         <NewItemModal :wishlistId="list.id" :open="newModalOpen" :itemToEdit="itemToEdit" @update:open="handleModal" />
         <DeleteModal :wishlistId="list.id" :open="deleteModalOpen" :itemToDelete="itemToDelete" @update:open="handleDeleteModal" />
-        <EditWishlistModal :wishlist="list" :open="editListModalOpen" @update:open="handleEditListModal"  />
+        <EditWishlistModal :wishlist="list" :open="editListModalOpen" @update:open="handleEditListModal" :canDelete="can.deleteList"  />
     </AppLayout>
 </template>
 
