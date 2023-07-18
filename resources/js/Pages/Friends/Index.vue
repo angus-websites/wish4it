@@ -15,18 +15,12 @@
                         <PrimaryButton @click="launchAddFriendModal">Add friend</PrimaryButton>
                     </div>
                     <p>Friends: </p>
-                    <div class="prose text-gray-200">
-                      <ul class="my-5">    
-                        <li v-for="friend in friends">
-                        {{friend.name}}
-                            <ul>
-                                <li v-for="wishlist in friend.wishlists">
-                                    <Link class="text-blue-200" :href="route('wishlists.show',wishlist.id)">{{wishlist.title}}</Link>
-                                </li>
-                            </ul>
+
+                    <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
+                        <li v-for="friend in friends" :key="friend.id">
+                          <Friend :friend="friend" />
                         </li>
-                      </ul>
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -39,7 +33,10 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/buttons/PrimaryButton.vue';
+import DangerButton from '@/Components/buttons/DangerButton.vue';
+
 import AddFriendModal from "@/Components/friends/AddFriendModal.vue";
+import Friend from "@/Components/friends/Friend.vue";
 
 import { ref } from 'vue'
 
