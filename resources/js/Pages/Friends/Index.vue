@@ -9,15 +9,14 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="overflow-hidden">
                     <!-- Button row -->
                     <div class="flex flex-row justify-center items-center my-5">
                         <PrimaryButton @click="launchAddFriendModal">Add friend</PrimaryButton>
                     </div>
-                    <p>Friends: </p>
 
                     <div class="flex flex-col space-y-5 py-4">
-                        <Friend v-for="friend in friends" :key="friend.id" :friend="friend" />
+                        <Friend v-for="friend in friends" :key="friend.id" :friend="friend" class="bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg p-3" />
                     </div>
                 </div>
             </div>
