@@ -12,8 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     
-    // TODO remove this
     protected $except = [
-        '/scrape-product',
     ];
 }

@@ -1,7 +1,6 @@
 <?php
 namespace App\Services;
 
-//use Goutte\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ProductScraperService
@@ -10,7 +9,7 @@ class ProductScraperService
     {
         // Create a Crawler instance and add HTML content
         $crawler = new Crawler($htmlContent);
-        
+
         // Attempt scraping using jsonLD schema
         $product = $this->scrapeJsonLdSchema($crawler);
 
@@ -23,7 +22,7 @@ class ProductScraperService
         if (empty($product)) {
             $product = $this->conventionalScrape($crawler);
         }
-        
+
         return $product;
     }
 
@@ -63,16 +62,16 @@ class ProductScraperService
         $productNode = $crawler->filterXPath('//*[@itemtype="http://schema.org/Product"]');
 
         if ($productNode->count() > 0) {
-            $product['name'] = $productNode->filterXPath('//*[@itemprop="name"]')->count() > 0 
+            $product['name'] = $productNode->filterXPath('//*[@itemprop="name"]')->count() > 0
                                 ? $productNode->filterXPath('//*[@itemprop="name"]')->attr('content')
                                 : $productNode->filterXPath('//*[@itemprop="name"]')->text();
-            $product['brand'] = $productNode->filterXPath('//*[@itemprop="brand"]')->count() > 0 
+            $product['brand'] = $productNode->filterXPath('//*[@itemprop="brand"]')->count() > 0
                                 ? $productNode->filterXPath('//*[@itemprop="brand"]')->attr('content')
                                 : $productNode->filterXPath('//*[@itemprop="brand"]')->text();
-            $product['price'] = $productNode->filterXPath('//*[@itemprop="price"]')->count() > 0 
+            $product['price'] = $productNode->filterXPath('//*[@itemprop="price"]')->count() > 0
                                 ? $productNode->filterXPath('//*[@itemprop="price"]')->attr('content')
                                 : $productNode->filterXPath('//*[@itemprop="price"]')->text();
-            $product['image'] = $productNode->filterXPath('//*[@itemprop="image"]')->count() > 0 
+            $product['image'] = $productNode->filterXPath('//*[@itemprop="image"]')->count() > 0
                                 ? $productNode->filterXPath('//*[@itemprop="image"]')->attr('content')
                                 : $productNode->filterXPath('//*[@itemprop="image"]')->attr('src');
         }
