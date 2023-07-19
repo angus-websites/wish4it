@@ -122,6 +122,36 @@ class ProductScraperTest extends TestCase
 
 
     /**
+     * Testing an ebay listing
+     */
+    public function test_ebay_scrape()
+    {
+
+        // https://www.ebay.co.uk/itm/266310290167
+
+        // Get the stored HTML content
+        $htmlContent = file_get_contents(base_path('tests/html/ebay.html'));
+
+        // Create a scraping service
+        $service = new ProductScraperService();
+        $product = $service->scrapeProduct($htmlContent);
+
+        // Expected
+        $expected = [
+            "name" => "UK Delivery | Herman Miller Sayl Chairs | Black Frame &amp; Base | Blue Seat",
+            "brand" => "Herman Miller",
+            "price" => "289.0",
+            "image" => "https://i.ebayimg.com/images/g/YjAAAOSwR0Rklf8P/s-l1600.jpg"
+        ];
+
+        // Assert specific values
+        $this->assertEqualsCanonicalizing($expected, $product);
+    }
+
+
+
+
+    /**
      * Testing the scraping of a camera on Argos
      */
     public function test_argos_scrape()
@@ -135,14 +165,17 @@ class ProductScraperTest extends TestCase
         $service = new ProductScraperService();
         $product = $service->scrapeProduct($htmlContent);
 
+        // Expected
+        $expected = [
+            "name" => "Sony Full Frame A7mk3 Camera with SEL2870 Lens",
+            "brand" => "Sony",
+            "price" => "1699.99",
+            "image" => "https://i1.adis.ws/i/jpl/bl_16243260_a"
+        ];
+
         // Assert specific values
-        $this->assertEquals('Sony Full Frame A7mk3 Camera with SEL2870 Lens ', $product['name']);
-        $this->assertEquals('Sony', $product['brand']);
-        $this->assertEquals('1699.99', $product['price']);
-        $this->assertEquals('https://i1.adis.ws/i/jpl/bl_16243260_a', $product['image']);
+        $this->assertEqualsCanonicalizing($expected, $product);
 
     }
-
-
 
 }
