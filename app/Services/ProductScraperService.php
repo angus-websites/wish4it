@@ -8,33 +8,29 @@ use App\Services\Scraper\MicrodataScraper;
 
 class ProductScraperService
 {
-    /**
-     * Scrape product details from the HTML content.
-     */
-    public function scrapeProduct($htmlContent)
+
+    public function scrapeProduct($htmlContent): array
     {
+
+        // Create our scrapers
         $scrapers = [
             new JsonLdScraper($htmlContent),
             new MicrodataScraper($htmlContent),
             new ConventionalScraper($htmlContent)
         ];
 
-        foreach ($scrapers as $scraper) {
-            $product = $scraper->scrape();
+        // Create a product instance
+        $product = new Product();
 
-            if (!empty($product)) {
-                return $product;
+        foreach ($scrapers as $scraper) {
+            $scraper->scrape($product);
+
+            if ($product->isComplete()) {
+                break;
             }
         }
 
-        return [];
+        return $product->toArray();
     }
-
-
-
-
-
-
-
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Scraper;
 
+use App\Services\Product;
 use Symfony\Component\DomCrawler\Crawler;
 
 abstract class Scraper
@@ -13,6 +14,6 @@ abstract class Scraper
         $this->crawler = new Crawler($htmlContent);
     }
 
-    abstract public function scrape();
+    abstract public function scrape(Product $product);
 }
 

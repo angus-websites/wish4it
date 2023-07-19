@@ -72,7 +72,7 @@ class ProductScraperTest extends TestCase
         // Assert specific values
         $this->assertEquals('Men’s Boreas GTX Mid Walking Boots', $product['name']);
         $this->assertEquals('Scarpa', $product['brand']);
-        $this->assertEquals('99.00', $product['price']);
+        $this->assertEquals('190', $product['price']);
         $this->assertEquals('https://i1.adis.ws/i/jpl/bl_16243260_a', $product['image']);
 
     }

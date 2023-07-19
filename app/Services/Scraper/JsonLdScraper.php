@@ -3,12 +3,12 @@
 namespace App\Services\Scraper;
 
 use Symfony\Component\DomCrawler\Crawler;
+use App\Services\Product;
 
 class JsonLdScraper extends Scraper
 {
-    public function scrape()
+    public function scrape(Product $product)
     {
-        $product = [];
 
         $schemaData = $this->crawler->filter('script[type="application/ld+json"]')->each(function (Crawler $node) {
             return json_decode($node->text(), true);
@@ -16,7 +16,10 @@ class JsonLdScraper extends Scraper
 
         foreach ($schemaData as $data) {
             if (isset($data['@type']) && strtolower($data['@type']) === 'product') {
-                $product = $this->extractProductDetails($data);
+                $product->setName($data['name'] ?? null);
+                $product->setBrand($data['brand']['name'] ?? null);
+                $product->setPrice($data['offers']['price'] ?? null);
+                $product->setImage($data['image'] ?? null);
                 break;
             }
         }
@@ -24,18 +27,4 @@ class JsonLdScraper extends Scraper
         return $product;
     }
 
-    /**
-     * Extract product details
-     */
-    private function extractProductDetails($data)
-    {
-        $product['name'] = $data['name'] ?? null;
-        $product['brand'] = $data['brand']['name'] ?? null;
-        $product['price'] = $data['offers']['price'] ?? null;
-        $product['image'] = $data['image'] ?? null;
-
-        // Additional product details can be extracted here
-
-        return $product;
-    }
 }

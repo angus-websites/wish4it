@@ -1,20 +1,19 @@
 <?php
 
 namespace App\Services\Scraper;
+use App\Services\Product;
 
 class MicrodataScraper extends Scraper
 {
-    public function scrape()
+    public function scrape(Product $product): Product
     {
-        $product = [];
-
         $productNode = $this->crawler->filterXPath('//*[@itemtype="http://schema.org/Product"]');
 
         if ($productNode->count() > 0) {
-            $product['name'] = $this->extractContent($productNode, 'name');
-            $product['brand'] = $this->extractContent($productNode, 'brand');
-            $product['price'] = $this->extractContent($productNode, 'price');
-            $product['image'] = $this->extractContent($productNode, 'image');
+            $product->setName($this->extractContent($productNode, 'name'));
+            $product->setBrand($this->extractContent($productNode, 'brand'));
+            $product->setPrice($this->extractContent($productNode, 'price'));
+            $product->setImage($this->extractContent($productNode, 'image'));
         }
 
         return $product;
