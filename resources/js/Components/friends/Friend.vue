@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+  <div class="w-full p-3 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-dark-dark2 dark:border-gray-700">
       <div class="flex justify-end px-4 pt-4">
           <Menu as="div" class="relative ml-auto">
             <MenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">
@@ -7,10 +7,10 @@
               <EllipsisHorizontalIcon class="h-5 w-5" aria-hidden="true" />
             </MenuButton>
             <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-              <MenuItems class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+              <MenuItems class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-light-light py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                 <MenuItem v-slot="{ active }">
-                  <a href="#" :class="[active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-gray-900']"
-                    >Remove friend</a
+                  <button type="button" class="block w-full px-3 py-1 text-sm leading-6 text-red-500 hover:text-red-700"
+                    >Remove friend</button
                   >
                 </MenuItem>
               </MenuItems>

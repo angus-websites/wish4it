@@ -15,8 +15,9 @@
                         <PrimaryButton @click="launchAddFriendModal">Add friend</PrimaryButton>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 items-start">
-                        <Friend v-for="friend in friends" :key="friend.id" :friend="friend" class="bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg p-3" />
+
+                    <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 items-start">
+                        <Friend v-for="friend in friends" :key="friend.id" :friend="friend" />
                     </div>
                 </div>
             </div>
