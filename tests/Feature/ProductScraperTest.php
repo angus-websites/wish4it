@@ -1,30 +1,34 @@
 <?php
-
-namespace Tests\Feature;
-
+use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 
-class ProductScraperTest extends TestCase
+class ScrapeProductTest extends TestCase
 {
-    /**
-     * Test the product scraper endpoint.
-     *
-     * @return void
-     */
-    public function testProductScraper()
-    {
-        $response = $this->postJson('/scrape-product', ['url' => 'https://idioma.world/collections/sweatshirts-he/products/balatapa-hood']);
+    use WithoutMiddleware;
 
-        echo($response);
-//        $response
-//            ->assertStatus(200)
-//            ->assertJson([
-//                'name' => 'Example Product Name',
-//                'brand' => 'Example Brand',
-//                'price' => 'Example Price',
-//                'image' => 'Example Image URL'
-//            ]);
+    /** @test */
+    public function it_scrapes_product_data_correctly()
+    {
+        // Get the stored HTML content
+        $htmlContent = file_get_contents(base_path('tests/html/sample-product.html'));
+
+        // Mock the HTTP request to return your stored HTML content
+        Http::fake([
+            '*' => Http::response($htmlContent, 200),
+        ]);
+
+        $response = $this->postJson('/api/scrape', [
+            'url' => 'https://www.example.com/sample-product'
+        ]);
+
+        // Assert that the response has the correct structure
+        $response->assertStatus(200)
+                 ->assertJsonStructure([
+                    'name',
+                    'brand',
+                    'price',
+                    'image'
+                 ]);
     }
 }
