@@ -1,7 +1,6 @@
 <?php
 namespace Tests\Feature;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use App\Services\ProductScraperService;
@@ -10,7 +9,7 @@ class ProductScraperTest extends TestCase
 {
     use WithoutMiddleware;
 
-    
+
     /** Test scraping for a hoodie at a shopify
      * website
      */
