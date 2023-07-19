@@ -12,10 +12,12 @@
                     <FlashMessages class="mb-5" />
 
                     <!-- Button row -->
-                    <div class="flex flex-row justify-end items-center mx-3 sm:mx-0 my-5">
+                    <div class="flex flex-row justify-center items-center my-5">
                         <PrimaryButton @click="createNewList">New List</PrimaryButton>
                     </div>
-                    <h2 v-if="lists.length < 1">No wishlists</h2>
+                    <EmptyState v-if="lists.length < 1">
+                        <p>No wishlists</p>
+                    </EmptyState>
 
                     <WishlistList v-else :lists="lists"/>
 
@@ -30,6 +32,8 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import FlashMessages from '@/Components/FlashMessages.vue'
+import EmptyState from '@/Components/EmptyState.vue'
+
 import WishlistList from '@/Components/wishlist/WishlistList.vue'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import EditWishlistModal from '@/Components/wishlist/EditWishlistModal.vue'

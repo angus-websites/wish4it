@@ -76,7 +76,6 @@ class FriendController extends Controller
     public function removeFriend(Request $request, $username)
     {
 
-        
         // Attempt to find a user with the given username
         $user = User::where('username', $username)->first();
 
