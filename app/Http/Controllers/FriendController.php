@@ -28,12 +28,8 @@ class FriendController extends Controller
     /**
      * Add a friend
      */
-    public function addFriend(Request $request)
+    public function addFriend(Request $request, $username)
     {
-        sleep(5);
-
-        // Extract the username from the request
-        $username = $request->get('username');
         
         // Attempt to find a user with the given username
         $user = User::where('username', $username)->first();
@@ -73,6 +69,37 @@ class FriendController extends Controller
             'message' => 'Friend added successfully.'
         ], 200);
     }
+
+    /**
+     * Remove a friend
+     */
+    public function removeFriend(Request $request, $username)
+    {
+
+        
+        // Attempt to find a user with the given username
+        $user = User::where('username', $username)->first();
+
+        // If the user doesn't exist, return an error
+        if(!$user) {
+            return back()->with('error', 'User not found.');
+        }
+
+        // Get the currently authenticated user
+        $currentUser = Auth::user();
+        
+        // If the user is not a friend, return an error
+        if(!$currentUser->friends()->where('friend_id', $user->id)->exists()) {
+            return back()->with('error', 'This user is not your friend.');
+        }
+
+        // Remove the user as a friend
+        $currentUser->friends()->detach($user->id);
+
+        // Redirect to the friends index page with a success message
+        return redirect()->route('friends')->with('success', 'Friend removed successfully.');
+    }
+
 
 
     /**

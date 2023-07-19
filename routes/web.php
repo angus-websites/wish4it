@@ -43,7 +43,9 @@ Route::middleware([
     // Friends page
     Route::get('/friends', [FriendController::class, 'index'])->name('friends');
     Route::post('/friends/search', [FriendController::class, 'search'])->name('friends.search');
-    Route::post('/friends/add', [FriendController::class, 'addFriend'])->name('friends.add');
+    Route::post('/friends/add/{username}', [FriendController::class, 'addFriend'])->name('friends.add');
+    Route::delete('/friends/remove/{username}', [FriendController::class, 'removeFriend'])->name('friends.remove');
+
 
 });
 

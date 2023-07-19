@@ -9,7 +9,7 @@
             <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
               <MenuItems class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-light-light py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                 <MenuItem v-slot="{ active }">
-                  <button type="button" class="block w-full px-3 py-1 text-sm leading-6 text-red-500 hover:text-red-700"
+                  <button @click="removeFriend" type="button" class="block w-full px-3 py-1 text-sm leading-6 text-red-500 hover:text-red-700"
                     >Remove friend</button
                   >
                 </MenuItem>
@@ -57,10 +57,19 @@ import {
 import { ChevronUpIcon } from '@heroicons/vue/20/solid'
 import { ChevronRightIcon } from '@heroicons/vue/20/solid'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
+import { router } from '@inertiajs/vue3'
 
 const props = defineProps({
     friend: Object,
   })
+
+function removeFriend()
+{
+  router.delete(
+  route("friends.remove", [props.friend.username]),
+  {preserveScroll: true}
+  )
+}
 </script>
 
 

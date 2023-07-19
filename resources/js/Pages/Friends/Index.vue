@@ -10,6 +10,8 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden">
+                    <FlashMessages class="mb-5" />
+                    
                     <!-- Button row -->
                     <div class="flex flex-row justify-center items-center my-5">
                         <PrimaryButton @click="launchAddFriendModal">Add friend</PrimaryButton>
@@ -32,6 +34,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/buttons/PrimaryButton.vue';
 import DangerButton from '@/Components/buttons/DangerButton.vue';
+import FlashMessages from '@/Components/FlashMessages.vue'
 
 import AddFriendModal from "@/Components/friends/AddFriendModal.vue";
 import Friend from "@/Components/friends/Friend.vue";

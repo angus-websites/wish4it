@@ -192,7 +192,7 @@ function addFriend(){
   }, 250);  
 
   // Add using axios
-  axios.post(route('friends.add'), { username: friendToAdd.value.username })
+  axios.post(route('friends.add', [friendToAdd.value.username] ))
       .then(response => {
 
           let data = response.data
