@@ -205,4 +205,29 @@ class ProductScraperTest extends TestCase
 
     }
 
+    public function test_bandq_scrape()
+    {
+        // https://www.diy.com/departments/goodhome-denia-brown-wooden-2-seater-square-table/1561081_BQ.prd?srsltid=ASuE1wS1D0lYYccrPFC5-xTCoJ_vFY31f83yJGJVFImQlSxWoe9TlNEkt4Y
+
+        // Get the stored HTML content
+        $htmlContent = file_get_contents(base_path('tests/html/bandq.html'));
+
+        // Create a scraping service
+        $service = new ProductScraperService();
+        $product = $service->scrapeProduct($htmlContent);
+
+        // Expected
+        $expected = [
+            "name" => "GoodHome Denia Brown Wooden 2 seater Square Table",
+            "brand" => null,
+            "price" => "34",
+            "image" => "https://media.diy.com/is/image/Kingfisher/goodhome-denia-brown-wooden-2-seater-square-table~3663602936015_01bq?$MOB_PREV$&$width=768&$height=768"
+        ];
+
+        // Assert specific values
+        $this->assertEqualsCanonicalizing($expected, $product);
+
+    }
+
+
 }
