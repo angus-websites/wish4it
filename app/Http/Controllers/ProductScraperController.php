@@ -12,6 +12,16 @@ class ProductScraperController extends Controller
     {
         $url = $request->input('url');
 
-        
+
+        // Create a crawler client
+        $client = new Client();
+        $crawler = $client->request('GET', $url);
+
+        // Check for jsonld schema file
+
+        // Check for microdata structure
+
+        // Conventional scraping
+
     }
 }
