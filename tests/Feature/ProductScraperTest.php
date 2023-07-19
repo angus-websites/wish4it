@@ -23,7 +23,7 @@ class ProductScraperTest extends TestCase
         // Create a scraping service
         $service = new ProductScraperService();
         $product = $service->scrapeProduct($htmlContent);
-        
+
         // Expected
         $expected = [
             "name" => "Balatapa Hood",
