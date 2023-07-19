@@ -2,25 +2,36 @@
     <AppLayout title="My Lists">
         <template #header>
             <div class="flex flex-row justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ list.title }}
-                </h2>
-                <PrimaryOutlineButton @click="editList" size="s">Edit List</PrimaryOutlineButton>
+                <div>
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        {{ list.title }} 
+                    </h2>
+                    <small v-if="$page.props.auth.user.id !== list.owner.id" class="text-sm">{{list.owner.name}}</small>
+                </div>
+
+                <PrimaryOutlineButton v-if="can.editList" @click="editList" size="s">Edit List</PrimaryOutlineButton>
             </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <FlashMessages class="mb-5" :hideErrors="true" />
-
+                
                 <!-- Button row-->
                 <div class="flex flex-row justify-between items-center mx-3 sm:mx-0 my-5">
+
                     <!-- Breadcrumb -->
                     <nav class="flex" aria-label="Breadcrumb">
                       <ol class="inline-flex items-center space-x-1 md:space-x-3">
                         <li>
                           <div class="flex items-center">
-                            <Link :href="route('wishlists.index')" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Wishlists</Link>
+
+
+                            <Link v-if="$page.props.auth.user.id === list.owner.id" :href="route('wishlists.index')" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Wishlists</Link>
+
+                            <Link v-else :href="route('friends')" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Friends</Link>
+
+
                           </div>
                         </li>
                         <li aria-current="page">
@@ -33,7 +44,7 @@
                         </li>
                       </ol>
                     </nav>
-                    <PrimaryButton @click="createNewItem">New item</PrimaryButton>
+                    <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
                 <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem"/>
             </div>
@@ -41,7 +52,7 @@
 
         <NewItemModal :wishlistId="list.id" :open="newModalOpen" :itemToEdit="itemToEdit" @update:open="handleModal" />
         <DeleteModal :wishlistId="list.id" :open="deleteModalOpen" :itemToDelete="itemToDelete" @update:open="handleDeleteModal" />
-        <EditWishlistModal :wishlist="list" :open="editListModalOpen" @update:open="handleEditListModal"  />
+        <EditWishlistModal :wishlist="list" :open="editListModalOpen" @update:open="handleEditListModal" :canDelete="can.deleteList"  />
     </AppLayout>
 </template>
 

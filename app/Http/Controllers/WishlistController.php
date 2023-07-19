@@ -62,8 +62,10 @@ class WishlistController extends Controller
         return Inertia::render('Wishlist/View', [
             'list' => $list,
             'can' => [
-                'deleteEntry' => Auth::user()->can('delete', $list),
-                'editEntry' => Auth::user()->can('update', $list),
+                'deleteList' => Auth::user()->can('delete', $wishlist),
+                'editList' => Auth::user()->can('update', $wishlist),
+                'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
+
             ],
         ]);
     }

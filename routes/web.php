@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\WishlistController;
 use \App\Http\Controllers\WishlistItemController;
+use \App\Http\Controllers\FriendController;
 
 use Inertia\Inertia;
 
@@ -27,6 +28,8 @@ Route::get('/', function () {
     ]);
 })->name('index');
 
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -38,9 +41,12 @@ Route::middleware([
     Route::resource('wishlists.items', WishlistItemController::class);
 
     // Friends page
-    Route::get('/friends', function () {
-        return Inertia::render('Friends');
-    })->name('friends');
+    Route::get('/friends', [FriendController::class, 'index'])->name('friends');
+    Route::post('/friends/search', [FriendController::class, 'search'])->name('friends.search');
+    Route::post('/friends/add/{username}', [FriendController::class, 'addFriend'])->name('friends.add');
+    Route::delete('/friends/remove/{username}', [FriendController::class, 'removeFriend'])->name('friends.remove');
+
+
 });
 
 

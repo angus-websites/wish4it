@@ -1,24 +1,20 @@
 <template>
-  <ul role="list" class="divide-y divide-gray-600/5 bg-white dark:bg-dark rounded-lg p-3">
-    <li v-for="list in lists" :key="lists.id" class="relative flex items-center space-x-4 py-4">
-      <div class="min-w-0 flex-auto">
-        <div class="flex items-center gap-x-3">
-          <h2 class="min-w-0 text-sm font-semibold leading-6 text-gray-800 dark:text-white hover:text-accent dark:hover:text-accent">
-            <Link :href="route('wishlists.show', list.id)" class="flex gap-x-2">
-              <span class="whitespace-nowrap text-lg">{{ list.title }}</span>
-              <span class="absolute inset-0" />
-            </Link>
-          </h2>
-        </div>
-        <div class="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-500 dark:text-gray-400">
-          <p class="whitespace-nowrap">{{ list.itemCount }} items</p>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div v-for="list in lists" :key="list.id" class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white dark:bg-dark-dark2 dark:border-gray-700 px-6 py-5 shadow-sm hover:border-primary-dark2 dark:hover:border-accent-dark2">
+        <div class="min-w-0 flex-1">
+          <Link :href="route('wishlists.show', list.id)" class="focus:outline-none">
+            <span class="absolute inset-0" aria-hidden="true" />
+            <div class="flex flex-row items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-900 dark:text-gray-300">{{ list.title }}</p>
+                <p class="truncate text-sm text-gray-500 dark:text-gray-400">{{ list.itemCount}} items</p>
+              </div>
+              <DefaultBadge><span v-if="list.public">Public</span><span v-else>Private</span></DefaultBadge>
+            </div>
+          </Link>
         </div>
       </div>
-      
-      <DefaultBadge><span v-if="list.public">Public</span><span v-else>Private</span></DefaultBadge>
-      <ChevronRightIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-    </li>
-  </ul>
+    </div>
 </template>
 
 <script setup>

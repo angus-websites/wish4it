@@ -93,4 +93,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Wishlist::class);
     }
+
+    /**
+     * Get the friends of this user
+     */
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id');
+    }
 }

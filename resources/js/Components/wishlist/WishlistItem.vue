@@ -26,8 +26,8 @@
 
     <!-- Buttons -->
     <div class="mt-auto">
-      <PrimaryButton @click="editItem" size="s">Edit</PrimaryButton>
-      <SecondaryButton @click="deleteItem" size="s">Delete</SecondaryButton>
+      <PrimaryButton v-if="item.can.update" @click="editItem" size="s">Edit</PrimaryButton>
+      <SecondaryButton v-if="item.can.delete" @click="deleteItem" size="s">Delete</SecondaryButton>
     </div>
 
   </div>

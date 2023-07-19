@@ -26,7 +26,7 @@ class WishlistPolicy
         if ($wishlist->isPublic()){
             return Response::allow();
         }
-
+        
         return $user->id === $wishlist->user_id
             ? Response::allow()
             : Response::deny('You cannot view this wishlist');

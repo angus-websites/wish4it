@@ -31,6 +31,9 @@ class WishlistItemController extends Controller
      */
     public function store(Request $request, Wishlist $wishlist)
     {
+
+        // Authorize this method manually
+        $this->authorize('create', [WishlistItem::class, $wishlist]);
         
         // Validate the incoming request data.
         $data = $request->validate([
