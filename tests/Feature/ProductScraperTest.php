@@ -23,12 +23,17 @@ class ProductScraperTest extends TestCase
         // Create a scraping service
         $service = new ProductScraperService();
         $product = $service->scrapeProduct($htmlContent);
+        
+        // Expected
+        $expected = [
+            "name" => "Balatapa Hood",
+            "brand" => "Idioma",
+            "price" => "89.0",
+            "image" => "//idioma.world/cdn/shop/products/Balatapa_Hood_Grey_Full_Hung_Web_grande.jpg?v=1679829385"
+        ];
 
         // Assert specific values
-        $this->assertEquals('Balatapa Hood', $product['name']);
-        $this->assertEquals('Idioma', $product['brand']);
-        $this->assertEquals('89.0', $product['price']);
-        $this->assertEquals('//idioma.world/cdn/shop/products/Balatapa_Hood_Grey_Full_Hung_Web_grande.jpg?v=1679829385', $product['image']);
+        $this->assertEqualsCanonicalizing($expected, $product);
     }
 
     /**
@@ -46,11 +51,16 @@ class ProductScraperTest extends TestCase
         $service = new ProductScraperService();
         $product = $service->scrapeProduct($htmlContent);
 
+        // Expected
+        $expected = [
+            "name" => "Bialetti Moka Express Hob Espresso Coffee Maker, 1 Cup",
+            "brand" => "Bialetti",
+            "price" => "24.00",
+            "image" => "http://johnlewis.scene7.com/is/image/JohnLewis/001407520"
+        ];
+
         // Assert specific values
-        $this->assertEquals('Bialetti Moka Express Hob Espresso Coffee Maker, 1 Cup', $product['name']);
-        $this->assertEquals('Bialetti', $product['brand']);
-        $this->assertEquals('24.00', $product['price']);
-        $this->assertEquals('http://johnlewis.scene7.com/is/image/JohnLewis/001407520', $product['image']);
+        $this->assertEqualsCanonicalizing($expected, $product);
 
     }
 
@@ -69,12 +79,45 @@ class ProductScraperTest extends TestCase
         $service = new ProductScraperService();
         $product = $service->scrapeProduct($htmlContent);
 
-        // Assert specific values
-        $this->assertEquals('Men’s Boreas GTX Mid Walking Boots', $product['name']);
-        $this->assertEquals('Scarpa', $product['brand']);
-        $this->assertEquals('190', $product['price']);
-        $this->assertEquals('https://i1.adis.ws/i/jpl/bl_16243260_a', $product['image']);
+        // Expected
+        $expected = [
+            "name" => "Men’s Boreas GTX Mid Walking Boots",
+            "brand" => "Scarpa",
+            "price" => "190",
+            "image" => "https://i1.adis.ws/i/jpl/bl_16243260_a"
+        ];
 
+        // Assert specific values
+        $this->assertEqualsCanonicalizing($expected, $product);
+
+
+    }
+
+    /**
+     * Testing the scraping of an iphone at Apple
+     */
+    public function test_apple_store_scrape()
+    {
+
+        // https://www.apple.com/uk/shop/buy-iphone/iphone-14-pro/6.1-inch-display-256gb-silver
+
+        // Get the stored HTML content
+        $htmlContent = file_get_contents(base_path('tests/html/iphone.html'));
+
+        // Create a scraping service
+        $service = new ProductScraperService();
+        $product = $service->scrapeProduct($htmlContent);
+
+        // Expected
+        $expected = [
+            "name" => "iPhone 14 Pro 256GB Silver",
+            "brand" => null,
+            "price" => "1209",
+            "image" => "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-14-pro-finish-select-202209-6-1inch-silver?wid=2560&hei=1440&fmt=jpeg&qlt=95&.v=1663703840488"
+        ];
+
+        // Assert specific values
+        $this->assertEqualsCanonicalizing($expected, $product);
     }
 
 
