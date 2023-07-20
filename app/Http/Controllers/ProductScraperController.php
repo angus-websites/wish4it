@@ -20,13 +20,30 @@ class ProductScraperController extends Controller
         $url = $request->input('url');
 
         // Use Laravel's HTTP client to get the HTML content
-        $response = Http::get($url);
-        $htmlContent = $response->body();
+        // Retry up to 2 times, with a wait time of 3 seconds before giving up
+        try {
+            $response = retry(2, function () use ($url) {
+                return Http::timeout(3)->withHeaders([
+                    'User-Agent' => "MyWishlistApp lookup",
+                ])->get($url);
+            }, 1000);
 
-        // Scrape the data using ProductScraperService
-        $product = $this->scraperService->scrapeProduct($htmlContent);
+            // If the request was successful, continue processing...
+            if ($response->successful()) {
+                $htmlContent = $response->body();
 
-        return response()->json($product);
+                // Scrape the data using ProductScraperService
+                $product = $this->scraperService->scrapeProduct($htmlContent);
+
+                return response()->json($product);
+            }
+
+        } catch (\Exception $exception) {
+            // If the request was not successful after retrying, return a response indicating the error
+            return response()->json(['error' => 'Unable to scrape product at this time. Please try again later.'], 500);
+        }
     }
+
+
 }
 
