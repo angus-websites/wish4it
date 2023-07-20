@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ProductScraperService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 class ProductScraperController extends Controller
 {
@@ -17,6 +18,15 @@ class ProductScraperController extends Controller
 
     public function scrapeProduct(Request $request)
     {
+        // Ensure we have a url in the request
+        $validator = Validator::make($request->all(), [
+            'url' => 'required|url',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $url = $request->input('url');
 
         // Use Laravel's HTTP client to get the HTML content
@@ -35,7 +45,7 @@ class ProductScraperController extends Controller
                 // Scrape the data using ProductScraperService
                 $product = $this->scraperService->scrapeProduct($htmlContent);
 
-                return response()->json($product);
+                return response()->json(["product" => $product]);
             }
 
         } catch (\Exception $exception) {

@@ -28,17 +28,25 @@
                 <div class="mb-6">
                     <InputLabel for="url" value="Enter a product url" />
                     <TextInput
-                        v-model="urlForm.url"
+                        v-model.lazy="urlForm.url"
                         id="url"
                         type="url"
                         class="mt-1 block w-full"
                         required
                         autofocus
                     />
+                    <InputError v-if="urlForm.errors.url" :message="urlForm.errors.url" class="mt-1"/>
                 </div>
 
-                <div v-if="showLoadUrlButton" class="text-center my-5">
-                  <PrimaryButton class="w-1/2">Load</PrimaryButton>
+                <Spinner v-if="showUrlLoadingSpinner" class="my-5 mx-auto text-center"/>
+
+                <div v-else-if="showLoadUrlButton" class="text-center my-5">
+                  <PrimaryButton @click="sendUrl" class="w-1/2">
+                    <span>Load</span>
+                    <span>
+                      
+                    </span>
+                  </PrimaryButton>
                 </div>
 
                 <!-- Manual button -->
@@ -159,8 +167,10 @@ import InputLabel from "@/Components/form/InputLabel.vue"
 import TextInput from "@/Components/form/TextInput.vue"
 import TextArea from "@/Components/form/TextArea.vue"
 import InputError from "@/Components/form/InputError.vue"
+import Spinner from "@/Components/Spinner.vue"
 
 import {useForm} from '@inertiajs/vue3';
+import axios from 'axios';
 
 const props = defineProps({
     wishlistId: [String, Number],
@@ -191,6 +201,10 @@ let isOpen = ref(props.open)
 let showDetails = ref(false)
 let showLoadUrlButton = ref(false)
 
+// Timeouts
+let urlLoadingTimeoutId = ref(null);
+let showUrlLoadingSpinner = ref(null);
+
 onBeforeUpdate(() => {
   if (props.itemToEdit) {
     Object.assign(form, props.itemToEdit);
@@ -202,8 +216,11 @@ onBeforeUpdate(() => {
 
 // Define the function to be called when urlForm.url changes
 function onUrlChange() {
-    console.log('URL Changed: ', urlForm.url);
-    // Your code here
+    if (urlForm.url.trim() !== '') {
+        showLoadUrlButton.value=true;
+    }else{
+      showLoadUrlButton.value=false;
+    }
 }
 
 // Watch for changes in urlForm.url
@@ -218,13 +235,50 @@ watchEffect(() => {
 })
 
 
+function sendUrl(){
+  /**
+   * When the user clicks the load button
+   * to load the url
+   */
+  
+  // Set a timeout to change addLoading after 1 second
+  urlLoadingTimeoutId.value = setTimeout(() => {
+      showUrlLoadingSpinner.value = true;
+  }, 250); 
+
+  axios.post(route('scrape', {"url": urlForm.url} ))
+    .then(response => {
+
+        let data = response.data
+        let product = data.product
+
+        if(product){
+          form.name = product.name
+          form.brand = product.brand
+          form.price = product.price
+          form.url = urlForm.url
+          showDetails.value = true;
+        }
+        console.log(response)
+    
+    })
+    .catch(error => {
+      console.error(error);
+      urlForm.setError('url', 'Something wrong');
+    }).finally(() => {
+      clearTimeout(urlLoadingTimeoutId.value);
+      showUrlLoadingSpinner.value=false;
+    });  
+}
+
 function closeModal() {
   emit('update:open', false)
+  setTimeout(reset, 500);
 }
 
 function reset(){
   form.reset();
-  closeModal();
+  showDetails.value=false;
 }
 
 function submitForm()
@@ -233,7 +287,7 @@ function submitForm()
   if (props.itemToEdit) {
     form.put(route('wishlists.items.update', [props.wishlistId, props.itemToEdit.id]), {
       preserveScroll: true,
-      onSuccess: () => reset(),
+      onSuccess: () => closeModal(),
     })
   } 
 
@@ -241,7 +295,7 @@ function submitForm()
   else {
     form.post(route('wishlists.items.store', props.wishlistId), {
       preserveScroll: true,
-      onSuccess: () => reset(),
+      onSuccess: () => closeModal(),
     })
   }
 }

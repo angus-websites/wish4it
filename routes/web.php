@@ -30,7 +30,7 @@ Route::get('/', function () {
 })->name('index');
 
 // TODO move to auth
-Route::post('/scrape-product', [ProductScraperController::class, 'scrapeProduct']);
+Route::post('/scrape-product', [ProductScraperController::class, 'scrapeProduct'])->name('scrape');
 
 
 Route::middleware([

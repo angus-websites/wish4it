@@ -18,13 +18,6 @@ class WishlistItemController extends Controller
         $this->authorizeResource(Wishlist::class);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -57,6 +50,9 @@ class WishlistItemController extends Controller
      */
     public function update(Request $request, Wishlist $wishlist, WishlistItem $item)
     {
+
+        sleep(5);
+
 
         // Validate the incoming request data.
         $data = $request->validate([
