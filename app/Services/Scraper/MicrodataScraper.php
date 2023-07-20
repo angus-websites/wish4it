@@ -53,9 +53,4 @@ class MicrodataScraper extends Scraper
         return null;
     }
 
-
-
-
-
-
 }

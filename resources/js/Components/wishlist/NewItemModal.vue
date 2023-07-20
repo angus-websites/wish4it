@@ -28,12 +28,17 @@
                 <div class="mb-6">
                     <InputLabel for="url" value="Enter a product url" />
                     <TextInput
+                        v-model="urlForm.url"
                         id="url"
                         type="url"
                         class="mt-1 block w-full"
                         required
                         autofocus
                     />
+                </div>
+
+                <div v-if="showLoadUrlButton" class="text-center my-5">
+                  <PrimaryButton class="w-1/2">Load</PrimaryButton>
                 </div>
 
                 <!-- Manual button -->
@@ -135,10 +140,7 @@
                   </div>
 
                 </form>
-
-              </div>
-
-              
+              </div> 
             </DialogPanel>
           </TransitionChild>
         </div>
@@ -148,7 +150,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onBeforeUpdate } from 'vue'
+import { ref, watchEffect, onBeforeUpdate, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
@@ -170,6 +172,7 @@ const props = defineProps({
 
 })
 
+
 const form = useForm({
   name: null,
   brand: null,
@@ -179,9 +182,14 @@ const form = useForm({
   needs: 1
 })
 
+const urlForm = useForm({
+  url: null
+})
+
+
 let isOpen = ref(props.open)
 let showDetails = ref(false)
-
+let showLoadUrlButton = ref(false)
 
 onBeforeUpdate(() => {
   if (props.itemToEdit) {
@@ -191,6 +199,15 @@ onBeforeUpdate(() => {
     form.reset();
   }
 })
+
+// Define the function to be called when urlForm.url changes
+function onUrlChange() {
+    console.log('URL Changed: ', urlForm.url);
+    // Your code here
+}
+
+// Watch for changes in urlForm.url
+watch(() => urlForm.url, onUrlChange, { deep: true });
 
 
 const emit = defineEmits(['update:open'])
