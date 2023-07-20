@@ -45,7 +45,7 @@ class ProductScraperTest extends TestCase
         // https://www.johnlewis.com/bialetti-moka-express-hob-espresso-coffee-maker/p1407523
 
         // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/html/coffee.html'));
+        $htmlContent = file_get_contents(base_path('tests/html/john_lewis_coffee.html'));
 
         // Create a scraping service
         $service = new ProductScraperService();
@@ -73,7 +73,7 @@ class ProductScraperTest extends TestCase
         // https://www.gooutdoors.co.uk/16243260/scarpa-mens-boreas-gtx-mid-walking-boots-16243260
 
         // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/html/boots.html'));
+        $htmlContent = file_get_contents(base_path('tests/html/go_outdoors_boots.html'));
 
         // Create a scraping service
         $service = new ProductScraperService();
@@ -102,7 +102,7 @@ class ProductScraperTest extends TestCase
         // https://www.apple.com/uk/shop/buy-iphone/iphone-14-pro/6.1-inch-display-256gb-silver
 
         // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/html/iphone.html'));
+        $htmlContent = file_get_contents(base_path('tests/html/apple_iphone.html'));
 
         // Create a scraping service
         $service = new ProductScraperService();
@@ -130,7 +130,7 @@ class ProductScraperTest extends TestCase
         // https://www.ebay.co.uk/itm/266310290167
 
         // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/html/ebay.html'));
+        $htmlContent = file_get_contents(base_path('tests/html/ebay_chair.html'));
 
         // Create a scraping service
         $service = new ProductScraperService();
@@ -159,7 +159,7 @@ class ProductScraperTest extends TestCase
         // https://www.argos.co.uk/product/7263259
 
         // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/html/camera.html'));
+        $htmlContent = file_get_contents(base_path('tests/html/argos_camera.html'));
 
         // Create a scraping service
         $service = new ProductScraperService();
@@ -210,7 +210,7 @@ class ProductScraperTest extends TestCase
         // https://www.diy.com/departments/goodhome-denia-brown-wooden-2-seater-square-table/1561081_BQ.prd?srsltid=ASuE1wS1D0lYYccrPFC5-xTCoJ_vFY31f83yJGJVFImQlSxWoe9TlNEkt4Y
 
         // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/html/bandq.html'));
+        $htmlContent = file_get_contents(base_path('tests/html/bandq_table.html'));
 
         // Create a scraping service
         $service = new ProductScraperService();
