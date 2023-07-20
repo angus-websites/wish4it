@@ -37,8 +37,6 @@ class Product
     }
 
 
-
-
     public function setName($value)
     {
         $this->name = $this->checkValue($value, $this->name);
@@ -58,6 +56,22 @@ class Product
     public function setImage($value)
     {
         $this->image = $this->checkValue($value, $this->image);
+    }
+
+    public function getName(){
+        return $this->name;
+    }
+
+    public function getBrand(){
+        return $this->brand;
+    }
+
+    public function getPrice(){
+        return $this->price;
+    }
+
+    public function getImage(){
+        return $this->image;
     }
 
     private function checkValue($newValue, $oldValue)

@@ -19,12 +19,16 @@ class JsonLdScraper extends Scraper
 
     public function scrape(Product $product)
     {
+        // Look for occurrences for jsonld schemas in the html
         $schemaData = $this->crawler->filter('script[type="application/ld+json"]')->each(function (Crawler $node) {
             return json_decode($node->text(), true);
         });
 
+        // Look for a product schema
         foreach ($schemaData as $data) {
             $productData = $this->recursiveSearch($data, '@type', 'product');
+
+            // Assign product data from the json
             if (!is_null($productData)) {
                 $product->setName($this->findValue($productData, "name"));
                 $product->setBrand($this->findValue($productData, "brand"));
@@ -41,7 +45,7 @@ class JsonLdScraper extends Scraper
     {
         $paths = $this->paths[$key];
         foreach ($paths as $path) {
-            $value = $this->findInPath($data, $path);
+            $value = $this->getValueFromPath($data, $path);
             if ($value !== null) {
                 return $value;
             }
@@ -49,49 +53,39 @@ class JsonLdScraper extends Scraper
         return null;
     }
 
-    private function findInPath(array $data, array $path)
-    {
-        $current = $data;
-        foreach ($path as $keyIndex => $key) {
-            if ($key === '*') {
-                if (is_array($current)) {
-                    foreach ($current as $item) {
-                        if (is_array($item)) {
-                            $remainingPath = array_slice($path, $keyIndex + 1);
-                            if (isset($remainingPath[0]) && array_key_exists($remainingPath[0], $item)) {
-                                return $item[$remainingPath[0]];
-                            }
-                            $result = $this->findInPath($item, $remainingPath);
-                            if ($result !== null) {
-                                return $result;
-                            }
-                        } elseif (is_object($item)) {
-                            $remainingPath = array_slice($path, $keyIndex + 1);
-                            if (isset($remainingPath[0]) && property_exists($item, $remainingPath[0])) {
-                                return $item->{$remainingPath[0]};
-                            }
-                            $result = $this->findInPath(get_object_vars($item), $remainingPath);
-                            if ($result !== null) {
-                                return $result;
-                            }
-                        }
-                    }
+    public function getValueFromPath($data, $path) {
+
+        // Base case: if path is empty, return the data if it's a leaf node, else return null
+        if (empty($path)) {
+            return is_array($data) ? null : $data;
+        }
+
+        // If data is not an array (but there's still some path left), return null
+        if (!is_array($data)) {
+            return null;
+        }
+
+        // Get the current key
+        $key = array_shift($path);
+
+        // Handle wildcard: continue the search in the current subtree
+        if ($key === '*') {
+            foreach ($data as $subdata) {
+                $result = $this->getValueFromPath($subdata, $path);
+                if ($result !== null) {
+                    return $result;
                 }
-                return null;
-            } else {
-                if (!isset($current[$key])) {
-                    return null;
-                }
-                $current = $current[$key];
             }
         }
-        return is_array($current) ? null : $current;
+
+        // If the key exists in the data, continue the search in the corresponding subtree
+        else if (array_key_exists($key, $data)) {
+            return $this->getValueFromPath($data[$key], $path);
+        }
+
+        // If the key does not exist, return null
+        return null;
     }
-
-
-
-
-
 
 
     private function recursiveSearch(array $array, string $key, string $value = null)
