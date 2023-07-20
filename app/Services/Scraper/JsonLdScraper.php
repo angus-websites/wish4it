@@ -21,7 +21,7 @@ class JsonLdScraper extends Scraper
                 $product->setName($this->findValue($productData, "name", "name"));
                 $product->setBrand($this->findValue($productData, "brand", "name"));
                 $product->setPrice($productData['price'] ?? $this->recursiveSearch($productData["offers"], 'price'));
-                $product->setImage($this->findValue($productData, "image", "name"));
+                $product->setImage($this->findValue($productData, "image", "thumbnail"));
                 break;
             }
         }

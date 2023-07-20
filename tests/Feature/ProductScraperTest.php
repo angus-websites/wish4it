@@ -256,5 +256,33 @@ class ProductScraperTest extends TestCase
 
     }
 
+    /**
+     * Test scraping an etsy (bunny toy)
+     */
+    public function test_etsy_scrape()
+    {
+        //https://www.etsy.com/uk/listing/1119045340/babies-personalised-easter-bunny-plush
+
+        // Get the stored HTML content
+        $htmlContent = file_get_contents(base_path('tests/html/etsy_bunny.html'));
+
+        // Create a scraping service
+        $service = new ProductScraperService();
+        $product = $service->scrapeProduct($htmlContent);
+
+        // Expected
+        $expected = [
+            "name" => "Babies personalised Easter Bunny plush toy",
+            "brand" => "LulabayUK",
+            "price" => "12.00",
+            "image" => "https://i.etsystatic.com/28485446/c/3000/2384/0/153/il/92de6f/4089068291/il_340x270.4089068291_imz3.jpg"
+        ];
+
+        // Assert specific values
+        $this->assertEqualsCanonicalizing($expected, $product);
+
+    }
+
+
 
 }
