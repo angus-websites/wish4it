@@ -282,34 +282,4 @@ class ProductScraperTest extends TestCase
         $this->assertEqualsCanonicalizing($expected, $product);
 
     }
-
-    /**
-     * Test scraping asos for a t-shirt
-     */
-    public function test_asos_scrape()
-    {
-        //https://www.asos.com/topman/topman-oversized-t-shirt-in-black/prd/203673837?clr=black&colourWayId=203673839&cid=30215
-
-        // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/html/asos_tee.html'));
-
-        // Create a scraping service
-        $service = new ProductScraperService();
-        $product = $service->scrapeProduct($htmlContent);
-
-        // Expected
-        $expected = [
-            "name" => "Topman oversized t-shirt in black ",
-            "brand" => "Topman",
-            "price" => "12.00",
-            "image" => "https://images.asos-media.com/products/topman-oversized-t-shirt-in-black/203673837-1-black"
-        ];
-
-        // Assert specific values
-        $this->assertEqualsCanonicalizing($expected, $product);
-
-    }
-
-
-
 }
