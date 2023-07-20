@@ -221,7 +221,7 @@ class ProductScraperTest extends TestCase
             "name" => "GoodHome Denia Brown Wooden 2 seater Square Table",
             "brand" => null,
             "price" => "34",
-            "image" => "https://media.diy.com/is/image/Kingfisher/goodhome-denia-brown-wooden-2-seater-square-table~3663602936015_01bq?$MOB_PREV$&$width=768&$height=768"
+            "image" => "https://media.diy.com/is/image/Kingfisher/goodhome-denia-brown-wooden-2-seater-square-table~3663602936015_01bq?\$MOB_PREV$&\$width=768&\$height=768"
         ];
 
         // Assert specific values
