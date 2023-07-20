@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Services\Scraper\ConventionalScraper;
+use App\Services\Scraper\AmazonScraper;
 use App\Services\Scraper\JsonLdScraper;
 use App\Services\Scraper\MicrodataScraper;
 
@@ -16,6 +16,7 @@ class ProductScraperService
         $scrapers = [
             new JsonLdScraper($htmlContent),
             new MicrodataScraper($htmlContent),
+            new AmazonScraper($htmlContent),
         ];
 
         // Create a product instance

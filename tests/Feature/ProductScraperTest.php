@@ -28,7 +28,7 @@ class ProductScraperTest extends TestCase
         $expected = [
             "name" => "Balatapa Hood",
             "brand" => "Idioma",
-            "price" => "89.0",
+            "price" => "89.00",
             "image" => "//idioma.world/cdn/shop/products/Balatapa_Hood_Grey_Full_Hung_Web_grande.jpg?v=1679829385"
         ];
 
@@ -83,7 +83,7 @@ class ProductScraperTest extends TestCase
         $expected = [
             "name" => "Men’s Boreas GTX Mid Walking Boots",
             "brand" => "Scarpa",
-            "price" => "190",
+            "price" => "190.00",
             "image" => "https://i1.adis.ws/i/jpl/bl_16243260_a"
         ];
 
@@ -112,7 +112,7 @@ class ProductScraperTest extends TestCase
         $expected = [
             "name" => "iPhone 14 Pro 256GB Silver",
             "brand" => null,
-            "price" => "1209",
+            "price" => "1209.00",
             "image" => "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-14-pro-finish-select-202209-6-1inch-silver?wid=2560&hei=1440&fmt=jpeg&qlt=95&.v=1663703840488"
         ];
 
@@ -140,7 +140,7 @@ class ProductScraperTest extends TestCase
         $expected = [
             "name" => "UK Delivery | Herman Miller Sayl Chairs | Black Frame &amp; Base | Blue Seat",
             "brand" => "Herman Miller",
-            "price" => "289.0",
+            "price" => "289.00",
             "image" => "https://i.ebayimg.com/images/g/YjAAAOSwR0Rklf8P/s-l1600.jpg"
         ];
 
@@ -220,8 +220,35 @@ class ProductScraperTest extends TestCase
         $expected = [
             "name" => "GoodHome Denia Brown Wooden 2 seater Square Table",
             "brand" => null,
-            "price" => "34",
+            "price" => "34.00",
             "image" => "https://media.diy.com/is/image/Kingfisher/goodhome-denia-brown-wooden-2-seater-square-table~3663602936015_01bq?\$MOB_PREV$&\$width=768&\$height=768"
+        ];
+
+        // Assert specific values
+        $this->assertEqualsCanonicalizing($expected, $product);
+
+    }
+
+    /**
+     * Test scraping an amazon product (batteries)
+     */
+    public function test_amazon_scrape()
+    {
+        // https://www.amazon.co.uk/gp/product/B003UOYB8A/ref=ewc_pr_img_2?smid=A3P5ROKL5A1OLE&th=1
+
+        // Get the stored HTML content
+        $htmlContent = file_get_contents(base_path('tests/html/amazon_batteries.html'));
+
+        // Create a scraping service
+        $service = new ProductScraperService();
+        $product = $service->scrapeProduct($htmlContent);
+
+        // Expected
+        $expected = [
+            "name" => "Duracell 2032 Twin Pack - silver",
+            "brand" => null,
+            "price" => "4.30",
+            "image" => "https://m.media-amazon.com/images/I/71iAp6vtJeL.__AC_SX300_SY300_QL70_ML2_.jpg"
         ];
 
         // Assert specific values

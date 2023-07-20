@@ -25,6 +25,20 @@ class Product
         ];
     }
 
+    private function parsePrice($value)
+    {
+        $value = preg_replace("/[^0-9.]/", "", $value);
+
+        if (is_numeric($value)) {
+            return number_format(floatval($value), 2, '.', '');
+        }
+
+        return null;
+    }
+
+
+
+
     public function setName($value)
     {
         $this->name = $this->checkValue($value, $this->name);
@@ -37,6 +51,7 @@ class Product
 
     public function setPrice($value)
     {
+        $value = $this->parsePrice($value);
         $this->price = $this->checkValue($value, $this->price);
     }
 
