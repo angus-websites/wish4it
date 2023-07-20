@@ -15,11 +15,13 @@ class JsonLdScraper extends Scraper
         });
 
         foreach ($schemaData as $data) {
-            if (isset($data['@type']) && strtolower($data['@type']) === 'product') {
-                $product->setName($this->findValue($data, "name", "name"));
-                $product->setBrand($this->findValue($data, "brand", "name"));
-                $product->setPrice($data['price'] ?? $this->recursiveSearch($data["offers"], 'price'));
-                $product->setImage($this->findValue($data, "image", "name"));
+            // Look for products in nested schemas
+            $productData = $this->recursiveSearch($data, '@type', 'product');
+            if (!is_null($productData)) {
+                $product->setName($this->findValue($productData, "name", "name"));
+                $product->setBrand($this->findValue($productData, "brand", "name"));
+                $product->setPrice($productData['price'] ?? $this->recursiveSearch($productData["offers"], 'price'));
+                $product->setImage($this->findValue($productData, "image", "name"));
                 break;
             }
         }
@@ -46,13 +48,25 @@ class JsonLdScraper extends Scraper
         return $this->recursiveSearch($data, $key);
     }
 
-    private function recursiveSearch(array $array, string $key)
+
+    /**
+     * @param array $array
+     * @param string $key
+     * @param string|null $value if provided, we look for nested arrays not values
+     */
+    private function recursiveSearch(array $array, string $key, string $value = null)
     {
         $iterator  = new \RecursiveArrayIterator($array);
         $recursive = new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::SELF_FIRST);
         foreach ($recursive as $k => $v) {
             if ($k === $key) {
-                return $v;
+                if (!is_null($value)) {
+                    if (is_string($v) && strtolower($v) === strtolower($value)) {
+                        return $recursive->getInnerIterator()->getArrayCopy();
+                    }
+                } else {
+                    return $v;
+                }
             }
         }
         return null;

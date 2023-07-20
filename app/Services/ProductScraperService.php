@@ -16,7 +16,6 @@ class ProductScraperService
         $scrapers = [
             new JsonLdScraper($htmlContent),
             new MicrodataScraper($htmlContent),
-            new ConventionalScraper($htmlContent)
         ];
 
         // Create a product instance
