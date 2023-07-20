@@ -70,10 +70,16 @@ class JsonLdScraper extends Scraper
 
         // Handle wildcard: continue the search in the current subtree
         if ($key === '*') {
-            foreach ($data as $subdata) {
-                $result = $this->getValueFromPath($subdata, $path);
-                if ($result !== null) {
-                    return $result;
+            $queue = [$data];
+            while (!empty($queue)) {
+                $subdata = array_shift($queue);
+                foreach ($subdata as $keyData => $valueData) {
+                    if (is_array($valueData)) {
+                        array_push($queue, $valueData);
+                    }
+                    if ($keyData === $path[0]) {
+                        return $valueData;
+                    }
                 }
             }
         }
@@ -86,6 +92,7 @@ class JsonLdScraper extends Scraper
         // If the key does not exist, return null
         return null;
     }
+
 
 
     private function recursiveSearch(array $array, string $key, string $value = null)

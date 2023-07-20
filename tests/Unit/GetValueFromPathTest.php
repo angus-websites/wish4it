@@ -40,6 +40,27 @@ class GetValueFromPathTest extends TestCase
 
     }
 
+    public function testVeryNestedBrand(): void
+    {
+        $jsonLdData = [
+            "name" => "Test Product",
+            "brand" => [
+                "data" => [
+                    "moreData" => [
+                        "name" => "Test Brand"
+                    ]
+                ],
+            ],
+            "price" => "30.00"
+        ];
+
+        $scraper = new JsonLdScraper(null);
+
+        $brand = $scraper->getValueFromPath($jsonLdData, ["brand", "*", "name"]);
+        $this->assertEquals("Test Brand", $brand);
+
+    }
+
     public function testNormalPrice(): void
     {
         $jsonLdData = [
