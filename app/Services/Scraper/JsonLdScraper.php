@@ -7,18 +7,10 @@ use App\Services\Product;
 
 class JsonLdScraper extends Scraper
 {
-    // Define possible paths for each attribute, note more complex routes should be defined first
-    // to avoid returning nested data
-//    private $paths = [
-//        'name' => [['name']],
-//        'brand' => [['brand', 'name']],
-//        'price' => [['offers', 'price'], ['price']],
-//        'image' => [['image', 'thumbnail'], ['image']],
-//    ];
-
+    // Define possible paths for each attribute
     private $paths = [
         'name' => [['name']],
-        'brand' => [['brand', 'name']],
+        'brand' => [['brand', 'name'], ["brand"]],
         'price' => [['offers', '*', 'price'], ['offers', 'price'], ['price']],
         'image' => [['image','*','thumbnail'], ['image']],
     ];
@@ -60,18 +52,26 @@ class JsonLdScraper extends Scraper
     private function findInPath(array $data, array $path)
     {
         $current = $data;
-        foreach ($path as $key) {
+        foreach ($path as $keyIndex => $key) {
             if ($key === '*') {
                 if (is_array($current)) {
                     foreach ($current as $item) {
                         if (is_array($item)) {
-                            $result = $this->findInPath($item, array_slice($path, 1));
-                            if ($result) {
+                            $remainingPath = array_slice($path, $keyIndex + 1);
+                            if (isset($remainingPath[0]) && array_key_exists($remainingPath[0], $item)) {
+                                return $item[$remainingPath[0]];
+                            }
+                            $result = $this->findInPath($item, $remainingPath);
+                            if ($result !== null) {
                                 return $result;
                             }
                         } elseif (is_object($item)) {
-                            $result = $this->findInPath(get_object_vars($item), array_slice($path, 1));
-                            if ($result) {
+                            $remainingPath = array_slice($path, $keyIndex + 1);
+                            if (isset($remainingPath[0]) && property_exists($item, $remainingPath[0])) {
+                                return $item->{$remainingPath[0]};
+                            }
+                            $result = $this->findInPath(get_object_vars($item), $remainingPath);
+                            if ($result !== null) {
                                 return $result;
                             }
                         }
@@ -87,6 +87,8 @@ class JsonLdScraper extends Scraper
         }
         return is_array($current) ? null : $current;
     }
+
+
 
 
 
