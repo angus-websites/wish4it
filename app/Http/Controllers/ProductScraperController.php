@@ -6,6 +6,7 @@ use App\Services\ProductScraperService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class ProductScraperController extends Controller
 {
@@ -49,6 +50,12 @@ class ProductScraperController extends Controller
             }
 
         } catch (\Exception $exception) {
+
+            Log::channel('scraper')->error('An error occurred during URL scraping', [
+                'url' => $url,
+                'error_message' => $exception->getMessage(),
+            ]);
+    
             // If the request was not successful after retrying, return a response indicating the error
             return response()->json(['error' => 'Unable to scrape product at this time. Please try again later.'], 500);
         }
