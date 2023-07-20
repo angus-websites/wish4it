@@ -216,12 +216,10 @@ onBeforeUpdate(() => {
 
 // Define the function to be called when urlForm.url changes
 function onUrlChange() {
-    if (urlForm.url.trim() !== '') {
-        showLoadUrlButton.value=true;
-    }else{
-      showLoadUrlButton.value=false;
-    }
+  const trimmedUrl = urlForm.url ? urlForm.url.trim() : '';
+  showLoadUrlButton.value = trimmedUrl !== '';
 }
+
 
 // Watch for changes in urlForm.url
 watch(() => urlForm.url, onUrlChange, { deep: true });
@@ -277,7 +275,12 @@ function closeModal() {
 }
 
 function reset(){
+
+  form.errors = {};
+  urlForm.errors = {};
+
   form.reset();
+  urlForm.reset();
   showDetails.value=false;
 }
 
