@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ProductScraperService;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -36,10 +37,14 @@ class ProductScraperController extends Controller
         $url = $request->input('url');
 
         try {
+
+            // Try to connect 3 times before giving up
             $response = Http::timeout(3)->withHeaders([
                 'User-Agent' => "MyWishlistApp lookup",
             ])->retry(2, 1000)->get($url);
 
+
+            // Continue if we succesfully connect to the url
             if ($response->successful()) {
                 $htmlContent = $response->body();
                 $product = $this->scraperService->scrapeProduct($htmlContent);
@@ -53,8 +58,26 @@ class ProductScraperController extends Controller
                 ]);
             }
 
-        } catch (RequestException $exception) {
-            Log::channel("scraper")->error('An error occurred during URL scraping', [
+        }
+        catch (RequestException $exception) {
+            Log::channel("scraper")->error('A request error occurred during URL scraping', [
+                'url' => $url,
+                'error_message' => $exception->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'Unable to scrape product at this time. Please try again later.'], 500);
+        }
+        catch (ConnectionException $exception) {
+
+            Log::channel("scraper")->error('A connection error occurred during URL scraping', [
+                'url' => $url,
+                'error_message' => $exception->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'Unable to connect to this url at this time. Please try again later.'], 500);
+        }
+        catch (Exception $exception) {
+            Log::channel("scraper")->error('A unknown error occurred during URL scraping', [
                 'url' => $url,
                 'error_message' => $exception->getMessage(),
             ]);

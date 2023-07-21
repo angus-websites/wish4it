@@ -38,6 +38,10 @@
                     <InputError v-if="urlForm.errors.url" :message="urlForm.errors.url" class="mt-1"/>
                 </div>
 
+                <div v-if="loadUrlError" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                  <span class="font-medium">Error!</span> {{ loadUrlError }}
+                </div>
+
                 <Spinner v-if="showUrlLoadingSpinner" class="my-5 mx-auto text-center"/>
 
                 <div v-else-if="showLoadUrlButton" class="text-center my-5">
@@ -200,6 +204,7 @@ const urlForm = useForm({
 let isOpen = ref(props.open)
 let showDetails = ref(false)
 let showLoadUrlButton = ref(false)
+let loadUrlError = ref(false);
 
 // Timeouts
 let urlLoadingTimeoutId = ref(null);
@@ -244,11 +249,16 @@ function sendUrl(){
       showUrlLoadingSpinner.value = true;
   }, 250); 
 
+  // Reset
+  loadUrlError.value = null;
+
   axios.post(route('scrape', {"url": urlForm.url} ))
     .then(response => {
 
         let data = response.data
-        let product = data.product
+
+        // Check we get a product back
+        let product = data.product ?? null;
 
         if(product){
           form.name = product.name
@@ -261,8 +271,15 @@ function sendUrl(){
     
     })
     .catch(error => {
-      console.error(error);
-      urlForm.setError('url', 'Something wrong');
+      if (error.response && error.response.data.errors && error.response.data.errors.url)
+        {
+          urlForm.setError('url', error.response.data.errors.url[0]);
+        }
+      if (error.response && error.response.data.error){
+        loadUrlError.value = error.response.data.error;
+        console.log(error.response.data.error)
+      }
+
     }).finally(() => {
       clearTimeout(urlLoadingTimeoutId.value);
       showUrlLoadingSpinner.value=false;
