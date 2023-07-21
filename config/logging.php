@@ -52,6 +52,13 @@ return [
     */
 
     'channels' => [
+
+        'scraper' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/scraper.log'),
+            'level' => 'error',
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

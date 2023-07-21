@@ -30,7 +30,7 @@ class FriendController extends Controller
      */
     public function addFriend(Request $request, $username)
     {
-        
+
         // Attempt to find a user with the given username
         $user = User::where('username', $username)->first();
 
@@ -106,6 +106,7 @@ class FriendController extends Controller
      */
     public function search(Request $request)
     {
+
         $search = $request->get('query');
 
         // Validate for empty searches

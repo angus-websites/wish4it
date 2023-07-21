@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\WishlistController;
 use \App\Http\Controllers\WishlistItemController;
 use \App\Http\Controllers\FriendController;
+use \App\Http\Controllers\ProductScraperController;
 
 use Inertia\Inertia;
 
@@ -28,6 +29,8 @@ Route::get('/', function () {
     ]);
 })->name('index');
 
+// TODO move to auth
+Route::post('/scrape-product', [ProductScraperController::class, 'scrapeProduct'])->name('scrape');
 
 
 Route::middleware([
