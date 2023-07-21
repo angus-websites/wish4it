@@ -31,10 +31,15 @@
       </div>
     </div>
 
-    <!-- Buttons -->
+    <!-- Buttons and quantity / needs -->
     <div class="mt-auto">
-      <PrimaryButton v-if="item.can.update" @click="editItem" size="s">Edit</PrimaryButton>
-      <SecondaryButton v-if="item.can.delete" @click="deleteItem" size="s">Delete</SecondaryButton>
+      <div v-if="item.can.update || item.can.delete" class="flex flex-row justify-around items-center">
+        <PrimaryButton v-if="item.can.update" @click="editItem" size="s" class="w-1/4">Edit</PrimaryButton>
+        <SecondaryButton v-if="item.can.delete" @click="deleteItem" size="s" class="w-1/4">Delete</SecondaryButton>
+      </div>
+      <div v-else class="flex flex-row justify-around items-center">
+        <SecondaryButton size="s">Mark as purchased</SecondaryButton>
+      </div>
     </div>
 
   </div>
