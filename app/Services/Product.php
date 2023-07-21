@@ -9,11 +9,15 @@ class Product
     private $price = null;
     private $image = null;
 
-    public function isComplete(): bool
+    public function getMissingFields(): array
     {
-        return isset($this->name, $this->brand, $this->price, $this->image);
-    }
+        $fields = ['name', 'brand', 'price', 'image'];
+        $missingFields = array_filter($fields, function($field) {
+            return is_null($this->$field);
+        });
 
+        return $missingFields;
+    }
 
     public function toArray(): array
     {
