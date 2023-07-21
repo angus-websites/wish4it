@@ -59,6 +59,13 @@ return [
             'level' => 'error',
         ],
 
+        'scraperIncomplete' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/scraperIncomplete.log'),
+            'level' => 'info',
+        ],
+
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],
