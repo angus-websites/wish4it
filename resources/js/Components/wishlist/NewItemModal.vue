@@ -21,7 +21,7 @@
                 </div>
               </DialogTitle>
 
-              <!-- Start screen -->
+              <!-- Start (url) screen -->
               <div v-if="!showDetails">
 
                 <!-- URL link -->
@@ -62,12 +62,18 @@
                 <div class="mt-5 text-center">
                   <SecondaryButton class="w-full" @click="closeModal">Cancel</SecondaryButton>
                 </div>
-
               </div>
 
               <!-- Details screen -->
-              <div v-else>
+              <div v-else class="flex-col gap-y-10">
                 
+                <!-- Image -->
+                <div v-if="form.image" class="w-full mt-5">
+                  <figure class="w-20 h-20 mx-auto">
+                    <img class="h-auto max-w-full rounded-lg" :src="form.image" alt="image description">
+                  </figure>
+                </div>
+
                 <!-- Form -->
                 <form @submit.prevent="submitForm">
                   <!-- Form elements -->
@@ -150,7 +156,6 @@
                     <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
                     <PrimaryButton :disabled="form.processing" type="submit">Save</PrimaryButton>
                   </div>
-
                 </form>
               </div> 
             </DialogPanel>
@@ -192,8 +197,9 @@ const form = useForm({
   brand: null,
   price: null,
   url: null,
-  comments: null,
-  needs: 1
+  comment: null,
+  needs: 1,
+  image: null
 })
 
 const urlForm = useForm({
@@ -266,6 +272,7 @@ function sendUrl(){
           form.price = product.price
           form.url = urlForm.url
           showDetails.value = true;
+          form.image = product.image
         }
         console.log(response)
     

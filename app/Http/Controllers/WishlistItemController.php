@@ -36,6 +36,7 @@ class WishlistItemController extends Controller
             'url' => 'nullable|url',
             'comment' => 'nullable|string|max:500',
             'needs' => 'required|integer|min:1',
+            'image' => 'nullable|string|url',
         ]);
 
         // Save
