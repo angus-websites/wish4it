@@ -47,7 +47,7 @@ class ProductScraperController extends Controller
             // Continue if we succesfully connect to the url
             if ($response->successful()) {
                 $htmlContent = $response->body();
-                $product = $this->scraperService->scrapeProduct($htmlContent);
+                $product = $this->scraperService->scrapeProduct($htmlContent, $url);
                 return response()->json(["product" => $product]);
             }
             else {
