@@ -21,7 +21,7 @@
                 </div>
               </DialogTitle>
 
-              <!-- Start screen -->
+              <!-- Start (url) screen -->
               <div v-if="!showDetails">
 
                 <!-- URL link -->
@@ -36,6 +36,10 @@
                         autofocus
                     />
                     <InputError v-if="urlForm.errors.url" :message="urlForm.errors.url" class="mt-1"/>
+                </div>
+
+                <div v-if="loadUrlError" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                  <span class="font-medium">Error!</span> {{ loadUrlError }}
                 </div>
 
                 <Spinner v-if="showUrlLoadingSpinner" class="my-5 mx-auto text-center"/>
@@ -58,12 +62,18 @@
                 <div class="mt-5 text-center">
                   <SecondaryButton class="w-full" @click="closeModal">Cancel</SecondaryButton>
                 </div>
-
               </div>
 
               <!-- Details screen -->
-              <div v-else>
+              <div v-else class="flex-col gap-y-10">
                 
+                <!-- Image -->
+                <div v-if="form.image" class="w-full mt-5">
+                  <figure class="w-20 h-20 mx-auto">
+                    <img class="h-auto max-w-full rounded-lg" :src="form.image" alt="image description">
+                  </figure>
+                </div>
+
                 <!-- Form -->
                 <form @submit.prevent="submitForm">
                   <!-- Form elements -->
@@ -146,7 +156,6 @@
                     <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
                     <PrimaryButton :disabled="form.processing" type="submit">Save</PrimaryButton>
                   </div>
-
                 </form>
               </div> 
             </DialogPanel>
@@ -188,8 +197,9 @@ const form = useForm({
   brand: null,
   price: null,
   url: null,
-  comments: null,
-  needs: 1
+  comment: null,
+  needs: 1,
+  image: null
 })
 
 const urlForm = useForm({
@@ -200,6 +210,7 @@ const urlForm = useForm({
 let isOpen = ref(props.open)
 let showDetails = ref(false)
 let showLoadUrlButton = ref(false)
+let loadUrlError = ref(false);
 
 // Timeouts
 let urlLoadingTimeoutId = ref(null);
@@ -244,11 +255,16 @@ function sendUrl(){
       showUrlLoadingSpinner.value = true;
   }, 250); 
 
+  // Reset
+  loadUrlError.value = null;
+
   axios.post(route('scrape', {"url": urlForm.url} ))
     .then(response => {
 
         let data = response.data
-        let product = data.product
+
+        // Check we get a product back
+        let product = data.product ?? null;
 
         if(product){
           form.name = product.name
@@ -256,13 +272,21 @@ function sendUrl(){
           form.price = product.price
           form.url = urlForm.url
           showDetails.value = true;
+          form.image = product.image
         }
         console.log(response)
     
     })
     .catch(error => {
-      console.error(error);
-      urlForm.setError('url', 'Something wrong');
+      if (error.response && error.response.data.errors && error.response.data.errors.url)
+        {
+          urlForm.setError('url', error.response.data.errors.url[0]);
+        }
+      if (error.response && error.response.data.error){
+        loadUrlError.value = error.response.data.error;
+        console.log(error.response.data.error)
+      }
+
     }).finally(() => {
       clearTimeout(urlLoadingTimeoutId.value);
       showUrlLoadingSpinner.value=false;
