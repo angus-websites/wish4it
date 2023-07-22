@@ -1,8 +1,11 @@
 <template>
-    <Link v-if="isLink" :class="[sizeClass, baseClasses]">
+    <a v-if="isAnchor" :class="[sizeClass, baseClasses]">
+        <slot />
+    </a>
+    <Link v-else-if="isLink" :class="[sizeClass, baseClasses]">
         <slot/>
     </Link>
-    <button v-bind="$attrs" v-else :class="[sizeClass, baseClasses]">
+    <button v-else v-bind="$attrs"  :class="[sizeClass, baseClasses]">
         <slot />
     </button>
 </template>
@@ -16,6 +19,9 @@ export default {
         },
         isLink: {
             default: false,
+        },
+        isAnchor:{
+            default: false
         }
     },
 
@@ -33,7 +39,7 @@ export default {
         },
 
         baseClasses(){
-            return "rounded-md bg-primary font-semibold text-white shadow-sm hover:bg-primary-dark";
+            return "rounded-md bg-primary font-semibold text-white shadow-sm hover:bg-primary-dark text-center";
         }
 
     }

@@ -6,7 +6,7 @@
       <Menu as="div" class="relative ml-auto">
         <MenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">
           <span class="sr-only">Open options</span>
-          <EllipsisHorizontalIcon class="h-5 w-5" aria-hidden="true" />
+          <EllipsisHorizontalIcon class="h-6 w-6" aria-hidden="true" />
         </MenuButton>
         <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
           <MenuItems class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-light-light py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
@@ -70,6 +70,9 @@
         <p>Needs: {{item.needs}}</p>
         <p>Has: {{item.has}}</p>
       </div>
+
+      <!-- Link -->
+      <PrimaryButton v-if="item.url" :isAnchor="true" :href="item.url" target="_blank" >View</PrimaryButton>
     </div>
 
   </div>
