@@ -1,6 +1,38 @@
 <template>
   <div class="border-b border-r border-gray-200 dark:border-[#1A202A] p-4 sm:p-6 flex flex-col">
 
+    <!-- Dropdown menu -->
+    <div class="flex items-center justify-end mb-3">
+      <Menu as="div" class="relative ml-auto">
+        <MenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">
+          <span class="sr-only">Open options</span>
+          <EllipsisHorizontalIcon class="h-5 w-5" aria-hidden="true" />
+        </MenuButton>
+        <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+          <MenuItems class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-light-light py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+
+            <template v-if="item.can.update || item.can.delete">
+              <MenuItem v-if="item.can.update" v-slot="{ active }">
+                <button @click="editItem" type="button" class="block w-full px-3 py-1 text-sm leading-6 text-gray-500 hover:text-gray-700"
+                  >Edit</button
+                >
+              </MenuItem>
+              <MenuItem v-if="item.can.delete" v-slot="{ active }">
+                <button @click="deleteItem" type="button" class="block w-full px-3 py-1 text-sm leading-6 text-red-500 hover:text-red-700"
+                  >Delete</button
+                >
+              </MenuItem>
+            </template>
+            <MenuItem v-else v-slot="{ active }">
+              <button type="button" class="block w-full px-3 py-1 text-sm leading-6 text-gray-500 hover:text-gray-700"
+                >Mark as purchased</button
+              >
+            </MenuItem>
+
+          </MenuItems>
+        </transition>
+      </Menu>
+    </div>
     <!-- Image -->
     <div v-if="item.image" class="aspect-h-1 aspect-w-1 h-32 w-75 overflow-hidden rounded-lg bg-gray-200 mb-10">
       <img :src="item.image" :alt="item.name" class="h-full w-full object-cover object-center" />
@@ -32,13 +64,11 @@
     </div>
 
     <!-- Buttons and quantity / needs -->
-    <div class="mt-auto">
-      <div v-if="item.can.update || item.can.delete" class="flex flex-row justify-around items-center">
-        <PrimaryButton v-if="item.can.update" @click="editItem" size="s" class="w-1/4">Edit</PrimaryButton>
-        <SecondaryButton v-if="item.can.delete" @click="deleteItem" size="s" class="w-1/4">Delete</SecondaryButton>
-      </div>
-      <div v-else class="flex flex-row justify-around items-center">
-        <SecondaryButton size="s">Mark as purchased</SecondaryButton>
+    <div class="mt-auto flex flex-col gap-y-3">
+      <!-- Needs -->
+      <div v-if="item.needs > 1" class="flex flex-row items-center justify-around">
+        <p>Needs: {{item.needs}}</p>
+        <p>Has: {{item.has}}</p>
       </div>
     </div>
 
@@ -49,6 +79,8 @@
 <script setup>
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 
 import { defineEmits } from 'vue';
 const props = defineProps({
