@@ -22,8 +22,8 @@ class WishlistPolicy
     public function view(User $user, Wishlist $wishlist)
     {
 
-        // If the wishlist is public
-        if ($wishlist->isPublic()){
+        // If the wishlist is public & the user is friends with the owner
+        if ($wishlist->isPublic() && $user->isFriends($wishlist->user())){
             return Response::allow();
         }
         

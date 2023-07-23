@@ -101,4 +101,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id');
     }
+
+    /**
+     * Check if this user is friends with
+     * another user
+     */
+    public function isFriends(User $user)
+    {
+        return $this->friends->contains($user);
+    }
 }
