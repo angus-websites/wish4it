@@ -52,9 +52,6 @@ class WishlistItemController extends Controller
     public function update(Request $request, Wishlist $wishlist, WishlistItem $item)
     {
 
-        sleep(5);
-
-
         // Validate the incoming request data.
         $data = $request->validate([
             'name' => 'required|string|max:50',

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class Handler extends ExceptionHandler
 {
@@ -28,8 +29,8 @@ class Handler extends ExceptionHandler
    public function register()
    {
        $this->reportable(function (Throwable $e) {
-           //
-       });
+            Log::channel('exceptions')->error($e->getMessage(), ['exception' => $e]);
+        });
    }
 
 

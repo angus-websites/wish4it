@@ -65,6 +65,12 @@ return [
             'level' => 'info',
         ],
 
+        'exceptions' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/exceptions.log'),
+            'level' => 'error',
+        ],
+
 
         'stack' => [
             'driver' => 'stack',
