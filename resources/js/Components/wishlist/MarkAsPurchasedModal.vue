@@ -12,20 +12,36 @@
 
               <div v-if="showConfirmation" class="relative w-full max-w-md max-h-full">
                   <div class="p-6 text-center">
-                      <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                      <svg class="mx-auto mb-4 text-gray-500 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                       </svg>
 
                       
-                      <p class="mb-2 text-lg font-normal text-gray-500 dark:text-gray-200">Are you sure you want to mark this product as purchased?</p>
+                      <p class="mb-2 text-lg font-normal text-gray-600 dark:text-gray-200">Are you sure you want to mark this product as purchased?</p>
+
+                     <dl class="divide-y divide-gray-100 dark:divide-dark-light">
+                        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt class="text-sm font-medium text-gray-700">Item to mark</dt>
+                          <dd class="mt-1 text-sm font-bold leading-6 text-primary sm:col-span-2 sm:mt-0">{{itemToMark.name}}</dd>
+                        </div>
+                        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt class="text-sm font-medium text-gray-700">Quantity chosen to reserve</dt>
+                          <dd class="mt-1 text-sm font-bold leading-6 text-primary sm:col-span-2 sm:mt-0">{{form.quantity}}</dd>
+                        </div>
+                        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt class="text-sm font-medium text-gray-700">Quantity desired by list creator</dt>
+                          <dd class="mt-1 text-sm font-bold leading-6 text-primary sm:col-span-2 sm:mt-0">{{itemToMark.needs}}</dd>
+                        </div>
+                        
+                      </dl> 
 
                       <div class="my-8">
 
-                        <div v-if="form.quantity >= itemToMark.needs" class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
-                          <span>This item will be removed from the wishlist as the quantity desired will be reached </span>
+                        <div v-if="form.quantity >= itemToMark.needs" class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 border border-blue-800" role="alert">
+                          <span>This item will be removed from the wishlist as the desired quantity will be reached </span>
                         </div>
 
-                        <div v-else-if="form.quantity < itemToMark.needs" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                        <div v-else-if="form.quantity < itemToMark.needs" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 border-yellow-800 border" role="alert">
                           <span>This item <b>will</b> remain visible on this wishlist as the quantity you selected to reserve is less than the desired amount</span>
                         </div>
 
@@ -51,10 +67,7 @@
 
                     <div class="p-6 text-center">
 
-                        <!-- <div v-if="form.quantity >= itemToMark.needs" class="p-4 text-sm text-center text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
-                          This item will be removed from the list as the desired quantity will been reached
-                        </div> -->
-    
+                      
                         <div class="my-3 text-gray-400 dark:text-gray-300">
                           <p>Quantity to reserve ({{itemToMark.needs}} wanted) </p>
                         </div>
@@ -68,7 +81,7 @@
                 
                     <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3 justify-center">
                       <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
-                      <PrimaryButton @click="clickUpdateButton">Update</PrimaryButton>
+                      <PrimaryButton @click="clickUpdateButton">Continue</PrimaryButton>
                     </div>
                 </div>
               </template>
@@ -116,6 +129,14 @@ watchEffect(() => {
 
 function closeModal() {
   emit('update:open', false)
+  setTimeout(reset, 500);
+}
+
+function reset(){
+  form.errors = {};
+
+  form.reset();
+  showConfirmation.value=false;
 }
 
 function clickUpdateButton()
