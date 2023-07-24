@@ -29,9 +29,6 @@ Route::get('/', function () {
     ]);
 })->name('index');
 
-// TODO move to auth
-Route::post('/scrape-product', [ProductScraperController::class, 'scrapeProduct'])->name('scrape');
-
 
 Route::middleware([
     'auth:sanctum',
@@ -48,6 +45,9 @@ Route::middleware([
     Route::post('/friends/search', [FriendController::class, 'search'])->name('friends.search');
     Route::post('/friends/add/{username}', [FriendController::class, 'addFriend'])->name('friends.add');
     Route::delete('/friends/remove/{username}', [FriendController::class, 'removeFriend'])->name('friends.remove');
+
+    // Scape products
+    Route::post('/scrape-product', [ProductScraperController::class, 'scrapeProduct'])->name('scrape');
 
 
 });
