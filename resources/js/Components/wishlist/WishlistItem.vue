@@ -24,7 +24,7 @@
               </MenuItem>
             </template>
             <MenuItem v-else v-slot="{ active }">
-              <button type="button" class="block w-full px-3 py-1 text-sm leading-6 text-gray-500 hover:text-gray-700"
+              <button type="button" class="block w-full px-3 py-1 text-xs leading-6 text-gray-500 hover:text-gray-700"
                 >Mark as purchased</button
               >
             </MenuItem>
