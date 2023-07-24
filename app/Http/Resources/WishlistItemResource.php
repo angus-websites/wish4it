@@ -24,6 +24,7 @@ class WishlistItemResource extends JsonResource
             'image' => $this->image,
             'needs' => $this->needs,
             'has' => $this->has,
+            'hasCurrentUserReservation' => $this->hasUserReservation($request->user()),
             'can' => [
                 'update' => $request->user()->can("update", $this->wishlist()),
                 'delete' => $request->user()->can("delete", $this->wishlist()),
