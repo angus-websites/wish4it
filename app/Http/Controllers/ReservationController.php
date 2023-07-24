@@ -27,11 +27,7 @@ class ReservationController extends Controller
         $reservation->user_id = Auth::user()->id;  // Get the logged in user's ID
 
         $reservation->save();
-
-        // Update the quantity of the wishlist item after the reservation
-        $item->has = $item->has + $request->quantity;
-        $item->save();
-
+        
         return Redirect::back()->with('success', 'Marked as purchased');
     }
 }
