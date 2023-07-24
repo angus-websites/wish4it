@@ -26,7 +26,8 @@ class WishlistItemResource extends JsonResource
             'has' => $this->has,
             'can' => [
                 'update' => $request->user()->can("update", $this->wishlist()),
-                'delete' => $request->user()->can("delete", $this->wishlist())
+                'delete' => $request->user()->can("delete", $this->wishlist()),
+                'mark' => $request->user()->can("markAsPurchased", $this->wishlist())
             ]
         ];
     }

@@ -23,7 +23,7 @@
                 >
               </MenuItem>
             </template>
-            <MenuItem v-else-if="item.can.markItem" v-slot="{ active }">
+            <MenuItem v-else-if="item.can.mark" v-slot="{ active }">
               <button @click="markItem" type="button" class="block w-full px-3 py-1 text-xs leading-6 text-gray-500 hover:text-gray-700"
                 >Mark as purchased</button
               >
