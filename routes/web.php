@@ -1,13 +1,11 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\WishlistController;
 use \App\Http\Controllers\WishlistItemController;
 use \App\Http\Controllers\FriendController;
 use \App\Http\Controllers\ProductScraperController;
-
-use Inertia\Inertia;
+use \App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,14 +18,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('index');
+Route::get('/', [HomeController::class, 'home'])->name('index');
 
 
 Route::middleware([
