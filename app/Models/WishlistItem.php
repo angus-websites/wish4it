@@ -14,4 +14,12 @@ class WishlistItem extends Model
     public function wishlist(){
         return $this->belongsTo(Wishlist::class)->firstOrFail();
     }
+
+    public function reservations() {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function getHasAttribute() {
+        return $this->reservations->sum('quantity');
+    }
 }

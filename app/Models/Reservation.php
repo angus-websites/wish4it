@@ -15,7 +15,7 @@ class Reservation extends Model
      * @var array
      */
     protected $fillable = [
-        'item_id',
+        'wishlist_item_id',
         'quantity',
         'user_id',
     ];
@@ -33,6 +33,8 @@ class Reservation extends Model
      */
     public function item()
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(WishlistItem::class);
     }
+
+
 }
