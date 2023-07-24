@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
+use App\Models\Reservation;
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Redirect;
 
 class WishlistItemController extends Controller
@@ -70,6 +73,27 @@ class WishlistItemController extends Controller
         // If we pass validation
         return Redirect::back()->with('success', 'Item updated');
     }
+
+    public function markAsPurchased(Request $request, Wishlist $wishlist, WishlistItem $item)
+    {
+
+        // Authorise marking this item as purchased
+        $this->authorize('markAsPurchased', [$wishlist]);
+
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        // Create the new reservation
+        $reservation = new Reservation();
+        $reservation->wishlist_item_id = $item->id;
+        $reservation->quantity = $request->quantity;
+        $reservation->user_id = Auth::user()->id;  // Get the logged in user's ID
+        $reservation->save();
+        
+        return Redirect::back()->with('success', 'Marked as purchased');
+    }
+
 
     /**
      * Remove the specified resource from storage.

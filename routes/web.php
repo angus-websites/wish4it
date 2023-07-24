@@ -31,7 +31,7 @@ Route::middleware([
     // Wishlists
     Route::resource('wishlists', WishlistController::class);
     Route::resource('wishlists.items', WishlistItemController::class);
-    Route::resource('reservations', ReservationController::class);
+    Route::put('/wishlists/{wishlist}/items/{item}/mark', [WishlistItemController::class, 'markAsPurchased'])->name('wishlists.items.mark');
 
     // Friends page
     Route::get('/friends', [FriendController::class, 'index'])->name('friends');

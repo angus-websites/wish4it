@@ -72,7 +72,7 @@ class WishlistController extends Controller
                 'deleteList' => Auth::user()->can('delete', $wishlist),
                 'editList' => Auth::user()->can('update', $wishlist),
                 'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
-
+                'markItems' => Auth::user()->can('mark',  [WishlistItem::class, $wishlist])
             ],
         ]);
     }

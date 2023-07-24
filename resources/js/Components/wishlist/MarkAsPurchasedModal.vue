@@ -197,11 +197,7 @@ function clickUpdateButton()
 function markItemAsPurchased()
 {
   // Add the wishlist item id
-  form.transform((data) => ({
-    ...data,
-    wishlist_item_id: props.itemToMark.id,
-  }))
-  .post(route('reservations.store'),{
+  form.put(route('wishlists.items.mark', { wishlist: props.wishlistId, item: props.itemToMark.id }),{
     onSuccess: page => {
       closeModal()
     },
