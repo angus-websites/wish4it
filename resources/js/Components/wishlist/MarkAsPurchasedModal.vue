@@ -12,12 +12,14 @@
 
               <div v-if="showConfirmation" class="relative w-full max-w-md max-h-full">
                   <div class="p-6 text-center">
-                      <svg class="mx-auto mb-4 text-gray-500 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                      </svg>
+                    <svg class="mx-auto mb-4 text-gray-500 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                    </svg>
 
                       
-                      <p class="mb-2 text-lg font-normal text-gray-600 dark:text-gray-200">Are you sure you want to mark this product as purchased?</p>
+                    <p class="mb-2 text-lg font-normal text-gray-600 dark:text-gray-200">Are you sure you want to mark this product as purchased?</p>
+
+                  
 
                      <dl class="divide-y divide-gray-100 dark:divide-dark-light mt-3">
                         <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -49,11 +51,17 @@
                           <span>This item <b>will</b> remain visible on this wishlist as the desired quanity has not been reached</span>
                         </div>
 
+                        <Spinner v-if="loading" />
+
+                        <div v-if="showError" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                          <span class="font-medium">An error occurred, please try again later</span>
+                        </div>
+
                       </div>
 
                       <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3 justify-center">
                         <SecondaryButton @click="showConfirmation = false" type="button">Back</SecondaryButton>
-                        <PrimaryButton @click="markItemAsPurchased">Update</PrimaryButton>
+                        <PrimaryButton :disabled="form.processing" @click="markItemAsPurchased">Update</PrimaryButton>
 
                       </div>
 
@@ -83,8 +91,6 @@
                           <InputError v-if="form.errors.quantity" :message="form.errors.quantity" class="mt-1 text-left"/>
                         </div>
 
-
-
                     </div>
 
                 
@@ -109,12 +115,12 @@ import { ref, watchEffect, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
-import { router } from '@inertiajs/vue3'
 import TextInput from "@/Components/form/TextInput.vue"
 import InputLabel from "@/Components/form/InputLabel.vue"
 import InputError from "@/Components/form/InputError.vue"
+import Spinner from "@/Components/Spinner.vue"
 
-import {useForm} from '@inertiajs/vue3';
+import {useForm, router} from '@inertiajs/vue3';
 
 const props = defineProps({
     wishlistId: [String, Number],
@@ -132,10 +138,28 @@ const form = useForm({
 let isOpen = ref(props.open)
 const emit = defineEmits(['update:open'])
 let showConfirmation = ref(false)
-
+let showError = ref(false);
+let loading = ref(false)
+let loadingTimeout = null
 
 watchEffect(() => {
     isOpen.value = props.open
+})
+
+
+watchEffect(() => {
+  if (form.processing) {
+    // If the form is processing, reset the error state
+    showError.value = false;
+    // Start a timer to show loading after 1 second
+    loadingTimeout = setTimeout(() => {
+      loading.value = true
+    }, 750)
+  } else {
+    // If the form is no longer processing, hide the loading spinner and clear the timeout
+    clearTimeout(loadingTimeout)
+    loading.value = false
+  }
 })
 
 
@@ -155,8 +179,8 @@ function closeModal() {
 
 function reset(){
   form.errors = {};
-
   form.reset();
+  showError.value = false;
   showConfirmation.value=false;
 }
 
@@ -172,7 +196,19 @@ function clickUpdateButton()
 
 function markItemAsPurchased()
 {
-  console.log("Marking");
+  // Add the wishlist item id
+  form.transform((data) => ({
+    ...data,
+    wishlist_item_id: props.itemToMark.id,
+  }))
+  .post(route('reservations.store'),{
+    onSuccess: page => {
+      closeModal()
+    },
+    onError: errors => {
+      showError.value = true;
+    },
+  })
 }
 
 

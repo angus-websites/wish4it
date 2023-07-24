@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Reservation;
 use App\Models\WishlistItem;
+use Illuminate\Support\Facades\Redirect;
 
 class ReservationController extends Controller
 {

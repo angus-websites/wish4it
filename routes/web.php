@@ -6,6 +6,7 @@ use \App\Http\Controllers\WishlistItemController;
 use \App\Http\Controllers\FriendController;
 use \App\Http\Controllers\ProductScraperController;
 use \App\Http\Controllers\HomeController;
+use \App\Http\Controllers\ReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,7 @@ Route::middleware([
     // Wishlists
     Route::resource('wishlists', WishlistController::class);
     Route::resource('wishlists.items', WishlistItemController::class);
+    Route::resource('reservations', ReservationController::class);
 
     // Friends page
     Route::get('/friends', [FriendController::class, 'index'])->name('friends');
