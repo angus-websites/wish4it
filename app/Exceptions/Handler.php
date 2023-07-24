@@ -6,6 +6,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class Handler extends ExceptionHandler
 {
@@ -28,8 +29,22 @@ class Handler extends ExceptionHandler
    public function register()
    {
        $this->reportable(function (Throwable $e) {
-           //
-       });
+
+            // Log the top of the stack trace
+            $trace = $e->getTrace();
+            $topTrace = count($trace) > 0 ? $trace[0] : 'No stack trace available';
+
+            Log::channel('exceptions')->error($e->getMessage(), [
+                'exception_class' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'top_trace' => $topTrace
+            ]);
+        });
+
+
+
+
    }
 
 
