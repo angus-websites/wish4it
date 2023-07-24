@@ -46,13 +46,14 @@
                     </nav>
                     <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
-                <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem"/>
+                <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
             </div>
         </div>
 
-        <NewItemModal :wishlistId="list.id" :open="newModalOpen" :itemToEdit="itemToEdit" @update:open="handleModal" />
+        <NewItemModal :wishlistId="list.id" :open="newModalOpen" :itemToEdit="itemToEdit" @update:open="handleNewItemModal" />
         <DeleteModal :wishlistId="list.id" :open="deleteModalOpen" :itemToDelete="itemToDelete" @update:open="handleDeleteModal" />
         <EditWishlistModal :wishlist="list" :open="editListModalOpen" @update:open="handleEditListModal" :canDelete="can.deleteList"  />
+        <MarkAsPurchasedModal :wishlistId="list.id" :itemToMark="itemToMark" :open="markPurchasedModalOpen" @update:open="handleMarkPurchaseModal"  />
     </AppLayout>
 </template>
 
@@ -65,6 +66,7 @@ import PrimaryOutlineButton from '@/Components/buttons/PrimaryOutlineButton.vue'
 import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
 import EditWishlistModal from '@/Components/wishlist/EditWishlistModal.vue'
+import MarkAsPurchasedModal from '@/Components/wishlist/MarkAsPurchasedModal.vue'
 
 import FlashMessages from '@/Components/FlashMessages.vue'
 
@@ -73,9 +75,11 @@ import { ref } from 'vue'
 let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)
 let editListModalOpen = ref(false)
+let markPurchasedModalOpen = ref(false)
 
 let itemToEdit = ref(null);
 let itemToDelete = ref(null);
+let itemToMark = ref(null);
 
 const props = defineProps({
     list: Object,
@@ -89,7 +93,8 @@ function createNewItem()
     newModalOpen.value = true;
 }
 
-function handleModal(value) {
+// Modal handlers
+function handleNewItemModal(value) {
     newModalOpen.value = value;
 }
 
@@ -101,9 +106,19 @@ function handleEditListModal(value){
     editListModalOpen.value = value
 }
 
+function handleMarkPurchaseModal(value){
+    markPurchasedModalOpen.value = value
+}
+
 function editItem(item) {
   itemToEdit.value = item;
   newModalOpen.value = true;
+}
+
+function markItem(item) {
+    console.log(item)
+  itemToMark.value = item;
+  markPurchasedModalOpen.value = true;
 }
 
 function deleteItem(item) {
