@@ -35,7 +35,7 @@
     </div>
     <!-- Image -->
     <div v-if="item.image" class="aspect-h-1 aspect-w-1 h-32 w-75 overflow-hidden rounded-lg bg-gray-200 mb-10">
-      <img :src="item.image" :alt="item.name" class="h-full w-full object-cover object-center" />
+      <img :src="item.image" :alt="item.name" class="h-full w-full object-contain object-center" />
     </div>
 
     <!-- Content -->
