@@ -42,7 +42,7 @@
                       <div class="my-8">
 
                         <div v-if="isQuantityReached" class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 border border-blue-800 dark:border-0" role="alert">
-                          <span>This item will be removed from the wishlist as the desired quantity will be reached </span>
+                          <span>This item will be removed from the wishlist as the desired quantity will be reached</span>
                         </div>
 
                         <div v-else-if="form.quantity < quantityNeeded" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 border-yellow-800 border dark:border-0" role="alert">
@@ -73,11 +73,16 @@
 
                       
                         <div class="my-3 text-gray-500 dark:text-gray-300">
-                          <p>Quantity to reserve ({{itemToMark.needs}} wanted<span v-if="itemToMark.has">, {{itemToMark.has}} already purchased </span>)</p>
+                          <p><b>{{itemToMark.needs}}</b> wanted<span v-if="itemToMark.has">, <b>{{itemToMark.has}}</b> already purchased</span></p>
                         </div>
 
                         <!-- Quantity to reserve -->
-                        <TextInput v-model="form.quantity" type="number" />
+                        <div class="flex flex-col">
+                          <InputLabel for="markQuantity" value="Quantity to reserve" />
+                          <TextInput id="markQuantity" v-model="form.quantity" type="number" class="mt-1" />
+                          <InputError v-if="form.errors.quantity" :message="form.errors.quantity" class="mt-1 text-left"/>
+                        </div>
+
 
 
                     </div>
@@ -106,6 +111,9 @@ import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
 import { router } from '@inertiajs/vue3'
 import TextInput from "@/Components/form/TextInput.vue"
+import InputLabel from "@/Components/form/InputLabel.vue"
+import InputError from "@/Components/form/InputError.vue"
+
 import {useForm} from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -154,7 +162,12 @@ function reset(){
 
 function clickUpdateButton()
 {
-  showConfirmation.value=true;
+  if (form.quantity <= 0 || !Number.isInteger(Number(form.quantity))) {
+    form.setError('quantity', 'Quantity must be a positive integer');
+  } else {
+    form.clearErrors('quantity')
+    showConfirmation.value = true;
+  }
 }
 
 function markItemAsPurchased()
