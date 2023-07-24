@@ -1,13 +1,11 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\WishlistController;
 use \App\Http\Controllers\WishlistItemController;
 use \App\Http\Controllers\FriendController;
 use \App\Http\Controllers\ProductScraperController;
-
-use Inertia\Inertia;
+use \App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,17 +18,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('index');
-
-// TODO move to auth
-Route::post('/scrape-product', [ProductScraperController::class, 'scrapeProduct'])->name('scrape');
+Route::get('/', [HomeController::class, 'home'])->name('index');
 
 
 Route::middleware([
@@ -48,6 +36,9 @@ Route::middleware([
     Route::post('/friends/search', [FriendController::class, 'search'])->name('friends.search');
     Route::post('/friends/add/{username}', [FriendController::class, 'addFriend'])->name('friends.add');
     Route::delete('/friends/remove/{username}', [FriendController::class, 'removeFriend'])->name('friends.remove');
+
+    // Scape products
+    Route::post('/scrape-product', [ProductScraperController::class, 'scrapeProduct'])->name('scrape');
 
 
 });
