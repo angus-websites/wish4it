@@ -39,7 +39,7 @@ export default {
         },
 
         baseClasses(){
-            return "rounded-md bg-primary font-semibold text-white shadow-sm hover:bg-primary-dark text-center";
+            return "rounded-md bg-primary font-semibold text-white shadow-sm hover:bg-primary-dark text-center disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary";
         }
 
     }

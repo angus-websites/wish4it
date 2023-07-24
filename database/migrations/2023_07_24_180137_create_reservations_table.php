@@ -11,18 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('friends', function (Blueprint $table) {
+        Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('friend_id');
+            $table->unsignedBigInteger('wishlist_item_id');
+            $table->integer("quantity");
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('friend_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-
-            $table->unique(['user_id', 'friend_id']);
-
+            $table->foreign('wishlist_item_id')->references('id')->on('wishlist_items')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('friends');
+        Schema::dropIfExists('reservations');
     }
 };

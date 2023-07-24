@@ -69,9 +69,14 @@
                 
                 <!-- Image -->
                 <div v-if="form.image" class="w-full mt-5">
-                  <figure class="w-20 h-20 mx-auto">
-                    <img class="h-auto max-w-full rounded-lg" :src="form.image" alt="image description">
-                  </figure>
+                  <div class="w-24 h-24 rounded-md overflow-hidden mx-auto bg-white">
+                    <img :src="form.image" alt="Your Image" class="w-full h-full object-contain">
+                  </div>
+
+
+      
+
+
                 </div>
 
                 <!-- Form -->

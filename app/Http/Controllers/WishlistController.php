@@ -56,6 +56,13 @@ class WishlistController extends Controller
         // Load the items of this wishlist
         $wishlist->load('items');
 
+        // Filter the items where needs is greater than has
+        if ($wishlist->user_id != Auth::user()->id) {
+            $wishlist->items = $wishlist->items->filter(function ($item) {
+                return $item->needs > $item->has;
+            });
+        }
+
         // Convert to an API resource
         $list = new WishlistResource($wishlist);
 
@@ -65,7 +72,6 @@ class WishlistController extends Controller
                 'deleteList' => Auth::user()->can('delete', $wishlist),
                 'editList' => Auth::user()->can('update', $wishlist),
                 'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
-
             ],
         ]);
     }
