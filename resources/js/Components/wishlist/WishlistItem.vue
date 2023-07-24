@@ -28,10 +28,8 @@
                 >Mark as purchased</button
               >
             </MenuItem>
-            <MenuItem v-else v-slot="{ active }">
-              <button @click="markItem" type="button" class="block w-full px-3 py-1 text-xs leading-6 text-gray-500 hover:text-gray-700"
-                >Mark as purchased</button
-              >
+            <MenuItem v-else>
+              <p class="px-3 py-1 text-red-500">N/A</p>
             </MenuItem>
 
 
