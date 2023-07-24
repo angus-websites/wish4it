@@ -22,27 +22,31 @@
                      <dl class="divide-y divide-gray-100 dark:divide-dark-light">
                         <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                           <dt class="text-sm font-medium text-gray-700 dark:text-gray-400">Item to mark</dt>
-                          <dd class="mt-1 text-sm font-bold leading-6 text-primary dark:text-light-dark sm:col-span-2 sm:mt-0">{{itemToMark.name}}</dd>
+                          <dd class="mt-1 text-sm font-bold leading-6 text-gray-500 dark:text-light-dark sm:col-span-2 sm:mt-0">{{itemToMark.name}}</dd>
                         </div>
                         <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                          <dt class="text-sm font-medium text-gray-700 dark:text-gray-400">Quantity chosen to reserve</dt>
-                          <dd class="mt-1 text-sm font-bold leading-6 text-primary dark:text-light-dark sm:col-span-2 sm:mt-0">{{form.quantity}}</dd>
+                          <dt class="text-sm font-medium text-blue-500 dark:text-accent-light">Quantity chosen to reserve</dt>
+                          <dd class="mt-1 text-sm font-bold leading-6 text-blue-500 dark:text-accent-light sm:col-span-2 sm:mt-0">{{form.quantity}}</dd>
+                        </div>
+                        <div v-if="itemToMark.has" class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt class="text-sm font-medium text-gray-700 dark:text-gray-400">Quantity already purchased by others</dt>
+                          <dd class="mt-1 text-sm font-bold leading-6 text-gray-500 dark:text-light-dark sm:col-span-2 sm:mt-0">{{itemToMark.has}}</dd>
                         </div>
                         <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                           <dt class="text-sm font-medium text-gray-700 dark:text-gray-400">Quantity desired by list creator</dt>
-                          <dd class="mt-1 text-sm font-bold leading-6 text-primary dark:text-light-dark sm:col-span-2 sm:mt-0">{{itemToMark.needs}}</dd>
+                          <dd class="mt-1 text-sm font-bold leading-6 text-gray-500 dark:text-light-dark sm:col-span-2 sm:mt-0">{{itemToMark.needs}}</dd>
                         </div>
                         
                       </dl> 
 
                       <div class="my-8">
 
-                        <div v-if="form.quantity >= itemToMark.needs" class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 border border-blue-800 dark:border-0" role="alert">
+                        <div v-if="isQuantityReached" class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 border border-blue-800 dark:border-0" role="alert">
                           <span>This item will be removed from the wishlist as the desired quantity will be reached </span>
                         </div>
 
-                        <div v-else-if="form.quantity < itemToMark.needs" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 border-yellow-800 border dark:border-0" role="alert">
-                          <span>This item <b>will</b> remain visible on this wishlist as the quantity you selected to reserve is less than the desired amount</span>
+                        <div v-else-if="form.quantity < quantityNeeded" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 border-yellow-800 border dark:border-0" role="alert">
+                          <span>This item <b>will</b> remain visible on this wishlist as the desired quanity has not been reached</span>
                         </div>
 
                       </div>
@@ -68,8 +72,8 @@
                     <div class="p-6 text-center">
 
                       
-                        <div class="my-3 text-gray-400 dark:text-gray-300">
-                          <p>Quantity to reserve ({{itemToMark.needs}} wanted) </p>
+                        <div class="my-3 text-gray-500 dark:text-gray-300">
+                          <p>Quantity to reserve ({{itemToMark.needs}} wanted<span v-if="itemToMark.has">, {{itemToMark.has}} already purchased </span>)</p>
                         </div>
 
                         <!-- Quantity to reserve -->
@@ -96,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
@@ -124,6 +128,15 @@ let showConfirmation = ref(false)
 
 watchEffect(() => {
     isOpen.value = props.open
+})
+
+
+const quantityNeeded = computed(() => {
+  return props.itemToMark.needs - props.itemToMark.has
+})
+
+const isQuantityReached = computed(() => {
+  return form.quantity >=  (props.itemToMark.needs - props.itemToMark.has)
 })
 
 
