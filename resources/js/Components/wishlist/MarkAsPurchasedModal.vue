@@ -19,7 +19,7 @@
                       
                       <p class="mb-2 text-lg font-normal text-gray-600 dark:text-gray-200">Are you sure you want to mark this product as purchased?</p>
 
-                     <dl class="divide-y divide-gray-100 dark:divide-dark-light">
+                     <dl class="divide-y divide-gray-100 dark:divide-dark-light mt-3">
                         <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                           <dt class="text-sm font-medium text-gray-700 dark:text-gray-400">Item to mark</dt>
                           <dd class="mt-1 text-sm font-bold leading-6 text-gray-500 dark:text-light-dark sm:col-span-2 sm:mt-0">{{itemToMark.name}}</dd>
