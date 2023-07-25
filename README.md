@@ -1,4 +1,6 @@
-# Wishlist
+<p align="center"><img src="logo.png"  width="400"></p>
+
+# Wish4it
 
 ## Overview
 A website for creating and sharing wishlists with family and friends
