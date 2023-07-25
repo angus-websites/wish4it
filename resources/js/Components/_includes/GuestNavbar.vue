@@ -6,8 +6,8 @@
         <!-- Logo and links -->
         <div class="flex gap-x-5">
           <div class="flex flex-shrink-0 items-center">
-            <TextLogo class="h-6 dark:hidden" />
-            <TextLogoForDarkMode class="h-6 hidden dark:block" />
+            <TextLogo class="h-8 dark:hidden" />
+            <TextLogoForDarkMode class="h-8 hidden dark:block" />
 
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -73,10 +73,7 @@ const canRegister = usePage().props.canRegister
 const showLogin = usePage().props.showLogin
 
 let navigation = [
-    { name: 'Overview', href: "#", current: route().current('index') },
-    { name: 'Features', href: "#", current: route().current('features') },
-    { name: 'Pricing', href: "#", current: route().current('pricing') },
-
+    
 ]
 
 </script>
