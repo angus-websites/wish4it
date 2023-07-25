@@ -208,6 +208,10 @@ function markItemAsPurchased()
     onError: errors => {
       showError.value = true;
     },
+    onFinish: visit => {
+      clearTimeout(loadingTimeout)
+      loading.value=false
+    },
   })
 }
 
