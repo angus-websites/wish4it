@@ -1,5 +1,5 @@
 <template>
-    <AppLayout title="My Lists">
+    <AppLayout :title="list.title">
         <template #header>
             <div class="flex flex-row justify-between items-center">
                 <div>

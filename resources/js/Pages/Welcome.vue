@@ -15,12 +15,15 @@ defineProps({
 <template>
     <GuestLayout title="Home">
         <PageContainer>
-            <div class="text-center">
-                <h1 class="h1">A website for creating & sharing wishlists.</h1>
-                <div class="py-10">
-                    <PrimaryButton :isLink="true" :href="route('register')" size="l">Get started</PrimaryButton>
-                </div>
+
+            <div class="p-4 rounded-lg text-center">
+              <h1 class="h1">A website for creating & sharing wishlists.</h1>
+              <div class="py-10">
+                  <PrimaryButton :isLink="true" :href="route('register')" size="l">Get started</PrimaryButton>
+              </div>
             </div>
+
+
         </PageContainer>
     </GuestLayout>
 </template>
