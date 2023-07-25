@@ -10,13 +10,13 @@ A website for creating and sharing wishlists with family and friends
 Clone the project
 
 ```bash
-git clone git@github.com:angus-websites/wishlist.git
+git clone git@github.com:angus-websites/wish4it.git
 ```
 
 Go to the project directory
 
 ```bash
-cd wishlist
+cd wish4it
 ```
 
 Setup Laravel Sail
