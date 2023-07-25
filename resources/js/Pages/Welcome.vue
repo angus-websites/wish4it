@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import PageContainer from "@/Components/_util/PageContainer.vue";
+import PrimaryButton from "@/Components/buttons/PrimaryButton.vue";
 
 defineProps({
     canLogin: Boolean,
@@ -14,13 +15,15 @@ defineProps({
 <template>
     <GuestLayout title="Home">
         <PageContainer>
-            <h1 class="h1"> H1 </h1>
-            <h2 class="h2"> H2 </h2>
-            <h3 class="h3"> H3</h3>
 
-            <h4 class="h4"> H4</h4>
-            <h5 class="h5"> H5</h5>
-            <h6 class="h6"> H6</h6>
+            <div class="p-4 rounded-lg text-center">
+              <h1 class="h1">A website for creating & sharing wishlists.</h1>
+              <div class="py-10">
+                  <PrimaryButton :isLink="true" :href="route('register')" size="l">Get started</PrimaryButton>
+              </div>
+            </div>
+
+
         </PageContainer>
     </GuestLayout>
 </template>
