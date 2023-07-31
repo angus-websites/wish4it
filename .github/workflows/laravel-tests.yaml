@@ -7,8 +7,18 @@ on:
     branches: [ main ]
 
 jobs:
-  tests:
+  Run all tests:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: laravel
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - name: Checkout code
@@ -18,7 +28,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.1'
-        extensions: mbstring, dom, fileinfo, mysql
+        extensions: mbstring, dom, fileinfo, pdo_mysql
         tools: composer:v2
 
     - name: Install Dependencies
@@ -26,6 +36,14 @@ jobs:
 
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      
+    - name: Configure .env
+      run: |
+        echo "DB_HOST=127.0.0.1" >> .env
+        echo "DB_PORT=3306" >> .env
+        echo "DB_DATABASE=laravel" >> .env
+        echo "DB_USERNAME=root" >> .env
+        echo "DB_PASSWORD=" >> .env
 
     - name: Generate key
       run: php artisan key:generate
@@ -33,5 +51,8 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
 
+    - name: Migrate Database
+      run: php artisan migrate --force
+      
     - name: Run tests
       run: vendor/bin/phpunit
