@@ -10,6 +10,13 @@ class WishlistTest extends TestCase
 {
     use DatabaseMigrations;
 
+    /**
+     * Test a non-logged-in user cannot view their wishlists
+     */
+    public function test_non_logged_in_user_cannot_access_wishlists(){
+        $response = $this->get('/wishlists');
+        $response->assertStatus(302);
+    }
 
     /**
      * Test a logged-in user can view their wishlists
@@ -22,10 +29,14 @@ class WishlistTest extends TestCase
     }
 
     /**
-     * Test a non-logged-in user cannot view their wishlists
+     * Test a non-logged-in user cannot create a wishlist
      */
-    public function test_non_logged_in_user_cannot_access_wishlists(){
-        $response = $this->get('/wishlists');
+    public function test_non_logged_in_user_cannot_create_wishlist()
+    {
+        $response = $this->post('/wishlists', [
+            'title' => 'Test Wishlist',
+            'public' => false,
+        ]);
         $response->assertStatus(302);
     }
 
@@ -50,18 +61,6 @@ class WishlistTest extends TestCase
             'public' => false,
         ]);
         $response->assertSessionHasErrors('title');
-    }
-
-    /**
-     * Test a non-logged-in user cannot create a wishlist
-     */
-    public function test_non_logged_in_user_cannot_create_wishlist()
-    {
-        $response = $this->post('/wishlists', [
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
-        $response->assertStatus(302);
     }
 
     /**
@@ -93,7 +92,22 @@ class WishlistTest extends TestCase
     }
 
     /**
-     * Test another user can view a public wishlist
+     * Test a friend of the creator cannot view a private wishlist
+     */
+    public function test_friend_of_creator_cannot_view_private_wishlist(){
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => false,
+        ]);
+        $otherUser = User::factory()->create();
+        $otherUser->friends()->attach($user);
+        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
+        $response->assertStatus(403);
+    }
+
+    /**
+     * Test another user can not view a public wishlist if they are not a friend of the creator
      */
     public function test_other_user_cannot_view_public_wishlist_if_not_friend_of_creator(){
         $user = User::factory()->create();
@@ -124,18 +138,37 @@ class WishlistTest extends TestCase
     }
 
     /**
-     * Test a friend of the creator cannot view a private wishlist
+     * Test other user cannot update a wishlist
      */
-    public function test_friend_of_creator_cannot_view_private_wishlist(){
+    public function test_other_user_cannot_update_wishlist(){
         $user = User::factory()->create();
         $wishlist = $user->wishlists()->create([
             'title' => 'Test Wishlist',
             'public' => false,
         ]);
         $otherUser = User::factory()->create();
-        $otherUser->friends()->attach($user);
-        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
+        $response = $this->actingAs($otherUser)->put('/wishlists/' . $wishlist->id, [
+            'title' => 'Updated Wishlist',
+            'public' => true,
+        ]);
         $response->assertStatus(403);
+    }
+
+    /**
+     * Test the wishlist is actually updated when the owner updates it
+     */
+    public function test_wishlist_is_updated_when_owner_updates_it()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => false,
+        ]);
+        $response = $this->actingAs($user)->put('/wishlists/' . $wishlist->id, [
+            'title' => 'Updated Wishlist',
+            'public' => true,
+        ]);
+        $this->assertDatabaseHas('wishlists', ['id' => $wishlist->id, 'title' => 'Updated Wishlist', 'public' => true]);
     }
 
     /**
@@ -152,23 +185,4 @@ class WishlistTest extends TestCase
         $response = $this->actingAs($otherUser)->delete('/wishlists/' . $wishlist->id);
         $response->assertStatus(403);
     }
-
-    /**
-     * Test only creator can update a wishlist
-     */
-    public function test_other_user_cannot_update_wishlist(){
-        $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
-        $otherUser = User::factory()->create();
-        $response = $this->actingAs($otherUser)->put('/wishlists/' . $wishlist->id, [
-            'title' => 'Updated Wishlist',
-            'public' => true,
-        ]);
-        $response->assertStatus(403);
-    }
-
-
 }
