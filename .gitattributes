@@ -11,4 +11,5 @@ CHANGELOG.md export-ignore
 .styleci.yml export-ignore
 
 tests/Data/* linguist-vendored
+tests/Data/html/** linguist-vendored
 
