@@ -42,7 +42,3 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           target: prod # Target the prod build target in the Dockerfile
-
-      - name: Notify server to deploy
-        run: |
-          curl -X POST ${{ secrets.WEBHOOK_URL }}
