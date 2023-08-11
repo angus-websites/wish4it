@@ -7,6 +7,7 @@ use \App\Http\Controllers\FriendController;
 use \App\Http\Controllers\ProductScraperController;
 use \App\Http\Controllers\HomeController;
 use \App\Http\Controllers\ReservationController;
+use App\Http\Controllers\StorageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,9 @@ use \App\Http\Controllers\ReservationController;
 
 Route::get('/', [HomeController::class, 'home'])->name('index');
 
+//Storage
+Route::get('/images/{path}', [StorageController::class, 'image'])->where('path', '.*');
+Route::get('/storage/{path}', [StorageController::class, 'storage'])->where('path', '.*');
 
 Route::middleware([
     'auth:sanctum',
