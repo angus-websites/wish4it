@@ -12,3 +12,4 @@ php artisan migrate --force
 chmod -R 777 storage
 
 php artisan db:seed --force
+php artisan test
