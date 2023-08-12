@@ -15,9 +15,13 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->foreignId('wishlist_id')->constrained("wishlists")
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->uuid('wishlist_id');
+            $table->foreign('wishlist_id')
+                  ->references('id')
+                  ->on('wishlists')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
+            
             $table->text("name");
             $table->text("brand")->nullable();
             $table->text("price")->nullable();
@@ -26,6 +30,8 @@ return new class extends Migration
             $table->text("image")->nullable();
             $table->integer("needs")->default(1);
             $table->integer("has")->default(0);
+
+            
         });
     }
 
