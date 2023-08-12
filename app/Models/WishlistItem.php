@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class WishlistItem extends Model
 {
     use HasFactory;
+    use HasUuids;
 
     protected $guarded = ['id', 'wishlist_id'];
 

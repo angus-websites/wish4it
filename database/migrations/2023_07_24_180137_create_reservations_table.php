@@ -14,12 +14,10 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-
-            $table->unsignedBigInteger('wishlist_item_id');
             $table->integer("quantity");
 
             $table->foreignUuid('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('wishlist_item_id')->references('id')->on('wishlist_items')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('wishlist_item_id')->references('id')->on('wishlist_items')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
@@ -31,3 +29,4 @@ return new class extends Migration
         Schema::dropIfExists('reservations');
     }
 };
+
