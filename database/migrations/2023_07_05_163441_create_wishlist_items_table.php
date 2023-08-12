@@ -14,14 +14,12 @@ return new class extends Migration
         Schema::create('wishlist_items', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-
-            $table->uuid('wishlist_id');
-            $table->foreign('wishlist_id')
+            $table->foreignUuid('wishlist_id')
                   ->references('id')
                   ->on('wishlists')
                   ->onUpdate('cascade')
-                  ->onDelete('cascade');
-            
+                  ->onDelete('cascade'); 
+                  
             $table->text("name");
             $table->text("brand")->nullable();
             $table->text("price")->nullable();

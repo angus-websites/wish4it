@@ -15,11 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('friend_id');
-
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('friend_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('friend_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
             $table->unique(['user_id', 'friend_id']);
 

@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->text("title");
             $table->boolean("public")->default(true);
-            $table->foreignId('user_id')->constrained("users")
+            $table->foreignUuid('user_id')->constrained("users")
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 

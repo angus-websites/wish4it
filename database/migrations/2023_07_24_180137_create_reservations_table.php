@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('wishlist_item_id');
             $table->integer("quantity");
 
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('wishlist_item_id')->references('id')->on('wishlist_items')->onUpdate('cascade')->onDelete('cascade');
         });
     }
