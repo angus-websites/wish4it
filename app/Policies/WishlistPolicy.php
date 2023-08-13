@@ -22,7 +22,7 @@ class WishlistPolicy
      */
     public function markAsPurchased(User $user, Wishlist $wishlist)
     {
-        return $user->isFriends($wishlist->user())
+        return $wishlist->isPublic()
             ? Response::allow()
             : Response::deny('You cannot mark this item as purchased');
     }
