@@ -154,4 +154,25 @@ class WishlistTest extends TestCase
         $response = $this->actingAs($otherUser)->delete('/wishlists/' . $wishlist->id);
         $response->assertStatus(403);
     }
+
+    public function test_a_guest_redirects_to_previous_wishlist_after_login()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+        $guest = User::factory()->create();
+        // Simulate the behavior of a guest trying to view the wishlist
+        $this->get(route('wishlists.show', $wishlist));
+
+        // Simulate login
+        $response = $this->post(route('login'), [
+            'email' => $guest->email,
+            'password' => 'password' // Assuming this is the default password you've set in your User factory.
+        ]);
+
+        $response->assertRedirect(route('wishlists.show', $wishlist));
+    }
 }
