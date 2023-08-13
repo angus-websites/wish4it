@@ -26,6 +26,9 @@ Route::get('/', [HomeController::class, 'home'])->name('index');
 Route::get('/images/{path}', [StorageController::class, 'image'])->where('path', '.*');
 Route::get('/storage/{path}', [StorageController::class, 'storage'])->where('path', '.*');
 
+// Public wishlists
+Route::get('wishlists/{wishlist}', [WishlistController::class, 'show'])->name('wishlists.show');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -33,7 +36,7 @@ Route::middleware([
 ])->group(function () {
 
     // Wishlists
-    Route::resource('wishlists', WishlistController::class);
+    Route::resource('wishlists', WishlistController::class)->except('show');;
     Route::resource('wishlists.items', WishlistItemController::class);
     Route::put('/wishlists/{wishlist}/items/{item}/mark', [WishlistItemController::class, 'markAsPurchased'])->name('wishlists.items.mark');
 
