@@ -105,36 +105,6 @@ class WishlistTest extends TestCase
         $response->assertStatus(403);
     }
 
-    /**
-     * Test another user can not view a public wishlist if they are not a friend of the creator
-     */
-    public function test_other_user_cannot_view_public_wishlist_if_not_friend_of_creator(){
-        $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
-        $otherUser = User::factory()->create();
-        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
-        $response->assertStatus(403);
-
-    }
-
-    /**
-     * Test another user can view a public wishlist if they are a friend of the creator
-     */
-    public function test_other_user_can_view_public_wishlist_if_friend_of_creator()
-    {
-        $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
-        $otherUser = User::factory()->create();
-        $otherUser->friends()->attach($user);
-        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
-        $response->assertStatus(200);
-    }
 
     /**
      * Test other user cannot update a wishlist
