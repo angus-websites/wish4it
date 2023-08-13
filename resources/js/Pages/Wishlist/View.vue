@@ -47,13 +47,13 @@
                     <!-- View purchased option -->
                     <div v-if="can.viewPurchased">
                         <label class="flex items-center">
-                            <Checkbox checked="false" name="remember" />
+                            <Checkbox v-model="viewPurchased" name="remember" />
                             <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Show purchased items</span>
                         </label>
                     </div>
                     <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
-                <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+                <WishlistGrid :items="list.items" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
             </div>
         </div>
 
@@ -85,6 +85,7 @@ let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)
 let editListModalOpen = ref(false)
 let markPurchasedModalOpen = ref(false)
+let viewPurchased = ref(false);
 
 let itemToEdit = ref(null);
 let itemToDelete = ref(null);
