@@ -31,9 +31,11 @@ const emit = defineEmits(['edit', "delete", "mark"]);
 
 // Computed property to filter items
 const displayedItems = computed(() => {
+  // Show all
   if (props.showPurchased) {
     return props.items;
   }
+  // Only show items that are still available to buy
   return props.items.filter(item => item.needs > item.has);
 });
 
