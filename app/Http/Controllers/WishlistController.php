@@ -58,7 +58,7 @@ class WishlistController extends Controller
 
         $currentUserId = Auth::id(); // This will return null if no user is authenticated
 
-        // Filter the items where needs is greater than has (remove the purchased items)
+        // Filter the items where needs is greater than has (remove the purchased items, unless author)
         if ($currentUserId && $wishlist->user_id != $currentUserId) {
             $wishlist->items = $wishlist->items->filter(function ($item) {
                 return $item->needs > $item->has;
@@ -86,6 +86,7 @@ class WishlistController extends Controller
                 'deleteList' => Auth::user()->can('delete', $wishlist),
                 'editList' => Auth::user()->can('update', $wishlist),
                 'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
+                'viewPurchased' => Auth::user()->can('viewPurchased',  $wishlist),
             ],
         ]);
     }

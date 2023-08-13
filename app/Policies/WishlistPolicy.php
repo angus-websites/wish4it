@@ -28,6 +28,17 @@ class WishlistPolicy
     }
 
     /**
+     * Determine whether the user can view items
+     * that have been marked as purchased
+     */
+    public function viewPurchased(User $user, Wishlist $wishlist)
+    {
+        return $user->id === $wishlist->user_id
+            ? Response::allow()
+            : Response::deny('You cannot view the purchased items');
+    }
+
+    /**
      * Determine whether the user can view the model.
      */
     public function view(?User $user, Wishlist $wishlist)

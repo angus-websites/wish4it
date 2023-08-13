@@ -19,7 +19,6 @@
                 
                 <!-- Button row-->
                 <div class="flex flex-row justify-between items-center mx-3 sm:mx-0 my-5">
-
                     <!-- Breadcrumb -->
                     <nav class="flex" aria-label="Breadcrumb">
                       <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -44,6 +43,14 @@
                         </li>
                       </ol>
                     </nav>
+
+                    <!-- View purchased option -->
+                    <div v-if="can.viewPurchased">
+                        <label class="flex items-center">
+                            <Checkbox checked="false" name="remember" />
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Show purchased items</span>
+                        </label>
+                    </div>
                     <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
                 <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
@@ -67,6 +74,8 @@ import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
 import EditWishlistModal from '@/Components/wishlist/EditWishlistModal.vue'
 import MarkAsPurchasedModal from '@/Components/wishlist/MarkAsPurchasedModal.vue'
+
+import Checkbox from '@/Components/form/Checkbox.vue'
 
 import FlashMessages from '@/Components/FlashMessages.vue'
 
