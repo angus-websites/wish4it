@@ -45,7 +45,7 @@ class WishlistPolicy
                 : Response::deny('You cannot view this wishlist');
         }
 
-        return Response::deny('You cannot view this wishlist')
+        return Response::deny('You cannot view this wishlist');
     }
 
     /**

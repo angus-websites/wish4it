@@ -2,7 +2,7 @@
   <div class="border-b border-r border-gray-200 dark:border-[#1A202A] p-4 sm:p-6 flex flex-col">
 
     <!-- Dropdown menu -->
-    <div class="flex items-center justify-end mb-3">
+    <div v-if="item.can" class="flex items-center justify-end mb-3">
       <Menu as="div" class="relative ml-auto">
         <MenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">
           <span class="sr-only">Open options</span>
