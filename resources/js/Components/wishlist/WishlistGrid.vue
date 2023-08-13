@@ -1,6 +1,6 @@
 <template>
 
-  <EmptyState v-if="items.length < 1">
+  <EmptyState v-if="displayedItems.length < 1">
       <p>No items</p>
   </EmptyState>
 
