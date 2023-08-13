@@ -70,6 +70,10 @@ class WishlistController extends Controller
 
         // If user not logged in then render a different view
         if (!$currentUserId) {
+
+            // Store the intended URL so if user creates an account they are redirected here
+            session(['url.intended' => url()->current()]);
+
             return Inertia::render('Guest/WishlistPublic', [
                 'list' => $list,
             ]);
