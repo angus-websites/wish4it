@@ -24,12 +24,16 @@ class WishlistItemResource extends JsonResource
             'image' => $this->image,
             'needs' => $this->needs,
             'has' => $this->has,
-            'hasCurrentUserReservation' => $this->hasUserReservation($request->user()),
-            'can' => [
-                'update' => $request->user()->can("update", $this->wishlist()),
-                'delete' => $request->user()->can("delete", $this->wishlist()),
-                'mark' => $request->user()->can("markAsPurchased", $this->wishlist())
-            ]
+            'hasCurrentUserReservation' => $this->when($request->user(), function () use ($request) {
+                return $this->hasUserReservation($request->user());
+            }),
+            'can' => $this->when($request->user(), function () use ($request) {
+                return [
+                    'update' => $request->user()->can("update", $this->wishlist()),
+                    'delete' => $request->user()->can("delete", $this->wishlist()),
+                    'mark' => $request->user()->can("markAsPurchased", $this->wishlist())
+                ];
+            }),
         ];
     }
 }
