@@ -31,6 +31,20 @@ class WishlistTest extends TestCase
     }
 
     /**
+     * Test a non-logged in user can view a public wishlist
+     */
+    public function test_non_logged_in_user_can_view_public_wishlist()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+        $response = $this->get('/wishlists/' . $wishlist->id);
+        $response->assertStatus(200);
+    }
+
+    /**
      * Test a non-logged-in user cannot create a wishlist
      */
     public function test_non_logged_in_user_cannot_create_wishlist()
@@ -253,8 +267,105 @@ class WishlistTest extends TestCase
 
 
 
-
     }
 
 
+    /**
+     * Test only a logged-in user can mark an item as purchased from another users public wishlist
+     */
+    public function test_only_logged_in_user_can_mark_item_as_purchased(){
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $response = $this->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark');
+        $response->assertRedirect('/login');
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id]);
+    }
+
+    /**
+     * Test a logged-in user can mark an item as purchased from another users public wishlist
+     */
+    public function test_logged_in_user_can_mark_item_as_purchased()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $another = User::factory()->create();
+
+        // Send a request to mark the item as purchased
+        $data = [
+            'quantity' => 1,
+        ];
+        $response = $this->actingAs($another)
+            ->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark', $data);
+
+        // Assert the database was updated
+        $this->assertDatabaseHas('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
+    }
+
+    /**
+     * Test a logged-in user cannot mark an item as purchased from another users private wishlist
+     */
+    public function test_logged_in_user_cannot_mark_item_as_purchased_from_private_list()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => false,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $another = User::factory()->create();
+
+        // Send a request to mark the item as purchased
+        $data = [
+            'quantity' => 1,
+        ];
+        $response = $this->actingAs($another)
+            ->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark', $data);
+
+        // Assert 403
+        $response->assertStatus(403);
+
+        // Assert the database was not updated
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
+    }
 }
