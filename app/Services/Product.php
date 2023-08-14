@@ -26,6 +26,7 @@ class Product
             "brand" => $this->brand,
             "price" => $this->price,
             "image" => $this->image,
+            "hasMissedFields" => count($this->getMissingFields()) > 0
         ];
     }
 
