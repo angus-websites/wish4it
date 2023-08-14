@@ -19,7 +19,7 @@
                         <p>No wishlists</p>
                     </EmptyState>
 
-                    <WishlistList v-else :lists="lists"/>
+                    <WishlistList v-else :lists="lists" class="mx-5"/>
 
                     <EditWishlistModal :open="newListModalOpen" @update:open="handleNewListModal" />
                     

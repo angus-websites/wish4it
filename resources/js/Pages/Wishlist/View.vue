@@ -1,7 +1,7 @@
 <template>
     <AppLayout :title="list.title">
         <template #header>
-            <div class="flex flex-col space-y-5 sm:flex-row justify-between items-center">
+            <div class="flex flex-col space-y-5 sm:flex-row sm:space-y-0 justify-between items-center">
                 <div>
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         {{ list.title }} 
