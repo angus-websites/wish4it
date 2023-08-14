@@ -44,16 +44,19 @@
                       </ol>
                     </nav>
 
-                    <!-- View purchased option -->
-                    <div v-if="can.viewPurchased">
-                        <label class="flex items-center">
-                            <Checkbox v-model="viewPurchased" name="remember" />
-                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Show purchased items</span>
-                        </label>
+                    <div class="flex flex-row justify-between items-center space-x-8">
+                        <!-- View purchased option -->
+                        <div v-if="can.viewPurchased">
+                            <label class="flex items-center">
+                                <Checkbox v-model="viewPurchased" name="remember" />
+                                <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Show purchased items</span>
+                            </label>
+                        </div>
+
+                        <!-- button -->
+                        <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                     </div>
 
-                    <!-- button -->
-                    <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
                 <WishlistGrid :items="list.items" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
             </div>

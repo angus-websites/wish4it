@@ -32,6 +32,7 @@
                         id="url"
                         type="url"
                         class="mt-1 block w-full"
+                        @focus="checkClipboardForUrl"
                         required
                         autofocus
                     />
@@ -297,6 +298,38 @@ function sendUrl(){
       showUrlLoadingSpinner.value=false;
     });  
 }
+
+
+
+async function checkClipboardForUrl() {
+
+  // Only check if the input is empty
+  if (urlForm.url) return;
+
+
+  if (navigator.clipboard && typeof navigator.clipboard.readText === "function") {
+    try {
+      const clipboardContent = await navigator.clipboard.readText();
+      if (isValidUrl(clipboardContent)) {
+        urlForm.url = clipboardContent;
+      }
+    } catch (err) {
+      console.error('Failed to read clipboard:', err);
+    }
+  }else{
+    console.log("Clipboard api not enabled")
+  }
+}
+
+function isValidUrl(str) {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
+    return false;  
+  }
+}
+
 
 function closeModal() {
   emit('update:open', false)
