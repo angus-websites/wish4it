@@ -12,15 +12,24 @@ class Wishlist extends Model
     use HasUuids;
 
     // Guarded attributtes
-    protected $guarded = ['id', 'user_id'];
+    protected $guarded = ['id'];
 
     /**
-     * Fetch the user
+     * Fetch the users
      * that this wishlist belongs
      * to
      */
-    public function user(){
-        return $this->belongsTo(User::class)->firstOrFail();
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withPivot('role');
+    }
+
+    /**
+     * Get the owner of this wishlist
+     */
+    public function owner()
+    {
+        return $this->belongsToMany(User::class)->wherePivot('role', 'owner')->first();
     }
 
     /**
