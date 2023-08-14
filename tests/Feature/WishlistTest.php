@@ -2,7 +2,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\Reservation;
+use App\Models\WishlistItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class WishlistTest extends TestCase
@@ -155,6 +158,11 @@ class WishlistTest extends TestCase
         $response->assertStatus(403);
     }
 
+
+    /**
+     * If a guest views a wishlist, then signs in or registers, they are
+     * redirected to the list they viewed
+     */
     public function test_a_guest_redirects_to_previous_wishlist_after_login()
     {
         $user = User::factory()->create();
@@ -175,4 +183,78 @@ class WishlistTest extends TestCase
 
         $response->assertRedirect(route('wishlists.show', $wishlist));
     }
+
+    /**
+     * Only the author of a list should have the option
+     * to view purchased items
+     */
+    public function test_only_author_can_view_purchased_items()
+    {
+
+        // Create the wishlist author and a new wishlist
+        $author = User::factory()->create();
+        $wishlist = $author->wishlists()->create([
+            'title' => 'My public Wishlist',
+            'public' => true,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        // Create an item on the wishlist to be purchased
+        $ipad = WishlistItem::create([
+          'name' => "iPad",
+          'wishlist_id' => $wishlist->id
+        ]);
+
+        // Create an item on the wishlist to not be purchased
+        $puppy = WishlistItem::create([
+          'name' => "Puppy",
+          'wishlist_id' => $wishlist->id
+        ]);
+
+        // Create a buyer
+        $buyer = User::factory()->create();
+
+        // Create a new reservation to mark as purchased
+        $reservation = Reservation::create([
+            'user_id' => $buyer->id,
+            'wishlist_item_id' => $ipad->id,
+            'quantity' => 1,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        // Create another user as another friend of the author
+        $friend = User::factory()->create();
+
+        // View the wishlist as the friend
+        $this->actingAs($friend)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            // Checking we have 1 item in our array
+            ->has('list.items', 1, fn(Assert $page) => $page
+                ->where('id', $puppy->id)
+                ->where('name', 'Puppy')
+                ->etc()
+            )
+        );
+
+        // View the wishlist as the author (both items should be present)
+        $this->actingAs($author)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            // Checking we have 2 items in our array
+            ->has('list.items', 2, fn(Assert $page) => $page
+                ->where('id', $ipad->id)
+                ->where('name', 'iPad')
+                ->etc()
+            )
+        );
+
+
+
+
+    }
+
+
 }

@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-    <GuestLayout title="Home">
+    <GuestLayout :title="list.title">
         <PageContainer>
 
             <div class="flex flex-row justify-between items-end">
@@ -21,7 +21,7 @@ defineProps({
                     <p class="h4 mt-2">{{list.owner.name}}</p>
                 </div>
                 <div>
-                    <p>{{list.itemCount}} items</p>
+                    <p>{{list.items.length}} items</p>
                 </div>
             </div>
 
