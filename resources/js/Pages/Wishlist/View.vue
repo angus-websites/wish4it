@@ -9,14 +9,29 @@
                     <small v-if="$page.props.auth.user.id !== list.owner.id" class="text-sm">{{list.owner.name}}</small>
                 </div>
 
-                <PrimaryOutlineButton v-if="can.editList" @click="editList" size="s">Edit List</PrimaryOutlineButton>
+                <div class="flex flex-row items-center space-x-3">
+                    <SecondaryOutlineButton @click="copyLinkUrl" size="s">Copy link</SecondaryOutlineButton>
+                    <PrimaryOutlineButton v-if="can.editList" @click="editList" size="s">Edit List</PrimaryOutlineButton>
+                </div>
             </div>
         </template>
 
+        <!-- Clipboard message success -->
+        <div v-if="showClipboardSuccessMessage" class="p-4 mb-4 text-sm text-green-800 dark:text-green-400 text-center" role="alert">
+          <span class="font-medium">Success!</span> link to list copied to clipboard
+        </div>
+
+        <!-- Clipboard message failure -->
+        <div v-if="showClipboardErrorMessage" class="p-4 mb-4 text-sm text-red-800 dark:text-red-400 text-center" role="alert">
+          <span class="font-medium">Failure!</span> failed to copy link to clipboard
+        </div>
+
         <div class="py-5 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
                 <FlashMessages class="mb-5" :hideErrors="true" />
-                
+            
+
                 <!-- Button row-->
                 <div class="flex flex-col space-y-8 sm:flex-row sm:space-y-0 justify-between items-center mx-3 sm:mx-0 my-5">
                     <!-- Breadcrumb -->
@@ -74,6 +89,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import WishlistGrid from '@/Components/wishlist/WishlistGrid.vue'
 import PrimaryButton from '@/Components/buttons/PrimaryButton.vue'
 import PrimaryOutlineButton from '@/Components/buttons/PrimaryOutlineButton.vue'
+import SecondaryOutlineButton from '@/Components/buttons/SecondaryOutlineButton.vue'
 
 import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
@@ -95,6 +111,9 @@ let viewPurchased = ref(false);
 let itemToEdit = ref(null);
 let itemToDelete = ref(null);
 let itemToMark = ref(null);
+let showClipboardSuccessMessage = ref(false);
+let showClipboardErrorMessage = ref(false);
+
 
 const props = defineProps({
     list: Object,
@@ -107,6 +126,26 @@ function createNewItem()
     itemToEdit.value = null;
     newModalOpen.value = true;
 }
+
+async function copyLinkUrl() {
+    try {
+        const listUrl = route('wishlists.show', props.list.id);
+        await navigator.clipboard.writeText(listUrl);
+        console.log("Success")
+        showClipboardSuccessMessage.value = true;
+        setTimeout(() => {
+            showClipboardSuccessMessage.value = false;
+        }, 3000);
+    } catch (err) {
+        console.error('Failed to copy link:', err);
+        showClipboardErrorMessage.value = true;
+        setTimeout(() => {
+            showClipboardErrorMessage.value = false;
+        }, 3000);
+    }
+}
+
+
 
 // Modal handlers
 function handleNewItemModal(value) {
