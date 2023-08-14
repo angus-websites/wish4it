@@ -13,12 +13,12 @@
             </div>
         </template>
 
-        <div class="py-12">
+        <div class="py-5 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <FlashMessages class="mb-5" :hideErrors="true" />
                 
                 <!-- Button row-->
-                <div class="flex flex-row justify-between items-center mx-3 sm:mx-0 my-5">
+                <div class="flex flex-col space-y-8 sm:flex-row sm:space-y-0 justify-between items-center mx-3 sm:mx-0 my-5">
                     <!-- Breadcrumb -->
                     <nav class="flex" aria-label="Breadcrumb">
                       <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -51,6 +51,8 @@
                             <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Show purchased items</span>
                         </label>
                     </div>
+
+                    <!-- button -->
                     <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
                 <WishlistGrid :items="list.items" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
