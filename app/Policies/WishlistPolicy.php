@@ -33,7 +33,7 @@ class WishlistPolicy
      */
     public function viewPurchased(User $user, Wishlist $wishlist)
     {
-        return $user->id === $wishlist->user_id
+        return $user->id === $wishlist->owner()->id
             ? Response::allow()
             : Response::deny('You cannot view the purchased items');
     }
@@ -51,7 +51,7 @@ class WishlistPolicy
         
         if ($user){
             // Only owners can view their own private lists
-            return $user->id === $wishlist->user_id
+            return $user->id === $wishlist->owner()->id
                 ? Response::allow()
                 : Response::deny('You cannot view this wishlist');
         }
@@ -72,7 +72,7 @@ class WishlistPolicy
      */
     public function update(User $user, Wishlist $wishlist)
     {        
-        return $user->id === $wishlist->user_id
+        return $user->id === $wishlist->owner()->id
             ? Response::allow()
             : Response::deny('You cannot update this wishlist');
     }
@@ -82,7 +82,7 @@ class WishlistPolicy
      */
     public function delete(User $user, Wishlist $wishlist)
     {
-        return $user->id === $wishlist->user_id
+        return $user->id === $wishlist->owner()->id
             ? Response::allow()
             : Response::deny('You cannot delete this wishlist');
     }

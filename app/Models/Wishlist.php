@@ -29,7 +29,7 @@ class Wishlist extends Model
      */
     public function owner()
     {
-        return $this->belongsToMany(User::class)->wherePivot('role', 'owner')->first();
+        return $this->belongsToMany(User::class)->wherePivot('role', 'owner')->firstOrFail();
     }
 
     /**

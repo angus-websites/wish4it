@@ -35,7 +35,7 @@ class AdminSeeder extends Seeder
 
         WishlistItem::create([
           'name' => "Air force 1",
-          'price' => "£100",
+          'price' => "100",
           'wishlist_id' => $christmas->id
         ]);
 
@@ -50,7 +50,7 @@ class AdminSeeder extends Seeder
 
         WishlistItem::create([
           'name' => "iMac",
-          'price' => "£1,200",
+          'price' => "1200",
           'wishlist_id' => $birthday->id
         ]);
 
