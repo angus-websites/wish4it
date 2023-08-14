@@ -19,7 +19,6 @@
                 
                 <!-- Button row-->
                 <div class="flex flex-row justify-between items-center mx-3 sm:mx-0 my-5">
-
                     <!-- Breadcrumb -->
                     <nav class="flex" aria-label="Breadcrumb">
                       <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -44,9 +43,17 @@
                         </li>
                       </ol>
                     </nav>
+
+                    <!-- View purchased option -->
+                    <div v-if="can.viewPurchased">
+                        <label class="flex items-center">
+                            <Checkbox v-model="viewPurchased" name="remember" />
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Show purchased items</span>
+                        </label>
+                    </div>
                     <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                 </div>
-                <WishlistGrid :items="list.items" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+                <WishlistGrid :items="list.items" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
             </div>
         </div>
 
@@ -68,6 +75,8 @@ import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
 import EditWishlistModal from '@/Components/wishlist/EditWishlistModal.vue'
 import MarkAsPurchasedModal from '@/Components/wishlist/MarkAsPurchasedModal.vue'
 
+import Checkbox from '@/Components/form/Checkbox.vue'
+
 import FlashMessages from '@/Components/FlashMessages.vue'
 
 import { ref } from 'vue'
@@ -76,6 +85,7 @@ let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)
 let editListModalOpen = ref(false)
 let markPurchasedModalOpen = ref(false)
+let viewPurchased = ref(false);
 
 let itemToEdit = ref(null);
 let itemToDelete = ref(null);

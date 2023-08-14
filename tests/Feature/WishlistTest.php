@@ -2,7 +2,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\Reservation;
+use App\Models\WishlistItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class WishlistTest extends TestCase
@@ -24,6 +27,20 @@ class WishlistTest extends TestCase
     {
         $user = User::factory()->create();
         $response = $this->actingAs($user)->get('/wishlists');
+        $response->assertStatus(200);
+    }
+
+    /**
+     * Test a non-logged in user can view a public wishlist
+     */
+    public function test_non_logged_in_user_can_view_public_wishlist()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+        $response = $this->get('/wishlists/' . $wishlist->id);
         $response->assertStatus(200);
     }
 
@@ -105,36 +122,6 @@ class WishlistTest extends TestCase
         $response->assertStatus(403);
     }
 
-    /**
-     * Test another user can not view a public wishlist if they are not a friend of the creator
-     */
-    public function test_other_user_cannot_view_public_wishlist_if_not_friend_of_creator(){
-        $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
-        $otherUser = User::factory()->create();
-        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
-        $response->assertStatus(403);
-
-    }
-
-    /**
-     * Test another user can view a public wishlist if they are a friend of the creator
-     */
-    public function test_other_user_can_view_public_wishlist_if_friend_of_creator()
-    {
-        $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
-        $otherUser = User::factory()->create();
-        $otherUser->friends()->attach($user);
-        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
-        $response->assertStatus(200);
-    }
 
     /**
      * Test other user cannot update a wishlist
@@ -183,5 +170,202 @@ class WishlistTest extends TestCase
         $otherUser = User::factory()->create();
         $response = $this->actingAs($otherUser)->delete('/wishlists/' . $wishlist->id);
         $response->assertStatus(403);
+    }
+
+
+    /**
+     * If a guest views a wishlist, then signs in or registers, they are
+     * redirected to the list they viewed
+     */
+    public function test_a_guest_redirects_to_previous_wishlist_after_login()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+        $guest = User::factory()->create();
+        // Simulate the behavior of a guest trying to view the wishlist
+        $this->get(route('wishlists.show', $wishlist));
+
+        // Simulate login
+        $response = $this->post(route('login'), [
+            'email' => $guest->email,
+            'password' => 'password' // Assuming this is the default password you've set in your User factory.
+        ]);
+
+        $response->assertRedirect(route('wishlists.show', $wishlist));
+    }
+
+    /**
+     * Only the author of a list should have the option
+     * to view purchased items
+     */
+    public function test_only_author_can_view_purchased_items()
+    {
+
+        // Create the wishlist author and a new wishlist
+        $author = User::factory()->create();
+        $wishlist = $author->wishlists()->create([
+            'title' => 'My public Wishlist',
+            'public' => true,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        // Create an item on the wishlist to be purchased
+        $ipad = WishlistItem::create([
+          'name' => "iPad",
+          'wishlist_id' => $wishlist->id
+        ]);
+
+        // Create an item on the wishlist to not be purchased
+        $puppy = WishlistItem::create([
+          'name' => "Puppy",
+          'wishlist_id' => $wishlist->id
+        ]);
+
+        // Create a buyer
+        $buyer = User::factory()->create();
+
+        // Create a new reservation to mark as purchased
+        $reservation = Reservation::create([
+            'user_id' => $buyer->id,
+            'wishlist_item_id' => $ipad->id,
+            'quantity' => 1,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        // Create another user as another friend of the author
+        $friend = User::factory()->create();
+
+        // View the wishlist as the friend
+        $this->actingAs($friend)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            // Checking we have 1 item in our array
+            ->has('list.items', 1, fn(Assert $page) => $page
+                ->where('id', $puppy->id)
+                ->where('name', 'Puppy')
+                ->etc()
+            )
+        );
+
+        // View the wishlist as the author (both items should be present)
+        $this->actingAs($author)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            // Checking we have 2 items in our array
+            ->has('list.items', 2, fn(Assert $page) => $page
+                ->where('id', $ipad->id)
+                ->where('name', 'iPad')
+                ->etc()
+            )
+        );
+
+
+
+    }
+
+
+    /**
+     * Test only a logged-in user can mark an item as purchased from another users public wishlist
+     */
+    public function test_only_logged_in_user_can_mark_item_as_purchased(){
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $response = $this->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark');
+        $response->assertRedirect('/login');
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id]);
+    }
+
+    /**
+     * Test a logged-in user can mark an item as purchased from another users public wishlist
+     */
+    public function test_logged_in_user_can_mark_item_as_purchased()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $another = User::factory()->create();
+
+        // Send a request to mark the item as purchased
+        $data = [
+            'quantity' => 1,
+        ];
+        $response = $this->actingAs($another)
+            ->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark', $data);
+
+        // Assert the database was updated
+        $this->assertDatabaseHas('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
+    }
+
+    /**
+     * Test a logged-in user cannot mark an item as purchased from another users private wishlist
+     */
+    public function test_logged_in_user_cannot_mark_item_as_purchased_from_private_list()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->wishlists()->create([
+            'title' => 'Test Wishlist',
+            'public' => false,
+        ]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $another = User::factory()->create();
+
+        // Send a request to mark the item as purchased
+        $data = [
+            'quantity' => 1,
+        ];
+        $response = $this->actingAs($another)
+            ->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark', $data);
+
+        // Assert 403
+        $response->assertStatus(403);
+
+        // Assert the database was not updated
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
     }
 }

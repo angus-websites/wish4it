@@ -18,8 +18,8 @@ return new class extends Migration
                   ->references('id')
                   ->on('wishlists')
                   ->onUpdate('cascade')
-                  ->onDelete('cascade'); 
-                  
+                  ->onDelete('cascade');
+
             $table->text("name");
             $table->text("brand")->nullable();
             $table->text("price")->nullable();
@@ -27,9 +27,7 @@ return new class extends Migration
             $table->text("comment")->nullable();
             $table->text("image")->nullable();
             $table->integer("needs")->default(1);
-            $table->integer("has")->default(0);
 
-            
         });
     }
 

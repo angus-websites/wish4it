@@ -22,25 +22,41 @@ class WishlistPolicy
      */
     public function markAsPurchased(User $user, Wishlist $wishlist)
     {
-        return $user->isFriends($wishlist->user())
+        return $wishlist->isPublic()
             ? Response::allow()
             : Response::deny('You cannot mark this item as purchased');
     }
 
     /**
+     * Determine whether the user can view items
+     * that have been marked as purchased
+     */
+    public function viewPurchased(User $user, Wishlist $wishlist)
+    {
+        return $user->id === $wishlist->user_id
+            ? Response::allow()
+            : Response::deny('You cannot view the purchased items');
+    }
+
+    /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Wishlist $wishlist)
+    public function view(?User $user, Wishlist $wishlist)
     {
 
-        // If the wishlist is public & the user is friends with the owner
-        if ($wishlist->isPublic() && $user->isFriends($wishlist->user())){
+        // If the wishlist is public then anybody can view this list (even without an account)
+        if ($wishlist->isPublic()){
             return Response::allow();
         }
         
-        return $user->id === $wishlist->user_id
-            ? Response::allow()
-            : Response::deny('You cannot view this wishlist');
+        if ($user){
+            // Only owners can view their own private lists
+            return $user->id === $wishlist->user_id
+                ? Response::allow()
+                : Response::deny('You cannot view this wishlist');
+        }
+
+        return Response::deny('You cannot view this wishlist');
     }
 
     /**

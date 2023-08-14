@@ -79,8 +79,8 @@
 
                     <div class="p-6 text-center">
 
-                        <div v-if="itemToMark.hasCurrentUserReservation" class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
-                          <span class="font-medium">Warning!</span> <span>You have previously marked this item as purchased</span>
+                        <div v-if="itemToMark.hasCurrentUserReservation" class="p-4 mb-4 text-sm font-bold text-yellow-900 rounded-lg bg-yellow-500 dark:bg-yellow-500 dark:text-yellow-900" role="alert">
+                          <span>Warning! You have previously marked this item as purchased</span>
                         </div>
 
                       

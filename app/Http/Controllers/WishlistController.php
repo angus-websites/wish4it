@@ -14,7 +14,7 @@ class WishlistController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum')->except(['show']);
         $this->authorizeResource(Wishlist::class);
     }
 
@@ -56,25 +56,42 @@ class WishlistController extends Controller
         // Load the items of this wishlist
         $wishlist->load('items');
 
-        // Filter the items where needs is greater than has
-        if ($wishlist->user_id != Auth::user()->id) {
+        $currentUserId = Auth::id(); // This will return null if no user is authenticated
+
+        // Filter the items where needs is greater than has (remove the purchased items, unless author)
+        if (!Auth::check() || !Auth::user()->can('viewPurchased', $wishlist)) {
             $wishlist->items = $wishlist->items->filter(function ($item) {
                 return $item->needs > $item->has;
             });
         }
 
+
         // Convert to an API resource
         $list = new WishlistResource($wishlist);
 
+        // If user not logged in then render a different view
+        if (!$currentUserId) {
+
+            // Store the intended URL so if user creates an account they are redirected here
+            session(['url.intended' => url()->current()]);
+
+            return Inertia::render('Guest/WishlistPublic', [
+                'list' => $list,
+            ]);
+        }
+
+        // Return to the authenticated view
         return Inertia::render('Wishlist/View', [
             'list' => $list,
             'can' => [
                 'deleteList' => Auth::user()->can('delete', $wishlist),
                 'editList' => Auth::user()->can('update', $wishlist),
                 'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
+                'viewPurchased' => Auth::user()->can('viewPurchased',  $wishlist),
             ],
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.

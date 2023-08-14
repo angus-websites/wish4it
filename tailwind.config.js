@@ -15,6 +15,13 @@ export default {
     darkMode: 'class',
 
     theme: {
+
+        screens: {
+          'xxs': '375px',
+          'xs': '475px',
+          ...defaultTheme.screens,
+        },
+        
         extend: {
             fontFamily: {
                 serif: ['Comic Neue', ...defaultTheme.fontFamily.serif],
