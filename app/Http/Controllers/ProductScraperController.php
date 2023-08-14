@@ -40,7 +40,7 @@ class ProductScraperController extends Controller
 
             // Try to connect 3 times before giving up
             $response = Http::timeout(3)->withHeaders([
-                'User-Agent' => "MyWishlistApp lookup",
+                'User-Agent' => "Wish4it",
             ])->retry(2, 1000)->get($url);
 
 
@@ -60,8 +60,18 @@ class ProductScraperController extends Controller
 
         }
         catch (RequestException $exception) {
+            $statusCode = $exception->response->status();
+            if ($statusCode == 403) {
+                Log::channel("scraper")->warning('403 Forbidden error when scraping', [
+                    'url' => $url,
+                    'error_message' => $exception->getMessage(),
+                ]);
+                return response()->json(['error' => 'The website has blocked us from retrieving product details :('], 403);
+            }
+
             Log::channel("scraper")->error('A request error occurred during URL scraping', [
                 'url' => $url,
+                'status_code' => $statusCode,
                 'error_message' => $exception->getMessage(),
             ]);
 
