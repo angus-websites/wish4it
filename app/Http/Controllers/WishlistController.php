@@ -85,6 +85,7 @@ class WishlistController extends Controller
                 'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
                 'viewPurchased' => Auth::user()->can('viewPurchased',  $wishlist),
             ],
+            'canAddFriend' => !(Auth::user()->isFriends($list->owner()))
         ]);
     }
 

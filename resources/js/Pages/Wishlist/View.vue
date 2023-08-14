@@ -117,7 +117,11 @@ let showClipboardErrorMessage = ref(false);
 
 const props = defineProps({
     list: Object,
-    can: Object
+    can: Object,
+    canAddFriend: {
+        type: Boolean,
+        default: false
+    }
 })
 
 function createNewItem()
