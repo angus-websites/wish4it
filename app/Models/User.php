@@ -93,8 +93,24 @@ class User extends Authenticatable
      */
     public function wishlists()
     {
-        return $this->hasMany(Wishlist::class);
+        return $this->belongsToMany(Wishlist::class)->withPivot('role');
     }
+
+    /**
+     * Custom method to quickly create wishlists
+     */
+    public function createWishlist($attributes = [])
+    {
+        // Create a new wishlist
+        $wishlist = Wishlist::create($attributes);
+
+        // Attach this user to the wishlist as an owner
+        $this->wishlists()->attach($wishlist->id, ['role' => 'owner']);
+
+        // Return the wishlist for further use
+        return $wishlist;
+    }
+
 
     /**
      * Get the friends of this user

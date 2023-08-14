@@ -16,13 +16,12 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         // Create the admin
         $this->call(AdminSeeder::class);
-        // Create 10 users
+
+        // Create 5 users
         \App\Models\User::factory()->count(5)->create()->each(function ($u){
 
-            Wishlist::create([
-              'title' => 'My wishlist',
-              'user_id' => $u->id
-            ]);
+            $wishlist = Wishlist::create(['title' => 'My wishlist']);
+            $wishlist->users()->attach($u->id, ['role' => 'owner']);
             
         });
 

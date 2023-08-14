@@ -39,11 +39,7 @@ class WishlistController extends Controller
         ]);
 
         // Save
-        $new_wishlist = new Wishlist();
-        $new_wishlist->fill($data);
-        $new_wishlist->user_id = Auth::user()->id;
-        $new_wishlist->save();
-
+        Auth::user()->createWishlist($data);
         return Redirect::route('wishlists.index')->with('success', 'Wishlist created');
     }
 

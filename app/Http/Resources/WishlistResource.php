@@ -16,7 +16,7 @@ class WishlistResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        $owner = $this->user();
+        $owner = $this->owner();
 
         return [
             'id' => $this->id,

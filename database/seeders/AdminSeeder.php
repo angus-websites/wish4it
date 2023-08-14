@@ -30,14 +30,12 @@ class AdminSeeder extends Seeder
         ]);
 
         // Create an christmas wishlist
-        $christmas = Wishlist::create([
-          'title' => 'Christmas list',
-          'user_id' => $admin->id,
-        ]);
+        $christmas = Wishlist::create(['title' => 'Birthday list']);
+        $christmas->users()->attach($admin->id, ['role' => 'owner']);
 
         WishlistItem::create([
           'name' => "Air force 1",
-          'price' => "£100",
+          'price' => "100",
           'wishlist_id' => $christmas->id
         ]);
 
@@ -47,15 +45,12 @@ class AdminSeeder extends Seeder
         ]);
 
 
-
-        $birthday = Wishlist::create([
-          'title' => 'Birthday list',
-          'user_id' => $admin->id,
-        ]);
+        $birthday = Wishlist::create(['title' => 'Birthday list']);
+        $birthday->users()->attach($admin->id, ['role' => 'owner']);
 
         WishlistItem::create([
           'name' => "iMac",
-          'price' => "£1,200",
+          'price' => "1200",
           'wishlist_id' => $birthday->id
         ]);
 
