@@ -26,6 +26,7 @@ return new class extends Migration
             $table->text("url")->nullable();
             $table->text("comment")->nullable();
             $table->text("image")->nullable();
+            $table->boolean("unlimited_needs")->default(false);
             $table->integer("needs")->default(1);
 
         });
