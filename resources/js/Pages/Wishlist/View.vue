@@ -31,7 +31,22 @@
         <div class="py-5 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-                <AddFriendAlert v-if="showAddFriendAlert" :owner="list.owner" class="mx-5 sm:mx-0" @add-friend="handleAddFriend" @dismissed="handleDismiss" />
+                <TransitionRoot
+                    :show="showAddFriendAlert"
+                    enter="transition-opacity duration-75"
+                    enter-from="opacity-0"
+                    enter-to="opacity-100"
+                    leave="transition-opacity duration-150"
+                    leave-from="opacity-100"
+                    leave-to="opacity-0"
+                  >
+                    <AddFriendAlert
+                      :owner="list.owner"
+                      class="mx-5 sm:mx-0"
+                      @add-friend="handleAddFriend"
+                      @dismissed="handleDismiss"
+                    />
+                  </TransitionRoot>
 
                 <FlashMessages class="mb-5" :hideErrors="true" />
             
@@ -102,7 +117,7 @@ import AddFriendAlert from '@/Components/friends/AddFriendAlert.vue'
 import Checkbox from '@/Components/form/Checkbox.vue'
 
 import FlashMessages from '@/Components/FlashMessages.vue'
-
+import { TransitionRoot } from '@headlessui/vue'
 import { ref } from 'vue'
 
 const props = defineProps({
