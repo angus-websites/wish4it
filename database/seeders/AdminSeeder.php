@@ -30,7 +30,7 @@ class AdminSeeder extends Seeder
         ]);
 
         // Create an christmas wishlist
-        $christmas = Wishlist::create(['title' => 'Birthday list']);
+        $christmas = Wishlist::create(['title' => 'Christmas list']);
         $christmas->users()->attach($admin->id, ['role' => 'owner']);
 
         WishlistItem::create([
