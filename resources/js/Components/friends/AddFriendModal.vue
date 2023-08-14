@@ -62,8 +62,7 @@
                     </div>
                   </div>
 
-                  
-                  <button @click="addFriend" :disabled="addLoading"  type="button" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 enabled:hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-bold rounded-lg text-sm px-5 py-2.5 text-center mr-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                  <GreenAddButton @click="addFriend" :disabled="addLoading"  type="button">
 
                     <span v-if="addLoading">
                       <svg aria-hidden="true" role="status" class="inline w-4 h-4 mr-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -74,7 +73,7 @@
                     </span>
                     <span v-else>Add "{{friendToAdd.username}}" as a friend</span>
 
-                    </button>
+                    </GreenAddButton>
                 </div>
 
                 <!-- Unsuccessful -->
@@ -106,6 +105,8 @@ import { ref, watchEffect, watch, onBeforeUnmount} from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
+import GreenAddButton from "@/Components/buttons/GreenAddButton.vue"
+
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
 import Spinner from "@/Components/Spinner.vue"
 
