@@ -9,7 +9,7 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="overflow-hidden">
+                <div class="overflow-hidden mx-5">
                     <FlashMessages class="mb-5" />
 
                     <!-- Button row -->
@@ -20,7 +20,7 @@
                         <p>You have no friends</p>
                     </EmptyState>
                     
-                    <div v-else class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 items-start">
+                    <div v-else class="mt-10 grid grid-cols-1 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 items-start">
                         <Friend v-for="friend in friends" :key="friend.id" :friend="friend" />
                     </div>
                 </div>

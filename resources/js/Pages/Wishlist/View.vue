@@ -26,12 +26,30 @@
           <span class="font-medium">Failure!</span> failed to copy link to clipboard
         </div>
 
+
+
         <div class="py-5 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
+                <TransitionRoot
+                    :show="showAddFriendAlert"
+                    enter="transition-opacity duration-75"
+                    enter-from="opacity-0"
+                    enter-to="opacity-100"
+                    leave="transition-opacity duration-150"
+                    leave-from="opacity-100"
+                    leave-to="opacity-0"
+                  >
+                    <AddFriendAlert
+                      :owner="list.owner"
+                      class="mx-5 sm:mx-0"
+                      @add-friend="handleAddFriend"
+                      @dismissed="handleDismiss"
+                    />
+                  </TransitionRoot>
+
                 <FlashMessages class="mb-5" :hideErrors="true" />
             
-
                 <!-- Button row-->
                 <div class="flex flex-col space-y-8 sm:flex-row sm:space-y-0 justify-between items-center mx-3 sm:mx-0 my-5">
                     <!-- Breadcrumb -->
@@ -42,7 +60,7 @@
 
 
                             <Link v-if="$page.props.auth.user.id === list.owner.id" :href="route('wishlists.index')" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Wishlists</Link>
-
+                            <p v-else-if="canAddFriend" class="ml-1 text-sm font-medium text-gray-700 md:ml-2 dark:text-gray-400">{{list.owner.username}}</p>
                             <Link v-else :href="route('friends')" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Friends</Link>
 
 
@@ -71,7 +89,6 @@
                         <!-- button -->
                         <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                     </div>
-
                 </div>
                 <WishlistGrid :items="list.items" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
             </div>
@@ -95,12 +112,22 @@ import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
 import EditWishlistModal from '@/Components/wishlist/EditWishlistModal.vue'
 import MarkAsPurchasedModal from '@/Components/wishlist/MarkAsPurchasedModal.vue'
+import AddFriendAlert from '@/Components/friends/AddFriendAlert.vue'
 
 import Checkbox from '@/Components/form/Checkbox.vue'
 
 import FlashMessages from '@/Components/FlashMessages.vue'
-
+import { TransitionRoot } from '@headlessui/vue'
 import { ref } from 'vue'
+
+const props = defineProps({
+    list: Object,
+    can: Object,
+    canAddFriend: {
+        type: Boolean,
+        default: false
+    }
+})
 
 let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)
@@ -114,11 +141,7 @@ let itemToMark = ref(null);
 let showClipboardSuccessMessage = ref(false);
 let showClipboardErrorMessage = ref(false);
 
-
-const props = defineProps({
-    list: Object,
-    can: Object
-})
+let showAddFriendAlert = ref(props.canAddFriend);
 
 function createNewItem()
 {
@@ -163,6 +186,19 @@ function handleEditListModal(value){
 function handleMarkPurchaseModal(value){
     markPurchasedModalOpen.value = value
 }
+
+
+function handleAddFriend(owner) {
+  // Logic to add the friend.
+  // After successfully adding the friend or on error, you can optionally hide the AddFriendAlert.
+  showAddFriendAlert.value = false;
+}
+
+function handleDismiss() {
+  // Logic to dismiss the alert.
+  showAddFriendAlert.value = false;
+}
+
 
 function editItem(item) {
   itemToEdit.value = item;

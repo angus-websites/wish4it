@@ -336,4 +336,73 @@ class WishlistTest extends TestCase
         // Assert the database was not updated
         $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
     }
+
+    /**
+     * Test a logged-in user that is not friends with the author, gets the option to add the author as a friend
+     */
+    public function test_logged_in_user_not_friends_with_author_gets_option_to_add_friend(){
+        $user = User::factory()->create();
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
+        $another = User::factory()->create();
+
+        $response = $this->actingAs($another)->get('/wishlists/' . $wishlist->id);
+        $response->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            ->has('list', fn(Assert $page) => $page
+                ->where('id', $wishlist->id)
+                ->where('title', 'Test Wishlist')
+                ->where('public', true)
+                ->etc()
+            )
+            ->where('canAddFriend', true)
+        );
+    }
+
+    /**
+     * Test a logged-in user that is friends with the author, does not get the option to add the author as a friend
+     */
+    public function test_logged_in_user_that_is_friends_with_author_does_not_gets_option_to_add_friend(){
+        $user = User::factory()->create();
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
+        $another = User::factory()->create();
+        $another->friends()->attach($user);
+
+        $response = $this->actingAs($another)->get('/wishlists/' . $wishlist->id);
+        $response->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            ->has('list', fn(Assert $page) => $page
+                ->where('id', $wishlist->id)
+                ->where('title', 'Test Wishlist')
+                ->where('public', true)
+                ->etc()
+            )
+            ->where('canAddFriend', false)
+        );
+    }
+
+    /**
+     * Check a user cannot be friends with themselves
+     */
+    public function test_user_cannot_be_friends_with_themselves()
+    {
+        $user = User::factory()->create();
+        $this->assertFalse($user->isFriends($user));
+    }
+
+    /**
+     * Check a user does not get option to add themselves as a friend
+     */
+    public function test_user_does_not_get_option_to_add_themselves_as_a_friend_when_viewing_their_own_wishlist()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+        $response = $this->actingAs($user)->get('/wishlists/' . $wishlist->id);
+        $response->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            ->where('canAddFriend', false)
+        );
+    }
+
 }
