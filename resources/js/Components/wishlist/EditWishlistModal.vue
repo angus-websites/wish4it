@@ -67,21 +67,16 @@
                   <!-- Public-->
                   <div>
                     <ToggleSwitch v-model="form.public" title="Public list" description="Should this wishlist be visible to the public?"/>
-
-                    <!-- Status -->
-                    <p class="mt-2">
-                      <DefaultBadge><span v-if="form.public">Public</span><span v-else>Private</span></DefaultBadge>
-                    </p>
                   </div>
           
                   <!-- Buttons -->
                   <div class="mt-5 flex flex-row justify-between items-center">
+                    <div>
+                      <DangerButton v-if="props.wishlist && canDelete" @click="deleteClicked" type="button">Delete list</DangerButton>
+                    </div>
                     <div class="flex flex-col gap-y-3 sm:flex-row gap-x-3">
                       <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
                       <PrimaryButton :disabled="form.processing" type="submit"><span v-if="props.wishlist">Save</span><span v-else>Create</span></PrimaryButton>
-                    </div>
-                    <div>
-                      <DangerButton v-if="props.wishlist && canDelete" @click="deleteClicked" type="button">Delete list</DangerButton>
                     </div>
                   </div>
                 </div>
