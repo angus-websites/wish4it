@@ -67,16 +67,23 @@
 
               <!-- Details screen -->
               <div v-else class="flex-col gap-y-10">
+
+                <!-- Missing fields -->
+                <div v-if="hasMissedFields" class="flex my-3 items-center p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">
+                  <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                  </svg>
+                  <span class="sr-only">Info</span>
+                  <div>
+                    <p>Some fields could not be retrieved automatically </p>
+                  </div>
+                </div>
                 
                 <!-- Image -->
                 <div v-if="form.image" class="w-full mt-5">
                   <div class="w-24 h-24 rounded-md overflow-hidden mx-auto bg-white">
                     <img :src="form.image" alt="Your Image" class="w-full h-full object-contain">
                   </div>
-
-
-      
-
 
                 </div>
 
@@ -121,7 +128,6 @@
                             id="price"
                             type="text"
                             class="w-full mt-1"
-                            placeholder="5"
                         />
                         <InputError v-if="form.errors.price" class="mt-1" :message="form.errors.price" />
                     </div>
@@ -215,6 +221,7 @@ const urlForm = useForm({
 
 let isOpen = ref(props.open)
 let showDetails = ref(false)
+let hasMissedFields = ref(false)
 let showLoadUrlButton = ref(false)
 let loadUrlError = ref(false);
 
@@ -277,10 +284,11 @@ function sendUrl(){
           form.brand = product.brand
           form.price = product.price
           form.url = urlForm.url
-          showDetails.value = true;
           form.image = product.image
+          hasMissedFields.value = product.hasMissedFields
+          showDetails.value = true;
+
         }
-        console.log(response)
     
     })
     .catch(error => {
@@ -340,6 +348,8 @@ function reset(){
 
   form.errors = {};
   urlForm.errors = {};
+  hasMissedFields.value = false;
+  loadUrlError.value = false;
 
   form.reset();
   urlForm.reset();
