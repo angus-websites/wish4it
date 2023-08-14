@@ -36,10 +36,7 @@ class WishlistTest extends TestCase
     public function test_non_logged_in_user_can_view_public_wishlist()
     {
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
         $response = $this->get('/wishlists/' . $wishlist->id);
         $response->assertStatus(200);
     }
@@ -84,10 +81,7 @@ class WishlistTest extends TestCase
      */
     public function test_owner_can_view_private_wishlist(){
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $response = $this->actingAs($user)->get('/wishlists/' . $wishlist->id);
         $response->assertStatus(200);
     }
@@ -98,10 +92,7 @@ class WishlistTest extends TestCase
     public function test_other_user_cannot_view_private_wishlist()
     {
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
         $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
         $response->assertStatus(403);
@@ -112,10 +103,7 @@ class WishlistTest extends TestCase
      */
     public function test_friend_of_creator_cannot_view_private_wishlist(){
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
         $otherUser->friends()->attach($user);
         $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
@@ -128,10 +116,7 @@ class WishlistTest extends TestCase
      */
     public function test_other_user_cannot_update_wishlist(){
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
         $response = $this->actingAs($otherUser)->put('/wishlists/' . $wishlist->id, [
             'title' => 'Updated Wishlist',
@@ -146,10 +131,7 @@ class WishlistTest extends TestCase
     public function test_wishlist_is_updated_when_owner_updates_it()
     {
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $response = $this->actingAs($user)->put('/wishlists/' . $wishlist->id, [
             'title' => 'Updated Wishlist',
             'public' => true,
@@ -163,10 +145,7 @@ class WishlistTest extends TestCase
     public function test_other_user_cannot_delete_wishlist()
     {
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
         $response = $this->actingAs($otherUser)->delete('/wishlists/' . $wishlist->id);
         $response->assertStatus(403);
@@ -180,10 +159,8 @@ class WishlistTest extends TestCase
     public function test_a_guest_redirects_to_previous_wishlist_after_login()
     {
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
 
         $guest = User::factory()->create();
         // Simulate the behavior of a guest trying to view the wishlist
@@ -207,10 +184,7 @@ class WishlistTest extends TestCase
 
         // Create the wishlist author and a new wishlist
         $author = User::factory()->create();
-        $wishlist = $author->wishlists()->create([
-            'title' => 'My public Wishlist',
-            'public' => true,
-        ]);
+        $wishlist = $author->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
 
         // Disable guarded attributes
         \Illuminate\Database\Eloquent\Model::unguard();
@@ -275,10 +249,8 @@ class WishlistTest extends TestCase
      */
     public function test_only_logged_in_user_can_mark_item_as_purchased(){
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
 
         // Disable guarded attributes
         \Illuminate\Database\Eloquent\Model::unguard();
@@ -302,10 +274,8 @@ class WishlistTest extends TestCase
     public function test_logged_in_user_can_mark_item_as_purchased()
     {
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
 
         // Disable guarded attributes
         \Illuminate\Database\Eloquent\Model::unguard();
@@ -337,10 +307,8 @@ class WishlistTest extends TestCase
     public function test_logged_in_user_cannot_mark_item_as_purchased_from_private_list()
     {
         $user = User::factory()->create();
-        $wishlist = $user->wishlists()->create([
-            'title' => 'Test Wishlist',
-            'public' => false,
-        ]);
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
+
 
         // Disable guarded attributes
         \Illuminate\Database\Eloquent\Model::unguard();
