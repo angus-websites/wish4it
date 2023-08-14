@@ -26,12 +26,15 @@
           <span class="font-medium">Failure!</span> failed to copy link to clipboard
         </div>
 
+
+
         <div class="py-5 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
+                <AddFriendAlert v-if="canAddFriend" :owner="list.owner" class="mx-5 sm:mx-0" />
+
                 <FlashMessages class="mb-5" :hideErrors="true" />
             
-
                 <!-- Button row-->
                 <div class="flex flex-col space-y-8 sm:flex-row sm:space-y-0 justify-between items-center mx-3 sm:mx-0 my-5">
                     <!-- Breadcrumb -->
@@ -42,7 +45,7 @@
 
 
                             <Link v-if="$page.props.auth.user.id === list.owner.id" :href="route('wishlists.index')" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Wishlists</Link>
-
+                            <p v-else-if="canAddFriend" class="ml-1 text-sm font-medium text-gray-700 md:ml-2 dark:text-gray-400">{{list.owner.username}}</p>
                             <Link v-else :href="route('friends')" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">Friends</Link>
 
 
@@ -71,7 +74,6 @@
                         <!-- button -->
                         <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                     </div>
-
                 </div>
                 <WishlistGrid :items="list.items" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
             </div>
@@ -95,6 +97,7 @@ import NewItemModal from '@/Components/wishlist/NewItemModal.vue'
 import DeleteModal from '@/Components/wishlist/DeleteModal.vue'
 import EditWishlistModal from '@/Components/wishlist/EditWishlistModal.vue'
 import MarkAsPurchasedModal from '@/Components/wishlist/MarkAsPurchasedModal.vue'
+import AddFriendAlert from '@/Components/friends/AddFriendAlert.vue'
 
 import Checkbox from '@/Components/form/Checkbox.vue'
 

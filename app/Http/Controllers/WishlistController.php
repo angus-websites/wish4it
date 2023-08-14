@@ -75,7 +75,7 @@ class WishlistController extends Controller
                 'list' => $list,
             ]);
         }
-
+        
         // Return to the authenticated view
         return Inertia::render('Wishlist/View', [
             'list' => $list,
@@ -85,7 +85,7 @@ class WishlistController extends Controller
                 'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
                 'viewPurchased' => Auth::user()->can('viewPurchased',  $wishlist),
             ],
-            'canAddFriend' => !(Auth::user()->isFriends($list->owner()))
+            'canAddFriend' => !(Auth::user()->isFriends($list->owner())) && Auth::user()->id !== $list->owner()->id
         ]);
     }
 

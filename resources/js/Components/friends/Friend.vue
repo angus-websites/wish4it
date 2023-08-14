@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full p-3 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-dark-dark2 dark:border-gray-700">
+  <div class="w-full p-3 bg-white border border-gray-200 rounded-lg shadow dark:bg-dark-dark2 dark:border-gray-700">
       <div class="flex justify-end px-4 pt-4">
           <Menu as="div" class="relative ml-auto">
             <MenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">

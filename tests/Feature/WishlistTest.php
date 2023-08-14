@@ -382,4 +382,27 @@ class WishlistTest extends TestCase
         );
     }
 
+    /**
+     * Check a user cannot be friends with themselves
+     */
+    public function test_user_cannot_be_friends_with_themselves()
+    {
+        $user = User::factory()->create();
+        $this->assertFalse($user->isFriends($user));
+    }
+
+    /**
+     * Check a user does not get option to add themselves as a friend
+     */
+    public function test_user_does_not_get_option_to_add_themselves_as_a_friend_when_viewing_their_own_wishlist()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+        $response = $this->actingAs($user)->get('/wishlists/' . $wishlist->id);
+        $response->assertInertia(fn(Assert $page) => $page
+            ->component('Wishlist/View')
+            ->where('canAddFriend', false)
+        );
+    }
+
 }
