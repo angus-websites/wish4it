@@ -10,8 +10,8 @@
       <p>Would you like to add <b>{{owner.name}} ({{owner.username}})</b> as a friend</p>
     </div>
     <div class="flex space-x-3">
-      <GreenAddButton>Add as friend</GreenAddButton>
-      <SecondaryButton>Dismiss</SecondaryButton>
+      <GreenAddButton @click="addFriend">Add as friend</GreenAddButton>
+      <SecondaryButton @click="dismiss">Dismiss</SecondaryButton>
     </div>
   </div>
 
@@ -24,5 +24,17 @@
   const props = defineProps({
       owner: Object
   })
+
+  const emit = defineEmits(['add-friend', 'dismissed']);
+
+  // Add friend logic
+  function addFriend() {
+    emit('add-friend', props.owner);
+  }
+
+  // Dismiss logic
+  function dismiss() {
+    emit('dismissed');
+  }
 
 </script>

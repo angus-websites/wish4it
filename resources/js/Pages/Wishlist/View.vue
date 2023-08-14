@@ -31,7 +31,7 @@
         <div class="py-5 sm:py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-                <AddFriendAlert v-if="canAddFriend" :owner="list.owner" class="mx-5 sm:mx-0" />
+                <AddFriendAlert v-if="showAddFriendAlert" :owner="list.owner" class="mx-5 sm:mx-0" @add-friend="handleAddFriend" @dismissed="handleDismiss" />
 
                 <FlashMessages class="mb-5" :hideErrors="true" />
             
@@ -105,6 +105,15 @@ import FlashMessages from '@/Components/FlashMessages.vue'
 
 import { ref } from 'vue'
 
+const props = defineProps({
+    list: Object,
+    can: Object,
+    canAddFriend: {
+        type: Boolean,
+        default: false
+    }
+})
+
 let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)
 let editListModalOpen = ref(false)
@@ -117,15 +126,7 @@ let itemToMark = ref(null);
 let showClipboardSuccessMessage = ref(false);
 let showClipboardErrorMessage = ref(false);
 
-
-const props = defineProps({
-    list: Object,
-    can: Object,
-    canAddFriend: {
-        type: Boolean,
-        default: false
-    }
-})
+let showAddFriendAlert = ref(props.canAddFriend);
 
 function createNewItem()
 {
@@ -170,6 +171,19 @@ function handleEditListModal(value){
 function handleMarkPurchaseModal(value){
     markPurchasedModalOpen.value = value
 }
+
+
+function handleAddFriend(owner) {
+  // Logic to add the friend.
+  // After successfully adding the friend or on error, you can optionally hide the AddFriendAlert.
+  showAddFriendAlert.value = false;
+}
+
+function handleDismiss() {
+  // Logic to dismiss the alert.
+  showAddFriendAlert.value = false;
+}
+
 
 function editItem(item) {
   itemToEdit.value = item;
