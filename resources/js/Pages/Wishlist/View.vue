@@ -1,7 +1,7 @@
 <template>
     <AppLayout :title="list.title">
         <template #header>
-            <div class="flex flex-row justify-between items-center">
+            <div class="flex flex-col space-y-5 sm:flex-row justify-between items-center">
                 <div>
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         {{ list.title }} 
@@ -17,12 +17,12 @@
         </template>
 
         <!-- Clipboard message success -->
-        <div v-if="showClipboardSuccessMessage" class="p-4 mb-4 text-sm text-green-800 dark:text-green-400 text-center" role="alert">
+        <div v-if="showClipboardSuccessMessage" class="p-4 text-sm text-green-800 dark:text-green-400 text-center" role="alert">
           <span class="font-medium">Success!</span> link to list copied to clipboard
         </div>
 
         <!-- Clipboard message failure -->
-        <div v-if="showClipboardErrorMessage" class="p-4 mb-4 text-sm text-red-800 dark:text-red-400 text-center" role="alert">
+        <div v-if="showClipboardErrorMessage" class="p-4 text-sm text-red-800 dark:text-red-400 text-center" role="alert">
           <span class="font-medium">Failure!</span> failed to copy link to clipboard
         </div>
 
