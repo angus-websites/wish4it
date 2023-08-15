@@ -75,7 +75,7 @@ class WishlistController extends Controller
                 'list' => $list,
             ]);
         }
-        
+
         // Return to the authenticated view
         return Inertia::render('Wishlist/View', [
             'list' => $list,
