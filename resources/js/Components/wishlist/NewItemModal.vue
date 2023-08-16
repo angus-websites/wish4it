@@ -8,8 +8,8 @@
       <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-            <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white dark:bg-dark px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-              <DialogTitle class="text-center mb-2">
+            <DialogPanel class="relative w-full transform overflow-hidden rounded-lg bg-white dark:bg-dark px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+              <DialogTitle class="text-center mb-5">
                 <div v-if="props.itemToEdit">
                   <p class="text-lg text-gray-700 dark:text-gray-200 font-bold ">Edit item</p>
                   <p class="text-sm  text-gray-600 dark:text-gray-300">Update the details of this item</p>
@@ -27,16 +27,24 @@
                 <!-- URL link -->
                 <div class="mb-6">
                     <InputLabel for="url" value="Enter a product url" />
-                    <TextInput
-                        v-model.lazy="urlForm.url"
-                        id="url"
-                        type="url"
-                        class="mt-1 block w-full"
-                        @focus="checkClipboardForUrl"
-                        required
-                        autofocus
-                    />
-                    <InputError v-if="urlForm.errors.url" :message="urlForm.errors.url" class="mt-1"/>
+                    <div class="flex flex-row items-center gap-x-3">
+                      <div class="flex-1">
+                        <TextInput
+                            v-model.lazy="urlForm.url"
+                            id="url"
+                            type="url"
+                            class="mt-1 block w-full"
+                            required
+                            autofocus
+                        />
+                        <InputError v-if="urlForm.errors.url" :message="urlForm.errors.url" class="mt-1"/>
+                      </div>
+                      <div>
+                        <PrimaryButton @click="checkClipboardForUrl" class="mt-1">
+                          <ClipboardIcon class="-ml-0.5 h-5 w-5" aria-hidden="true" />
+                        </PrimaryButton>
+                      </div>
+                    </div>
                 </div>
 
                 <div v-if="loadUrlError" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
@@ -182,6 +190,7 @@
 import { ref, watchEffect, onBeforeUpdate, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
+import { ClipboardIcon } from '@heroicons/vue/24/outline'
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
 import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
 import InputLabel from "@/Components/form/InputLabel.vue"
@@ -310,10 +319,6 @@ function sendUrl(){
 
 
 async function checkClipboardForUrl() {
-
-  // Only check if the input is empty
-  if (urlForm.url) return;
-
 
   if (navigator.clipboard && typeof navigator.clipboard.readText === "function") {
     try {
