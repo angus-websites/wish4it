@@ -219,6 +219,11 @@ const onInput = debounce(async (event) => {
     // Reset add vars
     addSuccess.value = null;
 
+    // Check if input value is empty or just whitespace
+    if (!form.username || !form.username.trim()) {
+        return; // Exit the function without making the request
+    }
+
     // Set a timeout to change isLoading after 1 second
     searchLoadingTimeoutId.value = setTimeout(() => {
 
