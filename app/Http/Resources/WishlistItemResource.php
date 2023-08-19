@@ -18,7 +18,7 @@ class WishlistItemResource extends JsonResource
             'wishlist_id' => $this->wishlist_id,
             'name' => $this->name,
             'brand' => $this->brand,
-            'price' => number_format($this->price, 2),
+            'price' => $this->price ? number_format($this->price, 2) : null,
             'url' => $this->url,
             'comment' => $this->comment,
             'image' => $this->image,
