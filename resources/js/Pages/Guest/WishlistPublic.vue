@@ -5,9 +5,11 @@ import PageContainer from "@/Components/_util/PageContainer.vue";
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue";
 
 import WishlistGrid from '@/Components/wishlist/WishlistGrid.vue'
+import Pagination from "@/Components/Pagination.vue";
 
 defineProps({
     list: Object,
+    items: Object,
 });
 </script>
 
@@ -21,7 +23,7 @@ defineProps({
                     <p class="h4 mt-2">{{list.owner.name}}</p>
                 </div>
                 <div>
-                    <p>{{list.items.length}} items</p>
+                    <p>{{items.data.length}} items</p>
                 </div>
             </div>
 
@@ -35,7 +37,12 @@ defineProps({
               </div>
             </div>
 
-            <WishlistGrid class="my-10" :items="list.items"/>
+            <WishlistGrid class="mt-10" :items="items.data"/>
+
+            <div class="py-8">
+              <Pagination :model="items" />
+            </div>
+
         </PageContainer>
     </GuestLayout>
 </template>

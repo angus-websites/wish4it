@@ -4,7 +4,7 @@
             <div class="flex flex-col space-y-5 sm:flex-row sm:space-y-0 justify-between items-center">
                 <div>
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                        {{ list.title }} 
+                        {{ list.title }}
                     </h2>
                     <small v-if="$page.props.auth.user.id !== list.owner.id" class="text-sm">{{list.owner.name}}</small>
                 </div>
@@ -49,7 +49,7 @@
                   </TransitionRoot>
 
                 <FlashMessages class="mb-5" :hideErrors="true" />
-            
+
                 <!-- Button row-->
                 <div class="flex flex-col space-y-8 sm:flex-row sm:space-y-0 justify-between items-center mx-3 sm:mx-0 my-5">
                     <!-- Breadcrumb -->
@@ -90,7 +90,11 @@
                         <PrimaryButton v-if="can.createItems" @click="createNewItem">New item</PrimaryButton>
                     </div>
                 </div>
-                <WishlistGrid :items="list.items" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+
+                <WishlistGrid :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+                <div class="py-8">
+                    <Pagination :model="items" />
+                </div>
             </div>
         </div>
 
@@ -119,9 +123,11 @@ import Checkbox from '@/Components/form/Checkbox.vue'
 import FlashMessages from '@/Components/FlashMessages.vue'
 import { TransitionRoot } from '@headlessui/vue'
 import { ref } from 'vue'
+import Pagination from "@/Components/Pagination.vue";
 
 const props = defineProps({
     list: Object,
+    items: Object,
     can: Object,
     canAddFriend: {
         type: Boolean,

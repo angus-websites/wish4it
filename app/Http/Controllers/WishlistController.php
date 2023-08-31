@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WishlistItemResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Http\Resources\WishlistResource;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 class WishlistController extends Controller
 {
@@ -49,45 +51,46 @@ class WishlistController extends Controller
      */
     public function show(Wishlist $wishlist){
 
-        // Load the items of this wishlist
-        $wishlist->load('items');
+        $currentUserId = Auth::id();
+        $itemsQuery = $wishlist->items();
+        $itemsCollection = $itemsQuery->get();
 
-        $currentUserId = Auth::id(); // This will return null if no user is authenticated
-
-        // Filter the items where needs is greater than has (remove the purchased items, unless author)
-        if (!Auth::check() || !Auth::user()->can('viewPurchased', $wishlist)) {
-            $wishlist->items = $wishlist->items->filter(function ($item) {
-                return $item->needs > $item->has;
-            });
+        // If the user is not logged in or the user is not the owner of the wishlist then remove purchased items
+        if (!Auth::check() || ($currentUserId && !Auth::user()->can('viewPurchased', $wishlist))) {
+            $itemsCollection = $itemsCollection->filter(fn($item) => $item->needs > $item->has);
         }
 
+        // Create a resource collection from the items and paginate
+        $items = WishlistItemResource::collection(
+            $itemsCollection->isEmpty() ? $itemsQuery->paginate(16)->withQueryString() : $itemsCollection->toQuery()->paginate(16)->withQueryString()
+        );
 
-        // Convert to an API resource
+        // Create a resource from the wishlist
         $list = new WishlistResource($wishlist);
 
-        // If user not logged in then render a different view
+
+        // If the user is not logged in then show the public wishlist page
         if (!$currentUserId) {
-
-            // Store the intended URL so if user creates an account they are redirected here
             session(['url.intended' => url()->current()]);
-
             return Inertia::render('Guest/WishlistPublic', [
                 'list' => $list,
+                'items' => $items,
             ]);
         }
 
-        // Return to the authenticated view
         return Inertia::render('Wishlist/View', [
             'list' => $list,
+            'items' => $items,
             'can' => [
                 'deleteList' => Auth::user()->can('delete', $wishlist),
                 'editList' => Auth::user()->can('update', $wishlist),
-                'createItems' => Auth::user()->can('create',  [WishlistItem::class, $wishlist]),
-                'viewPurchased' => Auth::user()->can('viewPurchased',  $wishlist),
+                'createItems' => Auth::user()->can('create', [WishlistItem::class, $wishlist]),
+                'viewPurchased' => Auth::user()->can('viewPurchased', $wishlist),
             ],
-            'canAddFriend' => !(Auth::user()->isFriends($list->owner())) && Auth::user()->id !== $list->owner()->id
+            'canAddFriend' => $currentUserId && !Auth::user()->isFriends($list->owner()) && $currentUserId !== $list->owner()->id
         ]);
     }
+
 
 
     /**
