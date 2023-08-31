@@ -1,7 +1,7 @@
 <template>
   <div class="dark:bg-[#232D3B] dark:border-0 bg-white border rounded-none sm:rounded-xl flex flex-col">
     <!-- Banner -->
-    <div v-if="itemPurchased" class="text-center bg-accent px-6 py-2 sm:px-3.5">
+    <div v-if="itemPurchased" class="text-center bg-accent px-6 py-2 sm:px-3.5 rounded-t-xl">
         <p class="text-sm text-dark font-bold">
           Purchased
         </p>

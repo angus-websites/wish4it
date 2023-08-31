@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use App\Http\Resources\WishlistResource;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 class WishlistController extends Controller
 {
@@ -53,12 +54,17 @@ class WishlistController extends Controller
         $currentUserId = Auth::id();
 
         // Initialize the query builder for items
-        $itemsQuery = $wishlist->items();
+        $itemsCollection = $wishlist->items()->get();
 
         // If the user cannot view purchased items, then filter them out.
         if (!Auth::check() || !Auth::user()->can('viewPurchased', $wishlist)) {
-            $itemsQuery->where('needs', '>', 'has');
+            $itemsCollection = $itemsCollection->filter(function ($item) {
+                return $item->needs > $item->has;
+            });
         }
+
+        // Transform the collection to a query builder (so we can paginate)
+        $itemsQuery = $itemsCollection->toQuery();
 
         // Now paginate and convert the items to a resource
         $items = WishlistItemResource::collection($itemsQuery->paginate(16)->withQueryString());

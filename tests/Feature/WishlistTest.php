@@ -221,7 +221,7 @@ class WishlistTest extends TestCase
         $this->actingAs($friend)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
             ->component('Wishlist/View')
             // Checking we have 1 item in our array
-            ->has('list.items', 1, fn(Assert $page) => $page
+            ->has('items.data', 1, fn(Assert $page) => $page
                 ->where('id', $puppy->id)
                 ->where('name', 'Puppy')
                 ->etc()
@@ -232,7 +232,7 @@ class WishlistTest extends TestCase
         $this->actingAs($author)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
             ->component('Wishlist/View')
             // Checking we have 2 items in our array
-            ->has('list.items', 2, fn(Assert $page) => $page
+            ->has('items.data', 2, fn(Assert $page) => $page
                 ->where('id', $ipad->id)
                 ->where('name', 'iPad')
                 ->etc()
