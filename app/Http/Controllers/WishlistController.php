@@ -63,8 +63,13 @@ class WishlistController extends Controller
             });
         }
 
-        // Transform the collection to a query builder (so we can paginate)
-        $itemsQuery = $itemsCollection->toQuery();
+        // Check the collection is not empty
+        if ($itemsCollection->isEmpty()) {
+            $itemsQuery = $wishlist->items();
+        }else{
+            // Transform the collection to a query builder (so we can paginate)
+            $itemsQuery = $itemsCollection->toQuery();
+        }
 
         // Now paginate and convert the items to a resource
         $items = WishlistItemResource::collection($itemsQuery->paginate(16)->withQueryString());
