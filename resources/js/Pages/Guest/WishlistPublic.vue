@@ -8,6 +8,7 @@ import WishlistGrid from '@/Components/wishlist/WishlistGrid.vue'
 
 defineProps({
     list: Object,
+    items: Object,
 });
 </script>
 
@@ -21,7 +22,7 @@ defineProps({
                     <p class="h4 mt-2">{{list.owner.name}}</p>
                 </div>
                 <div>
-                    <p>{{list.items.length}} items</p>
+                    <p>{{items.data.length}} items</p>
                 </div>
             </div>
 
@@ -35,7 +36,7 @@ defineProps({
               </div>
             </div>
 
-            <WishlistGrid class="my-10" :items="list.items"/>
+            <WishlistGrid class="my-10" :items="items.data"/>
         </PageContainer>
     </GuestLayout>
 </template>

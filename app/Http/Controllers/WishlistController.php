@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WishlistItemResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -49,20 +50,20 @@ class WishlistController extends Controller
      */
     public function show(Wishlist $wishlist){
 
-        // Load the items of this wishlist
-        $wishlist->load('items');
+        $currentUserId = Auth::id();
 
-        $currentUserId = Auth::id(); // This will return null if no user is authenticated
+        // Initialize the query builder for items
+        $itemsQuery = $wishlist->items();
 
-        // Filter the items where needs is greater than has (remove the purchased items, unless author)
+        // If the user cannot view purchased items, then filter them out.
         if (!Auth::check() || !Auth::user()->can('viewPurchased', $wishlist)) {
-            $wishlist->items = $wishlist->items->filter(function ($item) {
-                return $item->needs > $item->has;
-            });
+            $itemsQuery->where('needs', '>', 'has');
         }
 
+        // Now paginate and convert the items to a resource
+        $items = WishlistItemResource::collection($itemsQuery->paginate(16)->withQueryString());
 
-        // Convert to an API resource
+        // Convert the wishlist itself to an API resource
         $list = new WishlistResource($wishlist);
 
         // If user not logged in then render a different view
@@ -73,12 +74,14 @@ class WishlistController extends Controller
 
             return Inertia::render('Guest/WishlistPublic', [
                 'list' => $list,
+                'items' => $items,
             ]);
         }
 
         // Return to the authenticated view
         return Inertia::render('Wishlist/View', [
             'list' => $list,
+            'items' => $items,
             'can' => [
                 'deleteList' => Auth::user()->can('delete', $wishlist),
                 'editList' => Auth::user()->can('update', $wishlist),
