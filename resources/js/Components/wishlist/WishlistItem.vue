@@ -86,7 +86,11 @@
         <!-- Link -->
         <PrimaryButton v-if="item.url" :isAnchor="true" :href="item.url" target="_blank" >View</PrimaryButton>
       </div>
+
+
     </div>
+    <small class="text-xs text-center pb-2 opacity-60">{{item.created_at}}</small>
+
   </div>
 </template>
 
