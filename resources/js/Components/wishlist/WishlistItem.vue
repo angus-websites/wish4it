@@ -1,5 +1,5 @@
 <template>
-  <div class="border-b border-r border-gray-200 dark:border-[#1A202A] flex flex-col">
+  <div class="dark:bg-[#232D3B] dark:border-0 bg-white border rounded-none sm:rounded-xl flex flex-col">
     <!-- Banner -->
     <div v-if="itemPurchased" class="text-center bg-accent px-6 py-2 sm:px-3.5">
         <p class="text-sm text-dark font-bold">

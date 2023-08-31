@@ -4,14 +4,11 @@
       <p>No items</p>
   </EmptyState>
 
-  <div v-else class="bg-white dark:bg-[#2a3748]">
-    <p class="sr-only">Products</p>
-    <div class="grid  grid-cols-1 xs:grid-cols-2 border-l border-gray-200 dark:border-[#2a3748] sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
-      <template v-for="item in displayedItems" :key="item.id" >
+  <ul v-else role="list" class="grid grid-cols-1 gap-0.5 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <template v-for="item in displayedItems" :key="item.id">
         <WishlistItem :item="item" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
       </template>
-    </div>
-  </div>
+  </ul>
 </template>
 
 <script setup>

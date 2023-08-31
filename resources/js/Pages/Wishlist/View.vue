@@ -92,8 +92,7 @@
                 </div>
 
                 <WishlistGrid :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
-
-                <div class="py-3">
+                <div class="py-8">
                     <Pagination :model="items" />
                 </div>
             </div>
