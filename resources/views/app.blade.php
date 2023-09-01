@@ -8,7 +8,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{{config('seo.description') }}">
-        <meta name="keywords" content="Wish4it, Wishlist, Gift registry, Share wishlists, Family gifts, Friend gifts, Event wishlists, Birthday gifts, Holiday wishes, Special occasion gifts">
+        <meta name="keywords" content="Wish4it, wishlists, gift registry, share wishlists, family gifts, friends gifts, Event wishlists, birthday gifts, holiday wishes, Special occasion gifts, gifts, family, friends">
 
         <meta property="og:title" content="{{config('seo.title')}}">
         <meta property="og:description" content="{{config('seo.description') }}">
