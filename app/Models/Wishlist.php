@@ -47,4 +47,9 @@ class Wishlist extends Model
     {
         return $this->public;
     }
+
+    public function getUnpurchasedCount()
+    {
+        return $this->items()->sum('needs') - $this->items()->sum('has');
+    }
 }

@@ -21,7 +21,7 @@ export default {
           'xs': '475px',
           ...defaultTheme.screens,
         },
-        
+
         extend: {
             fontFamily: {
                 serif: ['Comic Neue', ...defaultTheme.fontFamily.serif],
@@ -42,6 +42,7 @@ export default {
                     DEFAULT: "#58D500",
                     dark: "#51BD04",
                     dark2: "#48A109",
+                    dark3: "#265d03",
                 },
 
                 dark: {

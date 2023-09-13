@@ -9,7 +9,7 @@
                 <p class="font-medium text-gray-900 dark:text-gray-300">{{ list.title }}</p>
                 <p class="truncate text-sm text-gray-500 dark:text-gray-400">{{ list.itemCount}} items</p>
               </div>
-              <DefaultBadge><span v-if="list.public">Public</span><span v-else>Private</span></DefaultBadge>
+              <VisibilityBadge :public="list.public"><span v-if="list.public">Public</span><span v-else>Private</span></VisibilityBadge>
             </div>
           </Link>
         </div>
@@ -19,15 +19,9 @@
 
 <script setup>
 import { ChevronRightIcon } from '@heroicons/vue/20/solid'
-import DefaultBadge from "@/Components/badges/DefaultBadge.vue"
-
+import VisibilityBadge from "@/Components/badges/VisibilityBadge.vue";
 const props = defineProps({
     lists: Object,
 })
-
-const visibilities = {
-  true: 'text-gray-400 bg-gray-400/10 ring-gray-400/20',
-  false: 'text-indigo-400 bg-indigo-400/10 ring-indigo-400/30',
-}
 
 </script>
