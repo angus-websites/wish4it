@@ -28,6 +28,7 @@ class WishlistResource extends JsonResource
             'title' => $this->title,
             'public' => boolval($this->public),
             'itemCount' => $this->items()->count(),
+            'unpurchasedItemCount' => $this->getUnpurchasedCount(),
         ];
     }
 }

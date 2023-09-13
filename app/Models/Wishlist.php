@@ -50,6 +50,9 @@ class Wishlist extends Model
 
     public function getUnpurchasedCount()
     {
-        return $this->items()->sum('needs') - $this->items()->sum('has');
+        return $this->items->filter(function ($item) {
+            // If 'has' is equal to or greater than 'needs', the item is considered purchased
+            return $item->has < $item->needs;
+        })->count();
     }
 }

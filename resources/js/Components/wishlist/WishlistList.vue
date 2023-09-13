@@ -11,7 +11,7 @@
           <div class="flex flex-row items-center justify-between">
             <div>
               <p class="font-medium text-gray-900 dark:text-gray-300">{{ list.title }}</p>
-              <p class="truncate text-sm text-gray-500 dark:text-gray-400">{{ list.itemCount}} items</p>
+              <p class="truncate text-sm text-gray-500 dark:text-gray-400">{{ list.unpurchasedItemCount}} items</p>
             </div>
             <VisibilityBadge :public="list.public"><span v-if="list.public">Public</span><span v-else>Private</span></VisibilityBadge>
           </div>
