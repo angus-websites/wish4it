@@ -9,7 +9,6 @@ class WishlistItemResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
-     *
      */
     public function toArray(Request $request): array
     {
@@ -30,9 +29,9 @@ class WishlistItemResource extends JsonResource
             }),
             'can' => $this->when($request->user(), function () use ($request) {
                 return [
-                    'update' => $request->user()->can("update", $this->wishlist()),
-                    'delete' => $request->user()->can("delete", $this->wishlist()),
-                    'mark' => $request->user()->can("markAsPurchased", $this->wishlist())
+                    'update' => $request->user()->can('update', $this->wishlist()),
+                    'delete' => $request->user()->can('delete', $this->wishlist()),
+                    'mark' => $request->user()->can('markAsPurchased', $this->wishlist()),
                 ];
             }),
         ];

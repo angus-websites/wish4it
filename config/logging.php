@@ -71,7 +71,6 @@ return [
             'level' => 'error',
         ],
 
-
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

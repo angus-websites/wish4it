@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Scraper;
+
 use App\Services\Product;
 
 class MicrodataScraper extends Scraper
@@ -52,5 +53,4 @@ class MicrodataScraper extends Scraper
 
         return null;
     }
-
 }

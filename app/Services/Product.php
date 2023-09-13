@@ -5,14 +5,17 @@ namespace App\Services;
 class Product
 {
     private $name = null;
+
     private $brand = null;
+
     private $price = null;
+
     private $image = null;
 
     public function getMissingFields(): array
     {
         $fields = ['name', 'brand', 'price', 'image'];
-        $missingFields = array_filter($fields, function($field) {
+        $missingFields = array_filter($fields, function ($field) {
             return is_null($this->$field);
         });
 
@@ -22,17 +25,17 @@ class Product
     public function toArray(): array
     {
         return [
-            "name" => $this->name,
-            "brand" => $this->brand,
-            "price" => $this->price,
-            "image" => $this->image,
-            "hasMissedFields" => count($this->getMissingFields()) > 0
+            'name' => $this->name,
+            'brand' => $this->brand,
+            'price' => $this->price,
+            'image' => $this->image,
+            'hasMissedFields' => count($this->getMissingFields()) > 0,
         ];
     }
 
     private function parsePrice($value)
     {
-        $value = preg_replace("/[^0-9.]/", "", $value);
+        $value = preg_replace('/[^0-9.]/', '', $value);
 
         if (is_numeric($value)) {
             return number_format(floatval($value), 2, '.', '');
@@ -40,7 +43,6 @@ class Product
 
         return null;
     }
-
 
     public function setName($value)
     {
@@ -63,24 +65,28 @@ class Product
         $this->image = $this->checkValue($value, $this->image);
     }
 
-    public function getName(){
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function getBrand(){
+    public function getBrand()
+    {
         return $this->brand;
     }
 
-    public function getPrice(){
+    public function getPrice()
+    {
         return $this->price;
     }
 
-    public function getImage(){
+    public function getImage()
+    {
         return $this->image;
     }
 
     private function checkValue($newValue, $oldValue)
     {
-        return (!is_null($newValue) && $newValue !== '') ? $newValue : $oldValue;
+        return (! is_null($newValue) && $newValue !== '') ? $newValue : $oldValue;
     }
 }

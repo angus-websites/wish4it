@@ -5,13 +5,11 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
-    
 
     /**
      * Test the login page is a valid route
@@ -21,7 +19,6 @@ class LoginTest extends TestCase
         $response = $this->get(route('login'));
         $response->assertStatus(200);
     }
-
 
     /**
      * Tests the correct validation errors
@@ -65,7 +62,7 @@ class LoginTest extends TestCase
         // Login with credentials
         $response = $this->post(route('login'), [
             'email' => $user->email,
-            'password' => 'password'
+            'password' => 'password',
         ]);
 
         // Check that we get redirected
@@ -88,6 +85,4 @@ class LoginTest extends TestCase
 
         $this->assertGuest();
     }
-
-
 }

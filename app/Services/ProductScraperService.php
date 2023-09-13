@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 
 class ProductScraperService
 {
-
     public function scrapeProduct($htmlContent, $url = null): array
     {
 
@@ -34,8 +33,7 @@ class ProductScraperService
         }
 
         // If we didn't scrape all the data then log it
-        if (!empty($missingFields))
-        {
+        if (! empty($missingFields)) {
             // Log missing fields to PHP's error log
             $this->logMissingFields($missingFields, $url);
         }
@@ -52,6 +50,4 @@ class ProductScraperService
         $urlString = $url ? " URL: $url" : 'N/A';
         Log::channel('scraperIncomplete')->info($missingFieldsString.$urlString);
     }
-
-
 }

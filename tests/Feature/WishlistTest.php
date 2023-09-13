@@ -1,8 +1,9 @@
 <?php
+
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Reservation;
+use App\Models\User;
 use App\Models\WishlistItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -15,7 +16,8 @@ class WishlistTest extends TestCase
     /**
      * Test a non-logged-in user cannot view their wishlists
      */
-    public function test_non_logged_in_user_cannot_access_wishlists(){
+    public function test_non_logged_in_user_cannot_access_wishlists()
+    {
         $response = $this->get('/wishlists');
         $response->assertStatus(302);
     }
@@ -37,7 +39,7 @@ class WishlistTest extends TestCase
     {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
-        $response = $this->get('/wishlists/' . $wishlist->id);
+        $response = $this->get('/wishlists/'.$wishlist->id);
         $response->assertStatus(200);
     }
 
@@ -56,7 +58,8 @@ class WishlistTest extends TestCase
     /**
      * Test a logged-in user can create a wishlist
      */
-    public function test_logged_in_user_can_create_wishlist(){
+    public function test_logged_in_user_can_create_wishlist()
+    {
         $user = User::factory()->create();
         $response = $this->actingAs($user)->post('/wishlists', [
             'title' => 'Test Wishlist',
@@ -68,7 +71,8 @@ class WishlistTest extends TestCase
     /**
      * Test a logged-in user receives an error when creating a wishlist with no title
      */
-    public function test_logged_in_user_cannot_create_wishlist_without_title(){
+    public function test_logged_in_user_cannot_create_wishlist_without_title()
+    {
         $user = User::factory()->create();
         $response = $this->actingAs($user)->post('/wishlists', [
             'public' => false,
@@ -79,10 +83,11 @@ class WishlistTest extends TestCase
     /**
      * Test the owner of a wishlist can view a private wishlist
      */
-    public function test_owner_can_view_private_wishlist(){
+    public function test_owner_can_view_private_wishlist()
+    {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
-        $response = $this->actingAs($user)->get('/wishlists/' . $wishlist->id);
+        $response = $this->actingAs($user)->get('/wishlists/'.$wishlist->id);
         $response->assertStatus(200);
     }
 
@@ -94,31 +99,32 @@ class WishlistTest extends TestCase
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
-        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
+        $response = $this->actingAs($otherUser)->get('/wishlists/'.$wishlist->id);
         $response->assertStatus(403);
     }
 
     /**
      * Test a friend of the creator cannot view a private wishlist
      */
-    public function test_friend_of_creator_cannot_view_private_wishlist(){
+    public function test_friend_of_creator_cannot_view_private_wishlist()
+    {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
         $otherUser->friends()->attach($user);
-        $response = $this->actingAs($otherUser)->get('/wishlists/' . $wishlist->id);
+        $response = $this->actingAs($otherUser)->get('/wishlists/'.$wishlist->id);
         $response->assertStatus(403);
     }
-
 
     /**
      * Test other user cannot update a wishlist
      */
-    public function test_other_user_cannot_update_wishlist(){
+    public function test_other_user_cannot_update_wishlist()
+    {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
-        $response = $this->actingAs($otherUser)->put('/wishlists/' . $wishlist->id, [
+        $response = $this->actingAs($otherUser)->put('/wishlists/'.$wishlist->id, [
             'title' => 'Updated Wishlist',
             'public' => true,
         ]);
@@ -132,7 +138,7 @@ class WishlistTest extends TestCase
     {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
-        $response = $this->actingAs($user)->put('/wishlists/' . $wishlist->id, [
+        $response = $this->actingAs($user)->put('/wishlists/'.$wishlist->id, [
             'title' => 'Updated Wishlist',
             'public' => true,
         ]);
@@ -147,10 +153,9 @@ class WishlistTest extends TestCase
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
         $otherUser = User::factory()->create();
-        $response = $this->actingAs($otherUser)->delete('/wishlists/' . $wishlist->id);
+        $response = $this->actingAs($otherUser)->delete('/wishlists/'.$wishlist->id);
         $response->assertStatus(403);
     }
-
 
     /**
      * If a guest views a wishlist, then signs in or registers, they are
@@ -161,7 +166,6 @@ class WishlistTest extends TestCase
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
 
-
         $guest = User::factory()->create();
         // Simulate the behavior of a guest trying to view the wishlist
         $this->get(route('wishlists.show', $wishlist));
@@ -169,7 +173,7 @@ class WishlistTest extends TestCase
         // Simulate login
         $response = $this->post(route('login'), [
             'email' => $guest->email,
-            'password' => 'password' // Assuming this is the default password you've set in your User factory.
+            'password' => 'password', // Assuming this is the default password you've set in your User factory.
         ]);
 
         $response->assertRedirect(route('wishlists.show', $wishlist));
@@ -191,14 +195,14 @@ class WishlistTest extends TestCase
 
         // Create an item on the wishlist to be purchased
         $ipad = WishlistItem::create([
-          'name' => "iPad",
-          'wishlist_id' => $wishlist->id
+            'name' => 'iPad',
+            'wishlist_id' => $wishlist->id,
         ]);
 
         // Create an item on the wishlist to not be purchased
         $puppy = WishlistItem::create([
-          'name' => "Puppy",
-          'wishlist_id' => $wishlist->id
+            'name' => 'Puppy',
+            'wishlist_id' => $wishlist->id,
         ]);
 
         // Create a buyer
@@ -218,10 +222,10 @@ class WishlistTest extends TestCase
         $friend = User::factory()->create();
 
         // View the wishlist as the friend
-        $this->actingAs($friend)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
+        $this->actingAs($friend)->get('/wishlists/'.$wishlist->id)->assertInertia(fn (Assert $page) => $page
             ->component('Wishlist/View')
             // Checking we have 1 item in our array
-            ->has('items.data', 1, fn(Assert $page) => $page
+            ->has('items.data', 1, fn (Assert $page) => $page
                 ->where('id', $puppy->id)
                 ->where('name', 'Puppy')
                 ->etc()
@@ -229,28 +233,25 @@ class WishlistTest extends TestCase
         );
 
         // View the wishlist as the author (both items should be present)
-        $this->actingAs($author)->get('/wishlists/'.$wishlist->id)->assertInertia(fn(Assert $page) => $page
+        $this->actingAs($author)->get('/wishlists/'.$wishlist->id)->assertInertia(fn (Assert $page) => $page
             ->component('Wishlist/View')
             // Checking we have 2 items in our array
-            ->has('items.data', 2, fn(Assert $page) => $page
+            ->has('items.data', 2, fn (Assert $page) => $page
                 ->where('id', $ipad->id)
                 ->where('name', 'iPad')
                 ->etc()
             )
         );
 
-
-
     }
-
 
     /**
      * Test only a logged-in user can mark an item as purchased from another users public wishlist
      */
-    public function test_only_logged_in_user_can_mark_item_as_purchased(){
+    public function test_only_logged_in_user_can_mark_item_as_purchased()
+    {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
-
 
         // Disable guarded attributes
         \Illuminate\Database\Eloquent\Model::unguard();
@@ -263,7 +264,7 @@ class WishlistTest extends TestCase
         // Enable guarded attributes
         \Illuminate\Database\Eloquent\Model::reguard();
 
-        $response = $this->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark');
+        $response = $this->put('/wishlists/'.$wishlist->id.'/items/'.$item->id.'/mark');
         $response->assertRedirect('/login');
         $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id]);
     }
@@ -275,7 +276,6 @@ class WishlistTest extends TestCase
     {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
-
 
         // Disable guarded attributes
         \Illuminate\Database\Eloquent\Model::unguard();
@@ -295,7 +295,7 @@ class WishlistTest extends TestCase
             'quantity' => 1,
         ];
         $response = $this->actingAs($another)
-            ->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark', $data);
+            ->put('/wishlists/'.$wishlist->id.'/items/'.$item->id.'/mark', $data);
 
         // Assert the database was updated
         $this->assertDatabaseHas('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
@@ -309,7 +309,6 @@ class WishlistTest extends TestCase
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => false]);
 
-
         // Disable guarded attributes
         \Illuminate\Database\Eloquent\Model::unguard();
 
@@ -328,7 +327,7 @@ class WishlistTest extends TestCase
             'quantity' => 1,
         ];
         $response = $this->actingAs($another)
-            ->put('/wishlists/' . $wishlist->id . '/items/' . $item->id . '/mark', $data);
+            ->put('/wishlists/'.$wishlist->id.'/items/'.$item->id.'/mark', $data);
 
         // Assert 403
         $response->assertStatus(403);
@@ -340,16 +339,17 @@ class WishlistTest extends TestCase
     /**
      * Test a logged-in user that is not friends with the author, gets the option to add the author as a friend
      */
-    public function test_logged_in_user_not_friends_with_author_gets_option_to_add_friend(){
+    public function test_logged_in_user_not_friends_with_author_gets_option_to_add_friend()
+    {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
 
         $another = User::factory()->create();
 
-        $response = $this->actingAs($another)->get('/wishlists/' . $wishlist->id);
-        $response->assertInertia(fn(Assert $page) => $page
+        $response = $this->actingAs($another)->get('/wishlists/'.$wishlist->id);
+        $response->assertInertia(fn (Assert $page) => $page
             ->component('Wishlist/View')
-            ->has('list', fn(Assert $page) => $page
+            ->has('list', fn (Assert $page) => $page
                 ->where('id', $wishlist->id)
                 ->where('title', 'Test Wishlist')
                 ->where('public', true)
@@ -362,17 +362,18 @@ class WishlistTest extends TestCase
     /**
      * Test a logged-in user that is friends with the author, does not get the option to add the author as a friend
      */
-    public function test_logged_in_user_that_is_friends_with_author_does_not_gets_option_to_add_friend(){
+    public function test_logged_in_user_that_is_friends_with_author_does_not_gets_option_to_add_friend()
+    {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
 
         $another = User::factory()->create();
         $another->friends()->attach($user);
 
-        $response = $this->actingAs($another)->get('/wishlists/' . $wishlist->id);
-        $response->assertInertia(fn(Assert $page) => $page
+        $response = $this->actingAs($another)->get('/wishlists/'.$wishlist->id);
+        $response->assertInertia(fn (Assert $page) => $page
             ->component('Wishlist/View')
-            ->has('list', fn(Assert $page) => $page
+            ->has('list', fn (Assert $page) => $page
                 ->where('id', $wishlist->id)
                 ->where('title', 'Test Wishlist')
                 ->where('public', true)
@@ -398,11 +399,10 @@ class WishlistTest extends TestCase
     {
         $user = User::factory()->create();
         $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
-        $response = $this->actingAs($user)->get('/wishlists/' . $wishlist->id);
-        $response->assertInertia(fn(Assert $page) => $page
+        $response = $this->actingAs($user)->get('/wishlists/'.$wishlist->id);
+        $response->assertInertia(fn (Assert $page) => $page
             ->component('Wishlist/View')
             ->where('canAddFriend', false)
         );
     }
-
 }

@@ -13,8 +13,8 @@
       </p>
     </div>
     <div class="flex justify-between sm:justify-end">
-      <Link v-if="model.links.prev" :href="model.links.prev" class="px-2 py-1 text-sm rounded-md font-semibold text-dark-light2 shadow-sm bg-light-dark hover:bg-light-dark2 dark:bg-dark-light dark:text-light dark:hover:bg-dark-light2">Previous</Link>
-      <Link v-if="model.links.next"  :href="model.links.next" class="px-2 py-1 text-sm rounded-md font-semibold text-dark-light2 shadow-sm bg-light-dark hover:bg-light-dark2 dark:bg-dark-light dark:text-light dark:hover:bg-dark-light2">Next</Link>
+      <Link preserve-state v-if="model.links.prev" :href="model.links.prev" class="px-2 py-1 text-sm rounded-md font-semibold text-dark-light2 shadow-sm bg-light-dark hover:bg-light-dark2 dark:bg-dark-light dark:text-light dark:hover:bg-dark-light2">Previous</Link>
+      <Link preserve-state v-if="model.links.next"  :href="model.links.next" class="px-2 py-1 text-sm rounded-md font-semibold text-dark-light2 shadow-sm bg-light-dark hover:bg-light-dark2 dark:bg-dark-light dark:text-light dark:hover:bg-dark-light2">Next</Link>
     </div>
   </nav>
 </template>

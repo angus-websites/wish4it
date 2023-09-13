@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Wishlist extends Model
 {
@@ -46,5 +46,13 @@ class Wishlist extends Model
     public function isPublic()
     {
         return $this->public;
+    }
+
+    public function getUnpurchasedCount()
+    {
+        return $this->items->filter(function ($item) {
+            // If 'has' is equal to or greater than 'needs', the item is considered purchased
+            return $item->has < $item->needs;
+        })->count();
     }
 }

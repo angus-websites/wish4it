@@ -21,9 +21,9 @@ return new class extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-            
-            $table->enum('role', ['owner', 'collaborator'])->default('collaborator');;
-            
+
+            $table->enum('role', ['owner', 'collaborator'])->default('collaborator');
+
             // Unique constraint for wishlist_id and user_id combination
             $table->unique(['wishlist_id', 'user_id']);
         });

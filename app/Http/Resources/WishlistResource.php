@@ -7,7 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class WishlistResource extends JsonResource
 {
-
     /**
      * Transform the resource into an array.
      *
@@ -28,6 +27,7 @@ class WishlistResource extends JsonResource
             'title' => $this->title,
             'public' => boolval($this->public),
             'itemCount' => $this->items()->count(),
+            'unpurchasedItemCount' => $this->getUnpurchasedCount(),
         ];
     }
 }
