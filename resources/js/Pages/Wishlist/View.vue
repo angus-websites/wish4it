@@ -76,8 +76,15 @@
                         </li>
                       </ol>
                     </nav>
+                    <!-- Number of items (desktop) -->
+                    <div class="hidden sm:block">
+                      <p class="text-center text-sm"><span class="font-bold" v-if="viewPurchased">{{list.itemCount}}</span><span class="font-bold" v-else>{{ list.unpurchasedItemCount }}</span> items</p>
+                    </div>
 
                     <div class="flex flex-row justify-between items-center space-x-8">
+                        <div class="sm:hidden">
+                          <p class="text-center text-sm"><span class="font-bold" v-if="viewPurchased">{{list.itemCount}}</span><span class="font-bold" v-else>{{ list.unpurchasedItemCount }}</span> items</p>
+                        </div>
                         <!-- View purchased option -->
                         <div v-if="can.viewPurchased">
                             <label class="flex items-center">
@@ -91,7 +98,8 @@
                     </div>
                 </div>
 
-                <WishlistGrid :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+
+                <WishlistGrid :itemCount="list.itemCount" :unpurchasedItemCount="list.unpurchasedItemCount" :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
                 <div class="py-8">
                     <Pagination :model="items" />
                 </div>
