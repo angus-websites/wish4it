@@ -19,7 +19,7 @@ class FriendResource extends JsonResource
             'name' => $this->name,
             'username' => $this->username,
             'wishlists' => $this->whenLoaded('wishlists', function () {
-                return WishlistResource::collection($this->wishlists()->where("public", true)->get());
+                return WishlistResource::collection($this->wishlists()->where('public', true)->get());
             }),
         ];
     }

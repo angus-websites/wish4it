@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class WishlistItem extends Model
 {
@@ -13,19 +13,23 @@ class WishlistItem extends Model
 
     protected $guarded = ['id', 'wishlist_id'];
 
-    public function wishlist(){
+    public function wishlist()
+    {
         return $this->belongsTo(Wishlist::class)->firstOrFail();
     }
 
-    public function reservations() {
+    public function reservations()
+    {
         return $this->hasMany(Reservation::class);
     }
 
-    public function getHasAttribute() {
+    public function getHasAttribute()
+    {
         return $this->reservations->sum('quantity');
     }
 
-    public function hasUserReservation(User $user) {
+    public function hasUserReservation(User $user)
+    {
         return $this->reservations()->where('user_id', $user->id)->exists();
     }
 }

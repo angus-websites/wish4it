@@ -27,8 +27,9 @@ class ProdRefresh extends Command
     public function handle()
     {
         // Only prompt for confirmation in production and when the --force flag is not set
-        if (!$this->option('force') && App::environment('production') && !$this->confirm('This command will refresh the database and replace all existing data. Do you wish to continue?')) {
+        if (! $this->option('force') && App::environment('production') && ! $this->confirm('This command will refresh the database and replace all existing data. Do you wish to continue?')) {
             $this->info('Command cancelled!');
+
             return;
         }
 
@@ -36,7 +37,7 @@ class ProdRefresh extends Command
 
         // If you want to run a specific seeder:
         $this->call('db:seed', [
-            '--class' => 'ProdSeeder'
+            '--class' => 'ProdSeeder',
         ]);
 
         $this->info('Database has been refreshed and seeded for production!');

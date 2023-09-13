@@ -2,20 +2,18 @@
 
 namespace App\Services\Scraper;
 
-use Symfony\Component\DomCrawler\Crawler;
 use App\Services\Product;
+use Symfony\Component\DomCrawler\Crawler;
 
 class JsonLdScraper extends Scraper
 {
     // Define possible paths for each attribute
     private $paths = [
         'name' => [['name']],
-        'brand' => [['brand', 'name'], ["brand"]],
+        'brand' => [['brand', 'name'], ['brand']],
         'price' => [['offers', '*', 'price'], ['offers', 'price'], ['price']],
-        'image' => [['image','*','thumbnail'], ['image']],
+        'image' => [['image', '*', 'thumbnail'], ['image']],
     ];
-
-
 
     public function scrape(Product $product)
     {
@@ -29,11 +27,11 @@ class JsonLdScraper extends Scraper
             $productData = $this->recursiveSearch($data, '@type', 'product');
 
             // Assign product data from the json
-            if (!is_null($productData)) {
-                $product->setName($this->findValue($productData, "name"));
-                $product->setBrand($this->findValue($productData, "brand"));
-                $product->setPrice($this->findValue($productData, "price"));
-                $product->setImage($this->findValue($productData, "image"));
+            if (! is_null($productData)) {
+                $product->setName($this->findValue($productData, 'name'));
+                $product->setBrand($this->findValue($productData, 'brand'));
+                $product->setPrice($this->findValue($productData, 'price'));
+                $product->setImage($this->findValue($productData, 'image'));
                 break;
             }
         }
@@ -50,10 +48,12 @@ class JsonLdScraper extends Scraper
                 return $value;
             }
         }
+
         return null;
     }
 
-    public function getValueFromPath($data, $path) {
+    public function getValueFromPath($data, $path)
+    {
 
         // Base case: if path is empty, return the data if it's a leaf node, else return null
         if (empty($path)) {
@@ -61,7 +61,7 @@ class JsonLdScraper extends Scraper
         }
 
         // If data is not an array (but there's still some path left), return null
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             return null;
         }
 
@@ -71,7 +71,7 @@ class JsonLdScraper extends Scraper
         // Handle wildcard: continue the search in the current subtree
         if ($key === '*') {
             $queue = [$data];
-            while (!empty($queue)) {
+            while (! empty($queue)) {
                 $subdata = array_shift($queue);
                 foreach ($subdata as $keyData => $valueData) {
                     if (is_array($valueData)) {
@@ -85,7 +85,7 @@ class JsonLdScraper extends Scraper
         }
 
         // If the key exists in the data, continue the search in the corresponding subtree
-        else if (array_key_exists($key, $data)) {
+        elseif (array_key_exists($key, $data)) {
             return $this->getValueFromPath($data[$key], $path);
         }
 
@@ -93,15 +93,13 @@ class JsonLdScraper extends Scraper
         return null;
     }
 
-
-
     private function recursiveSearch(array $array, string $key, string $value = null)
     {
-        $iterator  = new \RecursiveArrayIterator($array);
+        $iterator = new \RecursiveArrayIterator($array);
         $recursive = new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::SELF_FIRST);
         foreach ($recursive as $k => $v) {
             if ($k === $key) {
-                if (!is_null($value)) {
+                if (! is_null($value)) {
                     if (is_string($v) && strtolower($v) === strtolower($value)) {
                         return $recursive->getInnerIterator()->getArrayCopy();
                     }
@@ -110,6 +108,7 @@ class JsonLdScraper extends Scraper
                 }
             }
         }
+
         return null;
     }
 }

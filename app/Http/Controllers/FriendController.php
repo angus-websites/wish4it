@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\FriendResource;
-
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class FriendController extends Controller
 {
@@ -21,7 +20,7 @@ class FriendController extends Controller
         $friends = Auth::user()->friends()->with('wishlists')->get();
 
         return Inertia::render('Friends/Index', [
-            'friends' => FriendResource::collection($friends)
+            'friends' => FriendResource::collection($friends),
         ]);
     }
 
@@ -35,38 +34,38 @@ class FriendController extends Controller
         $user = User::where('username', $username)->first();
 
         // If the user doesn't exist, return an error
-        if(!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'User not found.'
+                'message' => 'User not found.',
             ], 404);
         }
 
         // Get the currently authenticated user
         $currentUser = Auth::user();
-        
+
         // If the user is the current user, return an error
-        if($currentUser->id == $user->id) {
+        if ($currentUser->id == $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'You cannot add yourself as a friend.'
+                'message' => 'You cannot add yourself as a friend.',
             ], 400);
         }
 
         // If the user is already a friend, return a message
-        if($currentUser->friends()->where('friend_id', $user->id)->exists()) {
+        if ($currentUser->friends()->where('friend_id', $user->id)->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'This user is already your friend.'
+                'message' => 'This user is already your friend.',
             ], 400);
         }
 
         // Add the user as a friend
         $currentUser->friends()->attach($user->id);
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'Friend added successfully.'
+            'message' => 'Friend added successfully.',
         ], 200);
     }
 
@@ -80,15 +79,15 @@ class FriendController extends Controller
         $user = User::where('username', $username)->first();
 
         // If the user doesn't exist, return an error
-        if(!$user) {
+        if (! $user) {
             return back()->with('error', 'User not found.');
         }
 
         // Get the currently authenticated user
         $currentUser = Auth::user();
-        
+
         // If the user is not a friend, return an error
-        if(!$currentUser->friends()->where('friend_id', $user->id)->exists()) {
+        if (! $currentUser->friends()->where('friend_id', $user->id)->exists()) {
             return back()->with('error', 'This user is not your friend.');
         }
 
@@ -98,8 +97,6 @@ class FriendController extends Controller
         // Redirect to the friends index page with a success message
         return redirect()->route('friends')->with('success', 'Friend removed successfully.');
     }
-
-
 
     /**
      * Search for users by username
@@ -114,7 +111,7 @@ class FriendController extends Controller
             return response()->json([
                 'success' => false,
                 'errorTitle' => 'No input',
-                'message' => 'Please enter something'
+                'message' => 'Please enter something',
             ]);
         }
 
@@ -122,23 +119,23 @@ class FriendController extends Controller
         $currentUser = Auth::user();
 
         // If the authenticated user searches for themselves
-        if(strcasecmp($currentUser->username, $search) == 0) {
+        if (strcasecmp($currentUser->username, $search) == 0) {
             return response()->json([
                 'success' => false,
                 'errorTitle' => 'That is sad',
-                'message' => 'You cannot add yourself as a friend'
+                'message' => 'You cannot add yourself as a friend',
             ]);
         }
 
         // Attempt to find a user matching the search
         $user = User::where('username', 'like', $search)->first();
-        
+
         // If the user doesn't exist
-        if(is_null($user)) {
+        if (is_null($user)) {
             return response()->json([
                 'success' => false,
                 'errorTitle' => 'User not found',
-                'message' => 'A user with that username was not found'
+                'message' => 'A user with that username was not found',
             ]);
         }
 
@@ -148,7 +145,7 @@ class FriendController extends Controller
             return response()->json([
                 'success' => false,
                 'errorTitle' => 'Friend exists',
-                'message' => 'This user is already your friend'
+                'message' => 'This user is already your friend',
             ]);
         }
 
@@ -157,8 +154,7 @@ class FriendController extends Controller
 
         return response()->json([
             'success' => true,
-            'friend' => $friend
+            'friend' => $friend,
         ]);
     }
-
 }

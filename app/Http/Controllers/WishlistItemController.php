@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Reservation;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
-use App\Models\Reservation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Facades\Redirect;
 
 class WishlistItemController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth:sanctum');
@@ -20,7 +18,6 @@ class WishlistItemController extends Controller
         // Authorize everyting through the parent wishlist
         $this->authorizeResource(Wishlist::class);
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -30,7 +27,7 @@ class WishlistItemController extends Controller
 
         // Authorize this method manually
         $this->authorize('create', [WishlistItem::class, $wishlist]);
-        
+
         // Validate the incoming request data.
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -47,7 +44,6 @@ class WishlistItemController extends Controller
 
         return Redirect::route('wishlists.show', $wishlist)->with('success', 'Item added');
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -67,7 +63,7 @@ class WishlistItemController extends Controller
 
         // Save
         $item->fill($data);
-        $item->wishlist_id=$wishlist->id;
+        $item->wishlist_id = $wishlist->id;
         $item->save();
 
         // If we pass validation
@@ -90,10 +86,9 @@ class WishlistItemController extends Controller
         $reservation->quantity = $request->quantity;
         $reservation->user_id = Auth::user()->id;  // Get the logged in user's ID
         $reservation->save();
-        
+
         return Redirect::back()->with('success', 'Marked as purchased');
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -101,6 +96,7 @@ class WishlistItemController extends Controller
     public function destroy(Request $request, Wishlist $wishlist, WishlistItem $item)
     {
         $item->delete();
+
         return Redirect::back()->with('success', 'Item deleted');
     }
 }

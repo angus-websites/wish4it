@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->timestamps();
 
-            $table->text("title");
-            $table->boolean("public")->default(true);
+            $table->text('title');
+            $table->boolean('public')->default(true);
         });
     }
 

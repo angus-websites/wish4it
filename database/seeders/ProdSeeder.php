@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Wishlist;
 
 class ProdSeeder extends Seeder
 {

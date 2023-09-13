@@ -15,19 +15,19 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->foreignUuid('wishlist_id')
-                  ->references('id')
-                  ->on('wishlists')
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('wishlists')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
 
-            $table->text("name");
-            $table->text("brand")->nullable();
-            $table->text("price")->nullable();
-            $table->text("url")->nullable();
-            $table->text("comment")->nullable();
-            $table->text("image")->nullable();
-            $table->boolean("unlimited_needs")->default(false);
-            $table->integer("needs")->default(1);
+            $table->text('name');
+            $table->text('brand')->nullable();
+            $table->text('price')->nullable();
+            $table->text('url')->nullable();
+            $table->text('comment')->nullable();
+            $table->text('image')->nullable();
+            $table->boolean('unlimited_needs')->default(false);
+            $table->integer('needs')->default(1);
 
         });
     }

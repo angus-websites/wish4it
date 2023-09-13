@@ -3,17 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\WishlistItemResource;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 use App\Http\Resources\WishlistResource;
 use App\Models\Wishlist;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class WishlistController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth:sanctum')->except(['show']);
@@ -23,9 +21,10 @@ class WishlistController extends Controller
     /**
      * Wishlist index page
      */
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         return Inertia::render('Wishlist/Index', [
-            'lists' => WishlistResource::collection(Auth::user()->wishlists()->get())
+            'lists' => WishlistResource::collection(Auth::user()->wishlists()->get()),
         ]);
     }
 
@@ -42,22 +41,23 @@ class WishlistController extends Controller
 
         // Save
         Auth::user()->createWishlist($data);
+
         return Redirect::route('wishlists.index')->with('success', 'Wishlist created');
     }
-
 
     /**
      * Display the specified resource.
      */
-    public function show(Wishlist $wishlist){
+    public function show(Wishlist $wishlist)
+    {
 
         $currentUserId = Auth::id();
         $itemsQuery = $wishlist->items();
         $itemsCollection = $itemsQuery->get();
 
         // If the user is not logged in or the user is not the owner of the wishlist then remove purchased items
-        if (!Auth::check() || ($currentUserId && !Auth::user()->can('viewPurchased', $wishlist))) {
-            $itemsCollection = $itemsCollection->filter(fn($item) => $item->needs > $item->has);
+        if (! Auth::check() || ($currentUserId && ! Auth::user()->can('viewPurchased', $wishlist))) {
+            $itemsCollection = $itemsCollection->filter(fn ($item) => $item->needs > $item->has);
         }
 
         // Create a resource collection from the items and paginate
@@ -68,10 +68,10 @@ class WishlistController extends Controller
         // Create a resource from the wishlist
         $list = new WishlistResource($wishlist);
 
-
         // If the user is not logged in then show the public wishlist page
-        if (!$currentUserId) {
+        if (! $currentUserId) {
             session(['url.intended' => url()->current()]);
+
             return Inertia::render('Guest/WishlistPublic', [
                 'list' => $list,
                 'items' => $items,
@@ -87,11 +87,9 @@ class WishlistController extends Controller
                 'createItems' => Auth::user()->can('create', [WishlistItem::class, $wishlist]),
                 'viewPurchased' => Auth::user()->can('viewPurchased', $wishlist),
             ],
-            'canAddFriend' => $currentUserId && !Auth::user()->isFriends($list->owner()) && $currentUserId !== $list->owner()->id
+            'canAddFriend' => $currentUserId && ! Auth::user()->isFriends($list->owner()) && $currentUserId !== $list->owner()->id,
         ]);
     }
-
-
 
     /**
      * Update the specified resource in storage.
@@ -118,6 +116,7 @@ class WishlistController extends Controller
     public function destroy(Wishlist $wishlist)
     {
         $wishlist->delete();
+
         return Redirect::route('wishlists.index')->with('info', 'Wishlist deleted');
     }
 }

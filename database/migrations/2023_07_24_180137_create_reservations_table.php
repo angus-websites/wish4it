@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer("quantity");
+            $table->integer('quantity');
 
             $table->foreignUuid('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignUuid('wishlist_item_id')->references('id')->on('wishlist_items')->onUpdate('cascade')->onDelete('cascade');
@@ -29,4 +29,3 @@ return new class extends Migration
         Schema::dropIfExists('reservations');
     }
 };
-

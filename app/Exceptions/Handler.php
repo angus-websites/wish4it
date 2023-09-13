@@ -3,10 +3,10 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -21,14 +21,14 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-   /**
-    * Register the exception handling callbacks for the application.
-    *
-    * @return void
-    */
-   public function register()
-   {
-       $this->reportable(function (Throwable $e) {
+    /**
+     * Register the exception handling callbacks for the application.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->reportable(function (Throwable $e) {
 
             // Log the top of the stack trace
             $trace = $e->getTrace();
@@ -38,21 +38,17 @@ class Handler extends ExceptionHandler
                 'exception_class' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'top_trace' => $topTrace
+                'top_trace' => $topTrace,
             ]);
         });
 
-
-
-
-   }
-
+    }
 
     public function render($request, Throwable $e)
     {
         $response = parent::render($request, $e);
 
-        if ((!App::environment(['test', 'local'])) && in_array($response->status(), [500, 503, 404, 403])) {
+        if ((! App::environment(['test', 'local'])) && in_array($response->status(), [500, 503, 404, 403])) {
             return Inertia::render('Errors/Index', ['status' => $response->status()])
                 ->toResponse($request)
                 ->setStatusCode($response->status());

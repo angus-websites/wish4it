@@ -16,4 +16,3 @@ abstract class Scraper
 
     abstract public function scrape(Product $product);
 }
-

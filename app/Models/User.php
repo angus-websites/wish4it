@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -19,7 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasUuids;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -68,23 +68,27 @@ class User extends Authenticatable implements MustVerifyEmail
      * is nullable so not all users
      * will have a role
      */
-    private function role() {
+    private function role()
+    {
         return $this->belongsTo(Role::class)->first();
     }
 
-    public function getRole(){
+    public function getRole()
+    {
         return $this->role();
     }
 
     /**
      * Is this user admin or super admin?
      */
-    public function isAdmin($super=false){
-        
+    public function isAdmin($super = false)
+    {
+
         // Check this user actually has a role
-        if ($this->role()){
-            return $super ? $this->role()->name == "Super Admin" :  in_array($this->role()->name, ["Admin", "Super Admin"]);
+        if ($this->role()) {
+            return $super ? $this->role()->name == 'Super Admin' : in_array($this->role()->name, ['Admin', 'Super Admin']);
         }
+
         return false;
     }
 
@@ -110,7 +114,6 @@ class User extends Authenticatable implements MustVerifyEmail
         // Return the wishlist for further use
         return $wishlist;
     }
-
 
     /**
      * Get the friends of this user

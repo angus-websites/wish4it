@@ -15,12 +15,13 @@ abstract class ConventionalScraper extends Scraper
         foreach ($selectors as $field => $selector) {
             $value = $this->extractContent($selector, $field);
             if ($value !== null) {
-                $setter = 'set' . ucfirst($field);
+                $setter = 'set'.ucfirst($field);
                 if (method_exists($product, $setter)) {
                     $product->$setter($value);
                 }
             }
         }
+
         return $product;
     }
 
@@ -33,6 +34,7 @@ abstract class ConventionalScraper extends Scraper
             if ($field === 'image') {
                 return $node->attr('src');
             }
+
             return $node->text();
         }
 

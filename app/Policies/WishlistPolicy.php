@@ -45,11 +45,11 @@ class WishlistPolicy
     {
 
         // If the wishlist is public then anybody can view this list (even without an account)
-        if ($wishlist->isPublic()){
+        if ($wishlist->isPublic()) {
             return Response::allow();
         }
-        
-        if ($user){
+
+        if ($user) {
             // Only owners can view their own private lists
             return $user->id === $wishlist->owner()->id
                 ? Response::allow()
@@ -71,7 +71,7 @@ class WishlistPolicy
      * Determine whether the user can update the model.
      */
     public function update(User $user, Wishlist $wishlist)
-    {        
+    {
         return $user->id === $wishlist->owner()->id
             ? Response::allow()
             : Response::deny('You cannot update this wishlist');
@@ -86,5 +86,4 @@ class WishlistPolicy
             ? Response::allow()
             : Response::deny('You cannot delete this wishlist');
     }
-
 }
