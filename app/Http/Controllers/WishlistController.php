@@ -62,7 +62,7 @@ class WishlistController extends Controller
 
         // Create a resource collection from the items and paginate
         $items = WishlistItemResource::collection(
-            $itemsCollection->isEmpty() ? $itemsQuery->paginate(16)->withQueryString() : $itemsCollection->toQuery()->paginate(16)->withQueryString()
+            $itemsCollection->isEmpty() ? $itemsQuery->paginate(16)->withQueryString() : $itemsCollection->toQuery()->orderBy('created_at', 'desc')->paginate(16)->withQueryString()
         );
 
         // Create a resource from the wishlist
