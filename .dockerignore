@@ -7,3 +7,4 @@ node_modules
 bootstrap/cache/*
 .git
 .github
+testing
