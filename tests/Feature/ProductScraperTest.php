@@ -287,4 +287,5 @@ class ProductScraperTest extends TestCase
         $this->assertEqualsCanonicalizing($expected, $product);
 
     }
+
 }
