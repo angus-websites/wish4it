@@ -24,6 +24,11 @@ class JsonLdScraper extends Scraper
 
         // Look for a product schema
         foreach ($schemaData as $data) {
+
+            if (is_null($data)) {
+                continue;
+            }
+
             $productData = $this->recursiveSearch($data, '@type', 'product');
 
             // Assign product data from the json
@@ -32,7 +37,6 @@ class JsonLdScraper extends Scraper
                 $product->setBrand($this->findValue($productData, 'brand'));
                 $product->setPrice($this->findValue($productData, 'price'));
                 $product->setImage($this->findValue($productData, 'image'));
-                break;
             }
         }
 

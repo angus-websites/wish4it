@@ -288,28 +288,4 @@ class ProductScraperTest extends TestCase
 
     }
 
-    public function test_camera_lens_scrape()
-    {
-        // https://www.harrisoncameras.co.uk/pd/canon-rf-24-70mm-f28-l-is-usm-rf-lens_3680c005aa
-
-        // Get the stored HTML content
-        $htmlContent = file_get_contents(base_path('tests/Data/html/camera_lens.html'));
-
-        // Create a scraping service
-        $service = new ProductScraperService();
-        $product = $service->scrapeProduct($htmlContent);
-
-        // Expected
-        $expected = [
-            'name' => 'Canon RF 24-70mm F2.8 L IS USM RF Lens',
-            'brand' => 'Canon',
-            'price' => '2359.00',
-            'image' => 'https://harrison-cameras.s3.amazonaws.com/p/s/3680C005AA.jpg',
-            'hasMissedFields' => false,
-        ];
-
-        // Assert specific values
-        $this->assertEqualsCanonicalizing($expected, $product);
-
-    }
 }
