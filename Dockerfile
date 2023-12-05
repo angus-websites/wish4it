@@ -35,8 +35,6 @@ RUN apk update && apk add --no-cache \
     libzip-dev \
     nginx
 
-# Install MySQL client
-RUN apk add --no-cache mysql-client
 
 # Configure PHP extensions
 RUN docker-php-ext-install \
