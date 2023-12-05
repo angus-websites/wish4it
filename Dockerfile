@@ -35,6 +35,7 @@ RUN apk update && apk add --no-cache \
     libzip-dev \
     nginx
 
+
 # Configure PHP extensions
 RUN docker-php-ext-install \
     pdo_mysql \
