@@ -13,6 +13,7 @@ class HomeController extends Controller
     public function home()
     {
 
+
         // The user is logged in, redirect to home.
         if (Auth::check()) {
             return redirect(RouteServiceProvider::HOME);
