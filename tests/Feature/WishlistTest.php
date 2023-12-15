@@ -337,6 +337,80 @@ class WishlistTest extends TestCase
     }
 
     /**
+     * Test an error is returned when marking an item as purchased with no quantity
+     */
+    public function test_error_returned_when_marking_item_as_purchased_with_no_quantity()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $another = User::factory()->create();
+
+        // Send a request to mark the item as purchased
+        $data = [
+            'quantity' => null,
+        ];
+        $response = $this->actingAs($another)
+            ->put('/wishlists/'.$wishlist->id.'/items/'.$item->id.'/mark', $data);
+
+        // Display the error
+        $response->assertSessionHasErrors('quantity');
+
+        // Assert 302
+        $response->assertStatus(302);
+
+
+        // Assert the database was not updated
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
+    }
+
+    /**
+     * Test an error is raised if an invalid wishlist ID is passed
+     */
+    public function test_error_returned_when_marking_item_as_purchased_with_invalid_wishlist_id()
+    {
+        $user = User::factory()->create();
+        $wishlist = $user->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        $item = WishlistItem::create([
+            'name' => 'Test Item',
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+        // Enable guarded attributes
+        \Illuminate\Database\Eloquent\Model::reguard();
+
+        $another = User::factory()->create();
+
+        // Send a request to mark the item as purchased
+        $data = [
+            'quantity' => 1,
+        ];
+        $response = $this->actingAs($another)
+            ->put('/wishlists/invalid-id/items/'.$item->id.'/mark', $data);
+
+        // Assert 404
+        $response->assertStatus(404);
+
+        // Assert the database was not updated
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $item->id, 'user_id' => $another->id]);
+    }
+
+    /**
      * Test a logged-in user that is not friends with the author, gets the option to add the author as a friend
      */
     public function test_logged_in_user_not_friends_with_author_gets_option_to_add_friend()

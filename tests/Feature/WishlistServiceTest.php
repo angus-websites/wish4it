@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Database\Factories\WishlistFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
@@ -54,7 +53,48 @@ class WishlistServiceTest extends TestCase
         // Assert that the wishlist are the same
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
         $this->wishlistService->fetchWishlist('invalid-id');
-        
+
+    }
+
+    /**
+     * Test the service can fetch all of a user's wishlists
+     */
+    public function test_fetches_all_user_wishlists()
+    {
+        // Call the service
+        $fetched_wishlists = $this->wishlistService->fetchUserWishlists($this->user);
+
+        // Assert that the wishlist are the same
+        $this->assertEquals($this->user->wishlists()->count(), $fetched_wishlists->count());
+    }
+
+    /**
+     * Test the service can check if a wishlist exists
+     */
+    public function test_wishlist_exists()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->user->wishlists()->first();
+
+        // Call the service
+        $wishlist_exists = $this->wishlistService->wishlistExists($wishlist->id);
+
+        // Assert that the wishlist are the same
+        $this->assertTrue($wishlist_exists);
+        ;
+    }
+
+    /**
+     * Test the service can check if a wishlist doesn't exist
+     */
+    public function test_wishlist_doesnt_exist()
+    {
+        // Call the service
+        $wishlist_exists = $this->wishlistService->wishlistExists('invalid-id');
+
+        // Assert that the wishlist are the same
+        $this->assertFalse($wishlist_exists);
+
     }
 
 }

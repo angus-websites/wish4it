@@ -7,11 +7,19 @@ use App\Models\Wishlist;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Used to fetch and cache the wishlist data
+ */
 class WishlistService
 {
     /**
-     * Used to fetch and cache the wishlist data
+     * @param string $wishlistId
+     * Check a wishlist exists or not
      */
+    public function wishlistExists(string $wishlistId): bool
+    {
+        return Wishlist::where('id', $wishlistId)->exists();
+    }
 
 
     /**
@@ -24,12 +32,12 @@ class WishlistService
     }
 
     /**
-     * @param User $user
-     * Fetch a particular wishlist for a given user
+     * @param string $wishlistId
+     * @return Wishlist
      */
     public function fetchWishlist(string $wishlistId): Wishlist
     {
-        return Wishlist::where('id', $wishlistId)->firstOrFail();
+        return Wishlist::findOrFail($wishlistId);
     }
 
 
