@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Resources\WishlistItemResource;
 use App\Http\Resources\WishlistResource;
 use App\Models\Wishlist;
+use App\Models\WishlistItem;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -50,26 +53,42 @@ class WishlistController extends Controller
      */
     public function show(Wishlist $wishlist)
     {
+        
 
-        $currentUserId = Auth::id();
-        $itemsQuery = $wishlist->items();
-        $itemsCollection = $itemsQuery->get();
+        $currentUser = Auth::user();
+        $currentUserId = $currentUser?->id;
+        $userAuthenticated = Auth::check();
 
-        // If the user is not logged in or the user is not the owner of the wishlist then remove purchased items
-        if (! Auth::check() || ($currentUserId && ! Auth::user()->can('viewPurchased', $wishlist))) {
-            $itemsCollection = $itemsCollection->filter(fn ($item) => $item->needs > $item->has);
+        // Eager load and fetch the items
+        $itemsCollection = $wishlist->items()->with('reservations')->get();
+
+        // If the user is not logged in or the user is not the owner of the wishlist,
+        // remove purchased items by filtering the collection
+        if (!$userAuthenticated || ($currentUserId && !$currentUser->can('viewPurchased', $wishlist))) {
+            $itemsCollection = $itemsCollection->reject(function ($item) {
+                return $item->needs <= $item->has;
+            });
         }
 
-        // Create a resource collection from the items and paginate
-        $items = WishlistItemResource::collection(
-            $itemsCollection->isEmpty() ? $itemsQuery->paginate(16)->withQueryString() : $itemsCollection->toQuery()->orderBy('created_at', 'desc')->paginate(16)->withQueryString()
+        // Manually paginate the filtered collection
+        $perPage = 16;
+        $page = Paginator::resolveCurrentPage() ?: 1;
+        $itemsPaginated = new LengthAwarePaginator(
+            $itemsCollection->forPage($page, $perPage),
+            $itemsCollection->count(),
+            $perPage,
+            $page,
+            ['path' => Paginator::resolveCurrentPath()]
         );
 
-        // Create a resource from the wishlist
+        // Create json resources
         $list = new WishlistResource($wishlist);
+        $items = WishlistItemResource::collection($itemsPaginated);
 
         // If the user is not logged in then show the public wishlist page
         if (! $currentUserId) {
+
+            // Store the intended url in the session to redirect after login
             session(['url.intended' => url()->current()]);
 
             return Inertia::render('Guest/WishlistPublic', [
@@ -82,12 +101,12 @@ class WishlistController extends Controller
             'list' => $list,
             'items' => $items,
             'can' => [
-                'deleteList' => Auth::user()->can('delete', $wishlist),
-                'editList' => Auth::user()->can('update', $wishlist),
-                'createItems' => Auth::user()->can('create', [WishlistItem::class, $wishlist]),
-                'viewPurchased' => Auth::user()->can('viewPurchased', $wishlist),
+                'deleteList' => $currentUser->can('delete', $wishlist),
+                'editList' => $currentUser->can('update', $wishlist),
+                'createItems' => $currentUser->can('create', [WishlistItem::class, $wishlist]),
+                'viewPurchased' => $currentUser->can('viewPurchased', $wishlist),
             ],
-            'canAddFriend' => $currentUserId && ! Auth::user()->isFriends($list->owner()) && $currentUserId !== $list->owner()->id,
+            'canAddFriend' => $currentUserId && ! $currentUser->isFriends($list->owner()) && $currentUserId !== $list->owner()->id,
         ]);
     }
 
