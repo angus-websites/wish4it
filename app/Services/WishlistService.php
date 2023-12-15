@@ -34,10 +34,19 @@ class WishlistService
     /**
      * @param string $wishlistId
      * @return Wishlist
+     * Fetch a wishlist by its ID
      */
     public function fetchWishlist(string $wishlistId): Wishlist
     {
         return Wishlist::findOrFail($wishlistId);
+    }
+
+    /**
+     * Store a wishlist in the database
+     */
+    public function storeWishlist(array $data): Wishlist
+    {
+        return Wishlist::create($data);
     }
 
 

@@ -97,5 +97,24 @@ class WishlistServiceTest extends TestCase
 
     }
 
+    /**
+     * Test creating a wishlist
+     */
+    public function test_creates_wishlist()
+    {
+        // Create a wishlist
+        $this->wishlistService->storeWishlist([
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+        // Assert it exists in the database
+        $this->assertDatabaseHas('wishlists', [
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
+
+    }
+
 }
 
