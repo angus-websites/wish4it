@@ -53,7 +53,7 @@ class WishlistController extends Controller
      */
     public function show(Wishlist $wishlist)
     {
-        
+
 
         $currentUser = Auth::user();
         $currentUserId = $currentUser?->id;

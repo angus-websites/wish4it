@@ -29,29 +29,16 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make(config('admin.admin_password')),
             ]);
 
-            // Create an christmas wishlist
-            $christmas = Wishlist::create(['title' => 'Christmas list']);
-            $christmas->users()->attach($admin->id, ['role' => 'owner']);
 
-            WishlistItem::create([
-                'name' => 'Air force 1',
-                'price' => '100',
-                'wishlist_id' => $christmas->id,
-            ]);
+            // Create 3 wishlists for the admin with 1-25 items and set the role to owner
+            $admin->wishlists()->attach(
+                Wishlist::factory()->count(3)
+                    ->hasItems(rand(1, 25))
+                    ->create()
+                , ['role' => 'owner']
+            );
 
-            WishlistItem::create([
-                'name' => 'Puppy',
-                'wishlist_id' => $christmas->id,
-            ]);
 
-            $birthday = Wishlist::create(['title' => 'Birthday list']);
-            $birthday->users()->attach($admin->id, ['role' => 'owner']);
-
-            WishlistItem::create([
-                'name' => 'iMac',
-                'price' => '1200',
-                'wishlist_id' => $birthday->id,
-            ]);
 
         }
 
