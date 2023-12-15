@@ -28,12 +28,5 @@ class WishlistFactory extends Factory
         ];
     }
 
-    /**
-     * Configure the factory to also create items for the wishlist.
-     *
-     */
-    public function withItems($count = 5): Factory|WishlistFactory
-    {
-        return $this->has(WishlistItem::factory()->count($count), 'items');
-    }
+
 }
