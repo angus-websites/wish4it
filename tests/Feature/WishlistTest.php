@@ -337,6 +337,109 @@ class WishlistTest extends TestCase
     }
 
     /**
+     * Test that when a user tries to mark something as purchased but the 'has'
+     * attribute has changed, a warning is returned and the item is NOT marked
+     */
+    public function test_when_user_marks_item_as_purchased_but_has_changed_warning_raised()
+    {
+        // Create the wishlist author and a new wishlist
+        $author = User::factory()->create();
+        $wishlist = $author->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        // Create an item on the wishlist to be purchased
+        $ipad = WishlistItem::create([
+            'name' => 'iPad',
+            'wishlist_id' => $wishlist->id,
+            'needs' => 5,
+        ]);
+
+        // Create buyer 1
+        $buyer = User::factory()->create();
+
+        // Reserve 2 out of 5 ipads
+        Reservation::create([
+            'user_id' => $buyer->id,
+            'wishlist_item_id' => $ipad->id,
+            'quantity' => 2,
+        ]);
+
+        // Create a second buyer
+        $buyer2 = User::factory()->create();
+
+        // Send a request to mark the item as purchased (with the expected has)
+        $data = [
+            'quantity' => 2,
+            'has' => '0'
+        ];
+
+        $response = $this->actingAs($buyer2)
+            ->put('/wishlists/'.$wishlist->id.'/items/'.$ipad->id.'/mark', $data);
+
+        // Assert we are redirected with an error
+        $response->assertRedirect()
+            ->assertSessionHasErrors(['hasChanged']);
+
+        // Assert the database was not updated
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $ipad->id, 'user_id' => $buyer2->id]);
+
+
+    }
+
+    /**
+     * Test that when a user tries to mark something as purchased but the item
+     * has already been marked as purchased, a warning is returned and the item is NOT marked
+     */
+    public function test_when_user_marks_item_as_purchased_but_already_purchased_error_raised()
+    {
+        // Create the wishlist author and a new wishlist
+        $author = User::factory()->create();
+        $wishlist = $author->createWishlist(['title' => 'Test Wishlist', 'public' => true]);
+
+        // Disable guarded attributes
+        \Illuminate\Database\Eloquent\Model::unguard();
+
+        // Create an item on the wishlist to be purchased
+        $ipad = WishlistItem::create([
+            'name' => 'iPad',
+            'wishlist_id' => $wishlist->id,
+            'needs' => 5,
+        ]);
+
+        // Create buyer 1
+        $buyer = User::factory()->create();
+
+        // Reserve all the ipads
+        Reservation::create([
+            'user_id' => $buyer->id,
+            'wishlist_item_id' => $ipad->id,
+            'quantity' => 5,
+        ]);
+
+        // Create a second buyer
+        $buyer2 = User::factory()->create();
+
+        // Send a request to mark the item as purchased (with the expected has)
+        $data = [
+            'quantity' => 2,
+            'has' => '0'
+        ];
+
+        $response = $this->actingAs($buyer2)
+            ->put('/wishlists/'.$wishlist->id.'/items/'.$ipad->id.'/mark', $data);
+
+        // Assert we are redirected with an error
+        $response->assertRedirect()
+            ->assertSessionHasErrors(['alreadyPurchased']);
+
+        // Assert the database was not updated
+        $this->assertDatabaseMissing('reservations', ['wishlist_item_id' => $ipad->id, 'user_id' => $buyer2->id]);
+    }
+
+
+    /**
      * Test a logged-in user that is not friends with the author, gets the option to add the author as a friend
      */
     public function test_logged_in_user_not_friends_with_author_gets_option_to_add_friend()
@@ -382,6 +485,8 @@ class WishlistTest extends TestCase
             ->where('canAddFriend', false)
         );
     }
+
+
 
     /**
      * Check a user cannot be friends with themselves

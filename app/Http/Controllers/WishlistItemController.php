@@ -76,9 +76,27 @@ class WishlistItemController extends Controller
         // Authorise marking this item as purchased
         $this->authorize('markAsPurchased', [$wishlist]);
 
+        // Validate
         $request->validate([
             'quantity' => 'required|integer|min:1',
+            'has' => 'sometimes|integer'
         ]);
+
+        // Check the client has value matches the server value (to check for out of date data)
+        $clientHas = (int)$request->has ?? 0;
+        $serverHas = $item->has;
+
+        if ($clientHas !== $serverHas)
+        {
+            // If the item is now marked as purchased, return an error
+            if ($serverHas >= $item->needs)
+            {
+                return Redirect::back()->withErrors(['alreadyPurchased' => 'This item has already been marked as purchased and is no longer available.']);
+            }
+
+            // Return an error
+            return Redirect::back()->withErrors(['hasChanged' => 'The number of purchases for this item has already changed. Please try again']);
+        }
 
         // Create the new reservation
         $reservation = new Reservation();
