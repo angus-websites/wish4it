@@ -16,10 +16,10 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
 
-                      
+
                     <p class="mb-2 text-lg font-normal text-gray-600 dark:text-gray-200">Are you sure you want to mark this product as purchased?</p>
 
-                  
+
 
                      <dl class="divide-y divide-gray-100 dark:divide-dark-light mt-3">
                         <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -38,8 +38,8 @@
                           <dt class="text-sm font-medium text-gray-700 dark:text-gray-400">Quantity desired by list creator</dt>
                           <dd class="mt-1 text-sm font-bold leading-6 text-gray-500 dark:text-light-dark sm:col-span-2 sm:mt-0">{{itemToMark.needs}}</dd>
                         </div>
-                        
-                      </dl> 
+
+                      </dl>
 
                       <div class="my-8">
 
@@ -54,15 +54,21 @@
                         <Spinner v-if="loading" />
 
                         <div v-if="showError" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-                          <span class="font-medium">An error occurred, please try again later</span>
+                          <span v-if="form.errors.hasChanged" class="font-medium">{{ form.errors.hasChanged }}</span>
+                          <span v-else-if="form.errors.alreadyPurchased" class="font-medium">{{ form.errors.alreadyPurchased }}</span>
+                          <span v-else class="font-medium">Something went wrong!</span>
                         </div>
 
                       </div>
 
                       <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3 justify-center">
-                        <SecondaryButton @click="showConfirmation = false" type="button">Back</SecondaryButton>
-                        <PrimaryButton :disabled="form.processing" @click="markItemAsPurchased">Update</PrimaryButton>
-
+                        <template v-if="form.errors.hasChanged || form.errors.alreadyPurchased">
+                          <PrimaryButton @click="closeModal">Close</PrimaryButton>
+                        </template>
+                        <template v-else>
+                          <SecondaryButton @click="showConfirmation = false" type="button">Back</SecondaryButton>
+                          <PrimaryButton :disabled="form.processing" @click="markItemAsPurchased">Update</PrimaryButton>
+                        </template>
                       </div>
 
                   </div>
@@ -83,7 +89,7 @@
                           <span>Warning! You have previously marked this item as purchased</span>
                         </div>
 
-                      
+
                         <div class="my-3 text-gray-500 dark:text-gray-300">
                           <p><b>{{itemToMark.needs}}</b> wanted<span v-if="itemToMark.has">, <b>{{itemToMark.has}}</b> already purchased</span></p>
                         </div>
@@ -97,7 +103,7 @@
 
                     </div>
 
-                
+
                     <div class="mt-5 flex flex-col gap-y-3 sm:flex-row gap-x-3 justify-center">
                       <SecondaryButton @click="closeModal" type="button">Cancel</SecondaryButton>
                       <PrimaryButton @click="clickUpdateButton">Continue</PrimaryButton>
@@ -201,7 +207,12 @@ function clickUpdateButton()
 function markItemAsPurchased()
 {
   // Add the wishlist item id
-  form.put(route('wishlists.items.mark', { wishlist: props.wishlistId, item: props.itemToMark.id }),{
+  form
+    .transform((data) => ({
+      ...data,
+      has: props.itemToMark ? props.itemToMark.has : 0,
+    }))
+    .put(route('wishlists.items.mark', { wishlist: props.wishlistId, item: props.itemToMark.id }),{
     onSuccess: page => {
       closeModal()
     },
@@ -214,6 +225,8 @@ function markItemAsPurchased()
     },
   })
 }
+
+
 
 
 </script>
