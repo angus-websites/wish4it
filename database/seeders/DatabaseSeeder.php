@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         // Create the admin
         $this->call(AdminSeeder::class);
-        
+
         // Create 10 users with 3 wishlists each with 1-25 items
         User::factory()->count(10)
             ->hasAttached(
@@ -26,6 +26,15 @@ class DatabaseSeeder extends Seeder
                     // For each wishlist, generate a random number of items
                     $wishlist->items()->saveMany(WishlistItem::factory(rand(1, 25))->make());
                 }),
+                ['role' => 'owner'],
+            )
+            ->create();
+
+        User::factory()->count(10)
+            ->hasAttached(
+                Wishlist::factory()
+                    ->count(3)
+                    ->hasItems(25),
                 ['role' => 'owner'],
             )
             ->create();

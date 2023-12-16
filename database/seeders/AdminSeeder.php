@@ -29,14 +29,14 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make(config('admin.admin_password')),
             ]);
 
-            $wishlists = Wishlist::factory()->count(3)->create()->each(function ($wishlist) use ($admin) {
-                // For each wishlist, generate a random number of items
-                $wishlist->items()->saveMany(WishlistItem::factory(rand(1, 25))->make());
 
-                // Attach the wishlist to the admin with the pivot data
-                $admin->wishlists()->attach($wishlist, ['role' => 'owner']);
-            });
-
+            // Create 3 wishlists for the admin with 1-25 items and set the role to owner
+            $admin->wishlists()->attach(
+                Wishlist::factory()->count(3)
+                    ->hasItems(rand(10, 30))
+                    ->create()
+                , ['role' => 'owner']
+            );
 
 
         }

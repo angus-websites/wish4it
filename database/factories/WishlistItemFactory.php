@@ -26,7 +26,6 @@ class WishlistItemFactory extends Factory
             'price' => $this->faker->randomNumber(2), // Generates a random number for the price
             'url' => $this->faker->url, // Generates a random URL
             'comment' => $this->faker->text, // Generates random text for the comment
-            'image' => $this->faker->imageUrl, // Generates a random image URL
             'needs' => $this->faker->numberBetween(1, 10) // Random number between 1 and 10
         ];
     }
