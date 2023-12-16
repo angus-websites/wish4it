@@ -49,5 +49,26 @@ class WishlistService
         return Wishlist::create($data);
     }
 
+    /**
+     * @param Wishlist $wishlist
+     * @param array $data
+     * @return Wishlist
+     *  Update a wishlist in the database
+     */
+    public function updateWishlist(Wishlist $wishlist, array $data): Wishlist
+    {
+        $wishlist->update($data);
+        return $wishlist;
+    }
+
+    /**
+     * @param Wishlist $wishlist
+     * Delete a wishlist from the database
+     */
+    public function deleteWishlist(Wishlist $wishlist): void
+    {
+        $wishlist->delete();
+    }
+
 
 }

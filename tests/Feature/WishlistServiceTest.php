@@ -100,7 +100,7 @@ class WishlistServiceTest extends TestCase
     /**
      * Test creating a wishlist
      */
-    public function test_creates_wishlist()
+    public function test_store_wishlist()
     {
         // Create a wishlist
         $this->wishlistService->storeWishlist([
@@ -114,6 +114,45 @@ class WishlistServiceTest extends TestCase
             'public' => true,
         ]);
 
+    }
+
+    /**
+     * Test updating a wishlist
+     */
+    public function test_update_wishlist()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->user->wishlists()->first();
+
+        // Update the wishlist
+        $this->wishlistService->updateWishlist($wishlist, [
+            'title' => 'Updated Wishlist',
+            'public' => false,
+        ]);
+
+        // Assert it exists in the database
+        $this->assertDatabaseHas('wishlists', [
+            'title' => 'Updated Wishlist',
+            'public' => false,
+            'id' => $wishlist->id,
+        ]);
+    }
+
+    /**
+     * Test deleting a wishlist
+     */
+    public function test_delete_wishlist()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->user->wishlists()->first();
+
+        // Delete the wishlist
+        $this->wishlistService->deleteWishlist($wishlist);
+
+        // Assert it exists in the database
+        $this->assertDatabaseMissing('wishlists', [
+            'id' => $wishlist->id,
+        ]);
     }
 
 }
