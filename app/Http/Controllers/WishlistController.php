@@ -6,6 +6,7 @@ use App\Http\Resources\WishlistItemResource;
 use App\Http\Resources\WishlistResource;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
+use App\Services\WishlistService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -15,10 +16,13 @@ use Inertia\Inertia;
 
 class WishlistController extends Controller
 {
-    public function __construct()
+    private WishlistService $wishlistService;
+
+    public function __construct(WishlistService $wishlistService)
     {
         $this->middleware('auth:sanctum')->except(['show']);
         $this->authorizeResource(Wishlist::class);
+        $this->wishlistService = $wishlistService;
     }
 
     /**
@@ -26,8 +30,12 @@ class WishlistController extends Controller
      */
     public function index(Request $request)
     {
+
+        $user = Auth::user();
+        $wishlists = $this->wishlistService->fetchUserWishlists($user);
+
         return Inertia::render('Wishlist/Index', [
-            'lists' => WishlistResource::collection(Auth::user()->wishlists()->get()),
+            'lists' => WishlistResource::collection($wishlists),
         ]);
     }
 

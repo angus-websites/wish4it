@@ -16,7 +16,7 @@ class WishlistService
      * @param string $wishlistId
      * Check a wishlist exists or not
      */
-    public function wishlistExists(string $wishlistId): bool
+    public function checkWishlistExists(string $wishlistId): bool
     {
         return Wishlist::where('id', $wishlistId)->exists();
     }
@@ -24,7 +24,7 @@ class WishlistService
 
     /**
      * @param User $user
-     * Fetch the wishlist for a given user
+     * Fetch all the wishlist for a given user
      */
     public function fetchUserWishlists(User $user): Collection
     {

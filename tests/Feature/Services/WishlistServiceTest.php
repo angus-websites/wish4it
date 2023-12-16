@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+namespace Feature\Services;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use App\Models\User;
 use App\Models\Wishlist;
-use Illuminate\Support\Facades\Cache;
 use App\Services\WishlistService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class WishlistServiceTest extends TestCase
 {
@@ -77,7 +76,7 @@ class WishlistServiceTest extends TestCase
         $wishlist = $this->user->wishlists()->first();
 
         // Call the service
-        $wishlist_exists = $this->wishlistService->wishlistExists($wishlist->id);
+        $wishlist_exists = $this->wishlistService->checkWishlistExists($wishlist->id);
 
         // Assert that the wishlist are the same
         $this->assertTrue($wishlist_exists);
@@ -90,7 +89,7 @@ class WishlistServiceTest extends TestCase
     public function test_wishlist_doesnt_exist()
     {
         // Call the service
-        $wishlist_exists = $this->wishlistService->wishlistExists('invalid-id');
+        $wishlist_exists = $this->wishlistService->checkWishlistExists('invalid-id');
 
         // Assert that the wishlist are the same
         $this->assertFalse($wishlist_exists);
