@@ -129,8 +129,7 @@ class WishlistController extends Controller
         ]);
 
         // Save
-        $wishlist->fill($data);
-        $wishlist->save();
+        $this->wishlistService->updateWishlist($wishlist, $data);
 
         // If we pass validation
         return Redirect::back()->with('success', 'Wishlist updated');
@@ -141,7 +140,7 @@ class WishlistController extends Controller
      */
     public function destroy(Wishlist $wishlist)
     {
-        $wishlist->delete();
+        $this->wishlistService->deleteWishlist($wishlist);
 
         return Redirect::route('wishlists.index')->with('info', 'Wishlist deleted');
     }
