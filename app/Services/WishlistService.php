@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -40,6 +41,22 @@ class WishlistService
     {
         return Wishlist::findOrFail($wishlistId);
     }
+
+    /**
+     * Fetch the items that have not been purchased for a given wishlist
+     */
+    public function fetchAvailableWishlistItems(Wishlist $wishlist): Collection
+    {
+
+        return $wishlist->items()->get();
+
+        // Available items are those where the 'has' field is less than the 'needs' field
+        $items = DB::table('wishlist_items')
+            ->where('wishlist_id', '=', $wishlist->id)
+            ->where('has', '<', DB::raw('needs'))
+            ->get();
+    }
+
 
     /**
      * Store a wishlist in the database

@@ -5,6 +5,7 @@ namespace Feature\Services;
 use App\Models\User;
 use App\Models\Wishlist;
 use App\Services\WishlistService;
+use Database\Factories\WishlistItemFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,13 +20,11 @@ class WishlistServiceTest extends TestCase
         $this->wishlistService = new WishlistService();
 
         // Create a user with a wishlist and 5 items
-        $this->user = User::factory()
-            ->hasAttached(
-                Wishlist::factory()
-                    ->hasItems(5),
-                ['role' => 'owner'],
-            )
-            ->create();
+        $this->user = User::factory()->create();
+        $this->public_wishlist = Wishlist::factory()->hasItems(5)->public(true)->create();
+        $this->user->wishlists()->attach($this->public_wishlist, ['role' => 'owner']);
+        $this->private_wishlist = Wishlist::factory()->hasItems(5)->public(false)->create();
+        $this->user->wishlists()->attach($this->private_wishlist, ['role' => 'owner']);
     }
 
     /**
@@ -34,7 +33,7 @@ class WishlistServiceTest extends TestCase
     public function test_fetches_valid_wishlist()
     {
         // Fetch the first wishlist
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         // Call the service
         $fetched_wishlist = $this->wishlistService->fetchWishlist($wishlist->id);
@@ -73,7 +72,7 @@ class WishlistServiceTest extends TestCase
     public function test_wishlist_exists()
     {
         // Fetch the first wishlist
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         // Call the service
         $wishlist_exists = $this->wishlistService->checkWishlistExists($wishlist->id);
@@ -125,7 +124,7 @@ class WishlistServiceTest extends TestCase
     public function test_update_wishlist()
     {
         // Fetch the first wishlist
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         // Update the wishlist
         $this->wishlistService->updateWishlist($wishlist, [
@@ -147,7 +146,7 @@ class WishlistServiceTest extends TestCase
     public function test_delete_wishlist()
     {
         // Fetch the first wishlist
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         // Delete the wishlist
         $this->wishlistService->deleteWishlist($wishlist);
@@ -156,6 +155,53 @@ class WishlistServiceTest extends TestCase
         $this->assertDatabaseMissing('wishlists', [
             'id' => $wishlist->id,
         ]);
+    }
+
+    /**
+     * Test fetching available wishlist items
+     */
+    public function test_fetch_available_wishlist_items()
+    {
+        // Create a wishlist
+        $wishlist = Wishlist::factory()->create();
+        $this->user->wishlists()->attach($wishlist, ['role' => 'owner']);
+
+        // Create 1 manually
+        $ipad = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'iPad',
+            'needs' => 1,
+        ]);
+
+        // Create 3 other items
+        $others = WishlistItemFactory::new()->count(3)->create([
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+
+        // Mark the ipad as reserved
+        \DB::table('reservations')->insert([
+            'user_id' => $this->user->id,
+            'wishlist_item_id' => $ipad->id,
+            'quantity' => 1,
+        ]);
+
+
+        // Fetch the available items
+        $available_items = $this->wishlistService->fetchAvailableWishlistItems($wishlist);
+
+        // Convert the id's to strings in a collection
+        $others = $others->map(function ($item) {
+            return $item->id->toString();
+        });
+
+        $available_items = $available_items->map(function ($item) {
+            return $item->id;
+        });
+
+        // Assert that the available items are the same as the others
+        $this->assertEquals($others, $available_items);
+
     }
 
 }
