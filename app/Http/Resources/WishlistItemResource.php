@@ -17,13 +17,13 @@ class WishlistItemResource extends JsonResource
             'wishlist_id' => $this->wishlist_id,
             'name' => $this->name,
             'brand' => $this->brand,
-            'price' => $this->price ? number_format($this->price, 2) : null,
+            'price' => $this->price,
             'url' => $this->url,
             'comment' => $this->comment,
             'image' => $this->image,
             'needs' => $this->needs,
             'has' => $this->has,
-            'created_at' => $this->created_at->format('d-m-Y'),
+            'created_at' => $this->created_at,
             'hasCurrentUserReservation' => $this->when($request->user(), function () use ($request) {
                 return $this->hasUserReservation($request->user());
             }),

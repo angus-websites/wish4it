@@ -64,29 +64,14 @@ class WishlistController extends Controller
 
         $currentUser = Auth::user();
         $currentUserId = $currentUser?->id;
-        $userAuthenticated = Auth::check();
 
-        // Eager load and fetch the items
-        $itemsCollection = $wishlist->items()->with('reservations')->get();
+        // Fetch the wishlist items
+        $itemsQuery = $this->wishlistService->fetchAvailableWishlistItems($wishlist);
 
-        // If the user is not logged in or the user is not the owner of the wishlist,
-        // remove purchased items by filtering the collection
-        if (!$userAuthenticated || ($currentUserId && !$currentUser->can('viewPurchased', $wishlist))) {
-            $itemsCollection = $itemsCollection->reject(function ($item) {
-                return $item->needs <= $item->has;
-            });
-        }
+        // Paginate the results
+        $itemsPaginated = $itemsQuery->paginate(16);
 
-        // Manually paginate the filtered collection
-        $perPage = 16;
-        $page = Paginator::resolveCurrentPage() ?: 1;
-        $itemsPaginated = new LengthAwarePaginator(
-            $itemsCollection->forPage($page, $perPage),
-            $itemsCollection->count(),
-            $perPage,
-            $page,
-            ['path' => Paginator::resolveCurrentPath()]
-        );
+        $b = $itemsPaginated->toArray();
 
         // Create json resources
         $list = new WishlistResource($wishlist);
