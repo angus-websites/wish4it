@@ -65,16 +65,9 @@ class WishlistController extends Controller
         $currentUser = Auth::user();
         $currentUserId = $currentUser?->id;
 
-        // Fetch the wishlist items
-        $itemsQuery = $this->wishlistService->fetchAvailableWishlistItems($wishlist);
-
-        // Paginate the results
-        $itemsPaginated = $itemsQuery->paginate(16);
-
-
         // Create json resources
-        $list = new WishlistResource($wishlist);
-        $items = WishlistItemResource::collection($itemsPaginated);
+        $list = $this->wishlistService->fetchWishlistResource($wishlist, $currentUser);
+        $items = $this->wishlistService->fetchWishlistItemsResource($wishlist, $currentUser);
 
         // If the user is not logged in then show the public wishlist page
         if (! $currentUserId) {

@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use App\Http\Resources\WishlistItemResource;
+use App\Http\Resources\WishlistResource;
 use App\Models\User;
 use App\Models\Wishlist;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -47,7 +51,7 @@ class WishlistService
     /**
      * Fetch a query builder for all the available wishlist items
      */
-    public function fetchAvailableWishlistItems(Wishlist $wishlist): \Illuminate\Database\Query\Builder
+    public function fetchAvailableWishlistItems(Wishlist $wishlist): Builder
     {
 
         return DB::table('wishlist_items as wi')
@@ -62,7 +66,7 @@ class WishlistService
      * Fetch a query builder for all the available wishlist items but with a user
      * so the query builder can be used to check if the user has reserved an item
      */
-    public function fetchAvailableWishlistItemsWithUser(Wishlist $wishlist, User $user): \Illuminate\Database\Query\Builder
+    public function fetchAvailableWishlistItemsWithUser(Wishlist $wishlist, User $user): Builder
     {
         return DB::table('wishlist_items as wi')
             ->leftJoin('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
@@ -80,7 +84,7 @@ class WishlistService
     /**
      * Fetch a query builder for all the reserved wishlist items
      */
-    public function fetchReservedWishlistItems(Wishlist $wishlist): \Illuminate\Database\Query\Builder
+    public function fetchReservedWishlistItems(Wishlist $wishlist): Builder
     {
         return DB::table('wishlist_items as wi')
             ->join('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
@@ -92,14 +96,47 @@ class WishlistService
             ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs');
     }
 
+
     /**
-     * Fetch all the wishlist items for a given wishlist
+     * Fetch all the wishlist items for a given wishlist, purchased or not
      */
-    public function fetchWishlistItems(Wishlist $wishlist): Collection
+    public function fetchWishlistItems(Wishlist $wishlist): Builder
     {
-        return $wishlist->items()->with('reservations')->get();
+        // Fetch ALL the wishlist items
+        return DB::table('wishlist_items as wi')
+            ->leftJoin('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
+            ->select('wi.*', DB::raw('COALESCE(SUM(r.quantity), 0) as has'))
+            ->where('wi.wishlist_id', $wishlist->id)
+            ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs');
+
     }
 
+    /**
+     * Fetch all the wishlist items for a given wishlist as a resource
+     */
+    public function fetchWishlistItemsResource(Wishlist $wishlist, ?User $user): JsonResource
+    {
+        if ($user && $user->can('viewPurchased', $wishlist)){
+            $data =  $this->fetchWishlistItems($wishlist);
+        }
+        elseif ($user){
+            $data = $this->fetchAvailableWishlistItemsWithUser($wishlist, $user);
+        }
+        else {
+            $data = $this->fetchAvailableWishlistItems($wishlist);
+        }
+
+        // Return as a resource
+        return WishlistItemResource::collection($data->paginate($this->paginationLength));
+    }
+
+    /**
+     * Fetch the wishlist itself as a resource
+     */
+    public function fetchWishlistResource(Wishlist $wishlist): WishlistResource
+    {
+        return new WishlistResource($wishlist);
+    }
 
     /**
      * Store a wishlist in the database

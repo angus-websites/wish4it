@@ -324,7 +324,7 @@ class WishlistServiceTest extends TestCase
         $items = $this->wishlistService->fetchWishlistItems($wishlist);
 
         // Assert that the items are the same
-        $this->assertEquals($wishlist->items()->count(), $items->count());
+        $this->assertEquals($wishlist->items()->count(), $items->get()->count());
     }
 }
 

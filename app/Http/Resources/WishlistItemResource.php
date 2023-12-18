@@ -27,7 +27,7 @@ class WishlistItemResource extends JsonResource
             'needs' => $this->needs,
             'has' => $this->has,
             'created_at' => $this->created_at,
-            'hasCurrentUserReservation' => $this->when($request->user(), function () use ($request) {
+            'hasCurrentUserReservation' => $this->when(isset($this->has_user_reserved), function () use ($request) {
                 return $this->has_user_reserved;
             }),
         ];

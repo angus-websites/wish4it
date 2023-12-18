@@ -27,7 +27,7 @@ class WishlistItemResourceTest extends TestCase
     }
 
 
-    public function test_wishlist_item_resource()
+    public function test_wishlist_item_resource_as_guest()
     {
         // Create a wishlist
         $wishlist = Wishlist::factory()->public(true)->create();
@@ -105,9 +105,11 @@ class WishlistItemResourceTest extends TestCase
             'has' => 0,
             'created_at' => $wishlist_item->created_at,
             'image' => null,
-            'hasCurrentUserReservation' => false,
+            'hasCurrentUserReservation' => new MissingValue,
         ];
 
         $this->assertEquals($expected, $resource_array);
     }
+
+
 }
