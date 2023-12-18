@@ -17,9 +17,9 @@ defineProps({
     <GuestLayout :title="list.title">
         <PageContainer>
 
-            <div class="flex flex-row justify-between items-end">
-                <div>
-                    <h1 class="h1">{{list.title}}</h1>
+            <div class="flex flex-row flex-wrap justify-between items-end">
+                <div class="overflow-hidden">
+                    <h1 class="h1 break-words">{{list.title}}</h1>
                     <p class="h4 mt-2">{{list.owner.name}}</p>
                 </div>
                 <div>

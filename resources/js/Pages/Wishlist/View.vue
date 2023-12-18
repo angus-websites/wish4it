@@ -1,9 +1,9 @@
 <template>
     <AppLayout :title="list.title">
         <template #header>
-            <div class="flex flex-col space-y-5 sm:flex-row sm:space-y-0 justify-between items-center">
+            <div class="flex flex-col space-y-5 sm:flex-row sm:space-y-0 justify-between items-center overflow-hidden">
                 <div>
-                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight break-words">
                         {{ list.title }}
                     </h2>
                     <small v-if="$page.props.auth.user.id !== list.owner.id" class="text-sm">{{list.owner.name}}</small>
