@@ -51,7 +51,7 @@ class WishlistController extends Controller
         ]);
 
         // Save
-        Auth::user()->createWishlist($data);
+        $this->wishlistService->storeWishlist($data, Auth::user());
 
         return Redirect::route('wishlists.index')->with('success', 'Wishlist created');
     }

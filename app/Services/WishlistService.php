@@ -44,9 +44,16 @@ class WishlistService
     /**
      * Store a wishlist in the database
      */
-    public function storeWishlist(array $data): Wishlist
+    public function storeWishlist(array $data, User $user, $role="owner"): Wishlist
     {
-        return Wishlist::create($data);
+        // Create a new wishlist
+        $wishlist = Wishlist::create($data);
+
+        // Attach this user to the wishlist as an owner
+        $user->wishlists()->attach($wishlist->id, ['role' => $role]);
+
+        return $wishlist;
+
     }
 
     /**

@@ -4,10 +4,8 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Wishlist;
-use App\Services\WishlistService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Inertia\Testing\AssertableInertia as Assert;
 
 class WishlistControllerTest extends TestCase
 {
@@ -18,13 +16,11 @@ class WishlistControllerTest extends TestCase
         parent::setUp();
 
         // Create a user with a wishlist and 5 items
-        $this->user = User::factory()
-            ->hasAttached(
-                Wishlist::factory()
-                    ->hasItems(5),
-                ['role' => 'owner'],
-            )
-            ->create();
+        $this->user = User::factory()->create();
+        $this->public_wishlist = Wishlist::factory()->public(true)->create();
+        $this->user->wishlists()->attach($this->public_wishlist, ['role' => 'owner']);
+        $this->private_wishlist = Wishlist::factory()->public(false)->create();
+        $this->user->wishlists()->attach($this->private_wishlist, ['role' => 'owner']);
     }
 
     /**
@@ -131,7 +127,7 @@ class WishlistControllerTest extends TestCase
      */
     public function test_show_route_for_normal_user()
     {
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         $response = $this->actingAs($this->user)
             ->get(route('wishlists.show', $wishlist));
@@ -144,13 +140,31 @@ class WishlistControllerTest extends TestCase
         );
     }
 
+    /**
+     * Test the show route for a guest
+     */
+    public function test_show_route_for_guest()
+    {
+        // Create a public wishlist
+        $wishlist = $this->public_wishlist;
+
+        $response = $this->get(route('wishlists.show', $wishlist));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($assert) => $assert
+            ->component('Guest/WishlistPublic')
+            ->has('list')
+            ->has('items')
+        );
+    }
+
 
     /**
      * Test the update route
      */
     public function test_update_route_for_normal_user()
     {
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         $response = $this->actingAs($this->user)
             ->put(route('wishlists.update', $wishlist), [
@@ -173,7 +187,7 @@ class WishlistControllerTest extends TestCase
      */
     public function test_update_route_for_guest()
     {
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         $response = $this->put(route('wishlists.update', $wishlist), [
             'title' => 'Updated Wishlist',
@@ -196,7 +210,7 @@ class WishlistControllerTest extends TestCase
      */
     public function test_update_route_validation()
     {
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         $this->actingAs($this->user);
 
@@ -228,7 +242,7 @@ class WishlistControllerTest extends TestCase
      */
     public function test_destroy_route_for_normal_user()
     {
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         $response = $this->actingAs($this->user)
             ->delete(route('wishlists.destroy', $wishlist));
@@ -246,7 +260,7 @@ class WishlistControllerTest extends TestCase
      */
     public function test_destroy_route_for_guest()
     {
-        $wishlist = $this->user->wishlists()->first();
+        $wishlist = $this->public_wishlist;
 
         $response = $this->delete(route('wishlists.destroy', $wishlist));
 

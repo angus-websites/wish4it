@@ -105,7 +105,7 @@ class WishlistServiceTest extends TestCase
         $this->wishlistService->storeWishlist([
             'title' => 'Test Wishlist',
             'public' => true,
-        ]);
+        ], $this->user);
 
         // Assert it exists in the database
         $this->assertDatabaseHas('wishlists', [
@@ -113,6 +113,10 @@ class WishlistServiceTest extends TestCase
             'public' => true,
         ]);
 
+        $this->assertDatabaseHas('user_wishlist', [
+            'user_id' => $this->user->id,
+            'role' => 'owner',
+        ]);
     }
 
     /**

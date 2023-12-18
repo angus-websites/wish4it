@@ -28,5 +28,18 @@ class WishlistFactory extends Factory
         ];
     }
 
+    /**
+     * Set the visibility of the wishlist.
+     *
+     * @param bool $isPublic
+     * @return $this
+     */
+    public function public(bool $isPublic): self
+    {
+        return $this->state([
+            'public' => $isPublic,
+        ]);
+    }
+
 
 }
