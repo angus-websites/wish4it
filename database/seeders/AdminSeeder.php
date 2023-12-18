@@ -29,7 +29,7 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make(config('admin.admin_password')),
             ]);
 
-            // Create an christmas wishlist
+            // Create a Christmas wishlist
             $christmas = Wishlist::create(['title' => 'Christmas list']);
             $christmas->users()->attach($admin->id, ['role' => 'owner']);
 
