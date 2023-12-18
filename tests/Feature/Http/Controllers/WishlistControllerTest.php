@@ -54,40 +54,96 @@ class WishlistControllerTest extends TestCase
     }
 
     /**
-     * Test the destroy route
+     * Test the store route for a normal user
      */
-    public function test_destroy_route_for_normal_user()
+    public function test_store_route_for_normal_user()
     {
-        $wishlist = $this->user->wishlists()->first();
-
         $response = $this->actingAs($this->user)
-            ->delete(route('wishlists.destroy', $wishlist));
+            ->post(route('wishlists.store'), [
+                'title' => 'Test Wishlist',
+                'public' => true,
+            ]);
 
         $response->assertStatus(302);
+        $response->assertSessionHas('success', 'Wishlist created');
 
-        // Assert that the wishlist was deleted
-        $this->assertDatabaseMissing('wishlists', [
-            'id' => $wishlist->id,
+        // Assert that the wishlist was created
+        $this->assertDatabaseHas('wishlists', [
+            'title' => 'Test Wishlist',
+            'public' => true,
         ]);
     }
 
     /**
-     * Test the destroy route for a guest
+     * Test the store route for a guest
      */
-    public function test_destroy_route_for_guest()
+    public function test_store_route_for_guest()
     {
-        $wishlist = $this->user->wishlists()->first();
-
-        $response = $this->delete(route('wishlists.destroy', $wishlist));
+        $response = $this->post(route('wishlists.store'), [
+            'title' => 'Test Wishlist',
+            'public' => true,
+        ]);
 
         $response->assertStatus(302);
         $response->assertRedirect(route('login'));
 
-        // Assert that the wishlist was not deleted
-        $this->assertDatabaseHas('wishlists', [
-            'id' => $wishlist->id,
+        // Assert that the wishlist was not created
+        $this->assertDatabaseMissing('wishlists', [
+            'title' => 'Test Wishlist',
+            'public' => true,
         ]);
     }
+
+    /**
+     * Test store route validation
+     */
+    public function test_store_route_validation()
+    {
+
+        $this->actingAs($this->user);
+
+        // Test without a title
+        $response = $this->post(route('wishlists.store'), [
+            'public' => true,
+        ]);
+
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('title');
+
+        // Test without a public value
+        $response = $this->post(route('wishlists.store'), [
+            'title' => 'Test Wishlist',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('public');
+
+        // Test without any data
+        $response = $this->post(route('wishlists.store'));
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors(['title', 'public']);
+    }
+
+    /**
+     * Test the show route for a normal user
+     */
+    public function test_show_route_for_normal_user()
+    {
+        $wishlist = $this->user->wishlists()->first();
+
+        $response = $this->actingAs($this->user)
+            ->get(route('wishlists.show', $wishlist));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($assert) => $assert
+            ->component('Wishlist/View')
+            ->has('list')
+            ->has('items')
+        );
+    }
+
 
     /**
      * Test the update route
@@ -168,80 +224,40 @@ class WishlistControllerTest extends TestCase
     }
 
     /**
-     * Test the store route for a normal user
+     * Test the destroy route
      */
-    public function test_store_route_for_normal_user()
+    public function test_destroy_route_for_normal_user()
     {
+        $wishlist = $this->user->wishlists()->first();
+
         $response = $this->actingAs($this->user)
-            ->post(route('wishlists.store'), [
-                'title' => 'Test Wishlist',
-                'public' => true,
-            ]);
+            ->delete(route('wishlists.destroy', $wishlist));
 
         $response->assertStatus(302);
-        $response->assertSessionHas('success', 'Wishlist created');
 
-        // Assert that the wishlist was created
-        $this->assertDatabaseHas('wishlists', [
-            'title' => 'Test Wishlist',
-            'public' => true,
+        // Assert that the wishlist was deleted
+        $this->assertDatabaseMissing('wishlists', [
+            'id' => $wishlist->id,
         ]);
     }
 
-
     /**
-     * Test the store route for a guest
+     * Test the destroy route for a guest
      */
-    public function test_store_route_for_guest()
+    public function test_destroy_route_for_guest()
     {
-        $response = $this->post(route('wishlists.store'), [
-            'title' => 'Test Wishlist',
-            'public' => true,
-        ]);
+        $wishlist = $this->user->wishlists()->first();
+
+        $response = $this->delete(route('wishlists.destroy', $wishlist));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('login'));
 
-        // Assert that the wishlist was not created
-        $this->assertDatabaseMissing('wishlists', [
-            'title' => 'Test Wishlist',
-            'public' => true,
+        // Assert that the wishlist was not deleted
+        $this->assertDatabaseHas('wishlists', [
+            'id' => $wishlist->id,
         ]);
     }
-
-    /**
-     * Test store route without a title
-     */
-    public function test_store_route_validation()
-    {
-
-        $this->actingAs($this->user);
-
-        // Test without a title
-        $response = $this->post(route('wishlists.store'), [
-            'public' => true,
-        ]);
-
-
-        $response->assertStatus(302);
-        $response->assertSessionHasErrors('title');
-
-        // Test without a public value
-        $response = $this->post(route('wishlists.store'), [
-            'title' => 'Test Wishlist',
-        ]);
-
-        $response->assertStatus(302);
-        $response->assertSessionHasErrors('public');
-
-        // Test without any data
-        $response = $this->post(route('wishlists.store'));
-
-        $response->assertStatus(302);
-        $response->assertSessionHasErrors(['title', 'public']);
-    }
-
-
 
 
 
