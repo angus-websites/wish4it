@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
  */
 class WishlistService
 {
+    private int $paginationLength = 16;
+
     /**
      * @param string $wishlistId
      * Check a wishlist exists or not

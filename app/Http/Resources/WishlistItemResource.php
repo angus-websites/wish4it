@@ -28,27 +28,9 @@ class WishlistItemResource extends JsonResource
             'has' => $this->has,
             'created_at' => $this->created_at,
             'hasCurrentUserReservation' => $this->when($request->user(), function () use ($request) {
-                return $this->hasUserReservation($request->user());
-            }),
-            'can' => $this->when($request->user(), function () use ($request) {
-                return $this->can($request->user());
+                return $this->has_user_reserved;
             }),
         ];
     }
 
-    private function hasUserReservation($user): bool
-    {
-        return WishlistItem::findOrfail($this->id)->hasUserReservation($user);
-
-    }
-
-    private function can($user): array
-    {
-        $wishlist = Wishlist::findOrfail($this->wishlist_id);
-        return [
-            'update' => $user->can('update', $wishlist),
-            'delete' => $user->can('delete', $wishlist),
-            'mark' => $user->can('markAsPurchased', $wishlist),
-        ];
-    }
 }

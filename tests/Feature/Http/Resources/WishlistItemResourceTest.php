@@ -62,7 +62,6 @@ class WishlistItemResourceTest extends TestCase
             'created_at' => $wishlist_item->created_at,
             'image' => null,
             'hasCurrentUserReservation' => new MissingValue,
-            'can' => new MissingValue
         ];
 
         $this->assertEquals($expected, $resource_array);
@@ -107,11 +106,6 @@ class WishlistItemResourceTest extends TestCase
             'created_at' => $wishlist_item->created_at,
             'image' => null,
             'hasCurrentUserReservation' => false,
-            'can' => [
-                'update' => true,
-                'delete' => true,
-                'mark' => true,
-            ]
         ];
 
         $this->assertEquals($expected, $resource_array);
