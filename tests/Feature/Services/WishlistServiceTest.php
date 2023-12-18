@@ -204,6 +204,7 @@ class WishlistServiceTest extends TestCase
 
     }
 
+
     /**
      * Test fetching all reserved wishlist items
      */
