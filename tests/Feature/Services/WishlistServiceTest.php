@@ -204,6 +204,63 @@ class WishlistServiceTest extends TestCase
 
     }
 
+    /**
+     * Test fetching available wishlist items with a user
+     */
+    public function test_fetch_available_wishlist_items_with_user()
+    {
+        // Create a wishlist
+        $wishlist = Wishlist::factory()->create();
+        $this->user->wishlists()->attach($wishlist, ['role' => 'owner']);
+
+        // Create 1 manually
+        $ipad = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'iPad',
+            'needs' => 10,
+        ]);
+
+        // Create 1 manually
+        $dog = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'dog',
+            'needs' => 1,
+        ]);
+
+        // Mark the ipad as reserved (by the user)
+        \DB::table('reservations')->insert([
+            'user_id' => $this->user->id,
+            'wishlist_item_id' => $ipad->id,
+            'quantity' => 1,
+        ]);
+
+        // Mark the dog as reserved (by another user)
+        \DB::table('reservations')->insert([
+            'user_id' => User::factory()->create()->id,
+            'wishlist_item_id' => $dog->id,
+            'quantity' => 1,
+        ]);
+
+
+
+        // Fetch the available items
+        $available_items = $this->wishlistService->fetchAvailableWishlistItemsWithUser($wishlist, $this->user)->get();
+
+        $available_ids = $available_items->map(function ($item) {
+            return $item->id;
+        })->toArray();
+
+        $others = [$ipad->id->toString()];
+
+        // Assert that the available items are the same as the others
+        $this->assertEqualsCanonicalizing($others, $available_ids);
+
+        // Assert the has_user_reserved is true for the ipad
+        $this->assertTrue((bool) $available_items->first()->has_user_reserved);
+
+
+    }
+
 
     /**
      * Test fetching all reserved wishlist items

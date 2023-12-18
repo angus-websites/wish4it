@@ -71,7 +71,6 @@ class WishlistController extends Controller
         // Paginate the results
         $itemsPaginated = $itemsQuery->paginate(16);
 
-        $b = $itemsPaginated->toArray();
 
         // Create json resources
         $list = new WishlistResource($wishlist);

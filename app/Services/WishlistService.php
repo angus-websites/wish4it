@@ -57,6 +57,25 @@ class WishlistService
     }
 
     /**
+     * Fetch a query builder for all the available wishlist items but with a user
+     * so the query builder can be used to check if the user has reserved an item
+     */
+    public function fetchAvailableWishlistItemsWithUser(Wishlist $wishlist, User $user): \Illuminate\Database\Query\Builder
+    {
+        return DB::table('wishlist_items as wi')
+            ->leftJoin('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
+            ->select([
+                'wi.*',
+                DB::raw('COALESCE(SUM(r.quantity), 0) as has'),
+                DB::raw('EXISTS(SELECT 1 FROM reservations WHERE wishlist_item_id = wi.id AND user_id = ?) as has_user_reserved')
+            ])
+            ->where('wi.wishlist_id', $wishlist->id)
+            ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs')
+            ->havingRaw('COALESCE(SUM(r.quantity), 0) < wi.needs')
+            ->setBindings([$user->id], 'select');
+    }
+
+    /**
      * Fetch a query builder for all the reserved wishlist items
      */
     public function fetchReservedWishlistItems(Wishlist $wishlist): \Illuminate\Database\Query\Builder
