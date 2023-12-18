@@ -17,9 +17,9 @@ class WishlistControllerTest extends TestCase
 
         // Create a user with a wishlist and 5 items
         $this->user = User::factory()->create();
-        $this->public_wishlist = Wishlist::factory()->public(true)->create();
+        $this->public_wishlist = Wishlist::factory()->hasItems(5)->public(true)->create();
         $this->user->wishlists()->attach($this->public_wishlist, ['role' => 'owner']);
-        $this->private_wishlist = Wishlist::factory()->public(false)->create();
+        $this->private_wishlist = Wishlist::factory()->hasItems(5)->public(false)->create();
         $this->user->wishlists()->attach($this->private_wishlist, ['role' => 'owner']);
     }
 

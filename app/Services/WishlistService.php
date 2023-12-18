@@ -50,12 +50,7 @@ class WishlistService
 
         return DB::table('wishlist_items as wi')
             ->leftJoin('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
-            ->select(
-                'wi.id',
-                'wi.wishlist_id',
-                'wi.needs',
-                DB::raw('COALESCE(SUM(r.quantity), 0) as total_reserved')
-            )
+            ->select('wi.*', DB::raw('COALESCE(SUM(r.quantity), 0) as has'))
             ->where('wi.wishlist_id', $wishlist->id)
             ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs')
             ->havingRaw('COALESCE(SUM(r.quantity), 0) < wi.needs');
@@ -69,10 +64,8 @@ class WishlistService
         return DB::table('wishlist_items as wi')
             ->join('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
             ->select(
-                'wi.id',
-                'wi.wishlist_id',
-                'wi.needs',
-                DB::raw('SUM(r.quantity) as total_reserved')
+                'wi.*',
+                DB::raw('SUM(r.quantity) as has')
             )
             ->where('wi.wishlist_id', $wishlist->id)
             ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs');
