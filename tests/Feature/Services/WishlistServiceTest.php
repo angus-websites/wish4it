@@ -188,7 +188,7 @@ class WishlistServiceTest extends TestCase
 
 
         // Fetch the available items
-        $available_items = $this->wishlistService->fetchAvailableWishlistItems($wishlist);
+        $available_items = $this->wishlistService->fetchAvailableWishlistItems($wishlist)->get();
 
         // Convert the id's to strings in a collection
         $others = $others->map(function ($item) {
@@ -200,9 +200,73 @@ class WishlistServiceTest extends TestCase
         });
 
         // Assert that the available items are the same as the others
-        $this->assertEquals($others, $available_items);
+        $this->assertEqualsCanonicalizing($others, $available_items);
 
     }
 
+    /**
+     * Test fetching all reserved wishlist items
+     */
+    public function test_fetch_reserved_wishlist_items()
+    {
+        // Create a wishlist
+        $wishlist = Wishlist::factory()->create();
+        $this->user->wishlists()->attach($wishlist, ['role' => 'owner']);
+
+        // Create 1 manually
+        $ipad = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'iPad',
+            'needs' => 1,
+        ]);
+
+        $dog = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'dog',
+            'needs' => 1,
+        ]);
+
+        // Create 3 other items
+        $others = WishlistItemFactory::new()->count(3)->create([
+            'wishlist_id' => $wishlist->id,
+        ]);
+
+
+        // Mark the ipad as reserved
+        \DB::table('reservations')->insert([
+            'user_id' => $this->user->id,
+            'wishlist_item_id' => $ipad->id,
+            'quantity' => 1,
+        ]);
+
+        // Mark the dog as reserved
+        \DB::table('reservations')->insert([
+            'user_id' => $this->user->id,
+            'wishlist_item_id' => $dog->id,
+            'quantity' => 1,
+        ]);
+
+
+        // Fetch the available items
+        $reserved_items = $this->wishlistService->fetchReservedWishlistItems($wishlist)->get();
+
+        // Check the reserved items equals the ipad and dog
+        $this->assertEqualsCanonicalizing([$ipad->id, $dog->id], $reserved_items->pluck('id')->toArray());
+    }
+
+    /**
+     * Test fetching all wishlist items
+     */
+    public function test_fetch_wishlist_items()
+    {
+        // Use the user's wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Fetch the items
+        $items = $this->wishlistService->fetchWishlistItems($wishlist);
+
+        // Assert that the items are the same
+        $this->assertEquals($wishlist->items()->count(), $items->count());
+    }
 }
 

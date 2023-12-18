@@ -43,18 +43,47 @@ class WishlistService
     }
 
     /**
-     * Fetch the items that have not been purchased for a given wishlist
+     * Fetch a query builder for all the available wishlist items
      */
-    public function fetchAvailableWishlistItems(Wishlist $wishlist): Collection
+    public function fetchAvailableWishlistItems(Wishlist $wishlist): \Illuminate\Database\Query\Builder
     {
 
-        return $wishlist->items()->get();
+        return DB::table('wishlist_items as wi')
+            ->leftJoin('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
+            ->select(
+                'wi.id',
+                'wi.wishlist_id',
+                'wi.needs',
+                DB::raw('COALESCE(SUM(r.quantity), 0) as total_reserved')
+            )
+            ->where('wi.wishlist_id', $wishlist->id)
+            ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs')
+            ->havingRaw('COALESCE(SUM(r.quantity), 0) < wi.needs');
+    }
 
-        // Available items are those where the 'has' field is less than the 'needs' field
-        $items = DB::table('wishlist_items')
-            ->where('wishlist_id', '=', $wishlist->id)
-            ->where('has', '<', DB::raw('needs'))
-            ->get();
+    /**
+     * Fetch a query builder for all the reserved wishlist items
+     */
+    public function fetchReservedWishlistItems(Wishlist $wishlist): \Illuminate\Database\Query\Builder
+    {
+        return DB::table('wishlist_items as wi')
+            ->join('reservations as r', 'wi.id', '=', 'r.wishlist_item_id')
+            ->select(
+                'wi.id',
+                'wi.wishlist_id',
+                'wi.needs',
+                DB::raw('SUM(r.quantity) as total_reserved')
+            )
+            ->where('wi.wishlist_id', $wishlist->id)
+            ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs');
+    }
+
+    /**
+     * Fetch all the wishlist items for a given wishlist
+     */
+    public function fetchWishlistItems(Wishlist $wishlist): Collection
+    {
+        return $wishlist->items()->with('reservations')->get();
     }
 
 
