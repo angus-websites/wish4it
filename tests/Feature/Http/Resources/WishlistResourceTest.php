@@ -61,6 +61,12 @@ class WishlistResourceTest extends TestCase
             'public' => true,
             'itemCount' => 5,
             'unpurchasedItemCount' => 5,
+            'can' => [
+                'update' => true,
+                'delete' => true,
+                'mark' => true,
+
+            ],
         ];
 
         $this->assertEquals($expected, $resource_array);
