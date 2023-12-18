@@ -67,9 +67,53 @@ class WishlistItemResourceTest extends TestCase
 
         $this->assertEquals($expected, $resource_array);
 
+    }
 
+    /**
+     * Test with a user
+     */
+    public function test_wishlist_item_resource_with_user()
+    {
+        // Create a wishlist
+        $wishlist = Wishlist::factory()->public(true)->create();
+        $this->user->wishlists()->attach($wishlist, ['role' => 'owner']);
+        $wishlist_item = WishlistItemFactory::new()->create(
+            [
+                'wishlist_id' => $wishlist->id,
+                'needs' => 1,
+                'name' => 'ipad',
+                'brand' => 'apple',
+                'price' => 1000,
+                'url' => 'https://www.apple.com/ipad',
+                'comment' => 'I want the 12.9" version',
+            ]
+        );
 
+        // Pass to the resource
+        $resource = new WishlistItemResource($wishlist_item);
+        $resource_array = $resource->toArray(request()->setUserResolver(fn () => $this->user));
 
+        // Assert that the structure is correct
+        $expected = [
+            'id' => $wishlist_item->id,
+            'wishlist_id' => $wishlist_item->wishlist_id,
+            'needs' => $wishlist_item->needs,
+            'name' => $wishlist_item->name,
+            'brand' => $wishlist_item->brand,
+            'price' => $wishlist_item->price,
+            'url' => $wishlist_item->url,
+            'comment' => $wishlist_item->comment,
+            'has' => 0,
+            'created_at' => $wishlist_item->created_at,
+            'image' => null,
+            'hasCurrentUserReservation' => false,
+            'can' => [
+                'update' => true,
+                'delete' => true,
+                'mark' => true,
+            ]
+        ];
 
+        $this->assertEquals($expected, $resource_array);
     }
 }

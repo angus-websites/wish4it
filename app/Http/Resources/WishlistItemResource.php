@@ -12,9 +12,11 @@ class WishlistItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $wishlist = $this->wishlist();
+
         return [
             'id' => $this->id,
-            'wishlist_id' => $this->wishlist_id,
+            'wishlist_id' => $wishlist->id,
             'name' => $this->name,
             'brand' => $this->brand,
             'price' => $this->price,
@@ -27,11 +29,11 @@ class WishlistItemResource extends JsonResource
             'hasCurrentUserReservation' => $this->when($request->user(), function () use ($request) {
                 return $this->hasUserReservation($request->user());
             }),
-            'can' => $this->when($request->user(), function () use ($request) {
+            'can' => $this->when($request->user(), function () use ($wishlist, $request) {
                 return [
-                    'update' => $request->user()->can('update', $this->wishlist()),
-                    'delete' => $request->user()->can('delete', $this->wishlist()),
-                    'mark' => $request->user()->can('markAsPurchased', $this->wishlist()),
+                    'update' => $request->user()->can('update', $wishlist),
+                    'delete' => $request->user()->can('delete', $wishlist),
+                    'mark' => $request->user()->can('markAsPurchased', $wishlist),
                 ];
             }),
         ];
