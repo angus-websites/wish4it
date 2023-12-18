@@ -54,7 +54,121 @@ class WishlistControllerTest extends TestCase
     }
 
     /**
-     * Test the store route
+     * Test the destroy route
+     */
+    public function test_destroy_route_for_normal_user()
+    {
+        $wishlist = $this->user->wishlists()->first();
+
+        $response = $this->actingAs($this->user)
+            ->delete(route('wishlists.destroy', $wishlist));
+
+        $response->assertStatus(302);
+
+        // Assert that the wishlist was deleted
+        $this->assertDatabaseMissing('wishlists', [
+            'id' => $wishlist->id,
+        ]);
+    }
+
+    /**
+     * Test the destroy route for a guest
+     */
+    public function test_destroy_route_for_guest()
+    {
+        $wishlist = $this->user->wishlists()->first();
+
+        $response = $this->delete(route('wishlists.destroy', $wishlist));
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('login'));
+
+        // Assert that the wishlist was not deleted
+        $this->assertDatabaseHas('wishlists', [
+            'id' => $wishlist->id,
+        ]);
+    }
+
+    /**
+     * Test the update route
+     */
+    public function test_update_route_for_normal_user()
+    {
+        $wishlist = $this->user->wishlists()->first();
+
+        $response = $this->actingAs($this->user)
+            ->put(route('wishlists.update', $wishlist), [
+                'title' => 'Updated Wishlist',
+                'public' => false,
+            ]);
+
+        $response->assertStatus(302);
+
+        // Assert that the wishlist was updated
+        $this->assertDatabaseHas('wishlists', [
+            'title' => 'Updated Wishlist',
+            'public' => false,
+            'id' => $wishlist->id,
+        ]);
+    }
+
+    /**
+     * Test the update route for a guest
+     */
+    public function test_update_route_for_guest()
+    {
+        $wishlist = $this->user->wishlists()->first();
+
+        $response = $this->put(route('wishlists.update', $wishlist), [
+            'title' => 'Updated Wishlist',
+            'public' => false,
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('login'));
+
+        // Assert that the wishlist was not updated
+        $this->assertDatabaseMissing('wishlists', [
+            'title' => 'Updated Wishlist',
+            'public' => false,
+            'id' => $wishlist->id,
+        ]);
+    }
+
+    /**
+     * Test the update route validation
+     */
+    public function test_update_route_validation()
+    {
+        $wishlist = $this->user->wishlists()->first();
+
+        $this->actingAs($this->user);
+
+        // Test without a title
+        $response = $this->put(route('wishlists.update', $wishlist), [
+            'public' => false,
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('title');
+
+        // Test without a public value
+        $response = $this->put(route('wishlists.update', $wishlist), [
+            'title' => 'Updated Wishlist',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('public');
+
+        // Test without any data
+        $response = $this->put(route('wishlists.update', $wishlist));
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors(['title', 'public']);
+    }
+
+    /**
+     * Test the store route for a normal user
      */
     public function test_store_route_for_normal_user()
     {
@@ -73,6 +187,7 @@ class WishlistControllerTest extends TestCase
             'public' => true,
         ]);
     }
+
 
     /**
      * Test the store route for a guest
@@ -125,6 +240,8 @@ class WishlistControllerTest extends TestCase
         $response->assertStatus(302);
         $response->assertSessionHasErrors(['title', 'public']);
     }
+
+
 
 
 
