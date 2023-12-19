@@ -59,7 +59,7 @@ class WishlistController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Wishlist $wishlist)
+    public function show(Request $request, Wishlist $wishlist)
     {
 
         $currentUser = Auth::user();
@@ -67,7 +67,7 @@ class WishlistController extends Controller
 
         // Create json resources
         $list = $this->wishlistService->fetchWishlistResource($wishlist);
-        $items = $this->wishlistService->fetchWishlistItemsResource($wishlist, $currentUser);
+        $items = $this->wishlistService->fetchWishlistItemsResource($wishlist, $currentUser, $request->input('page', 1));
 
         // If the user is not logged in then show the public wishlist page
         if (! $currentUserId) {

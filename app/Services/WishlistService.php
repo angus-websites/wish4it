@@ -12,6 +12,7 @@ use App\Models\WishlistItem;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 
@@ -21,6 +22,11 @@ use Illuminate\Support\Facades\DB;
 class WishlistService
 {
     private int $paginationLength = 16;
+
+    private function invalidateCache(Wishlist $wishlist): void
+    {
+        Cache::tags("wishlist_{$wishlist->id}")->flush();
+    }
 
     /**
      * @param string $wishlistId
@@ -134,22 +140,34 @@ class WishlistService
      * Fetch all the wishlist items for a given wishlist as a resource
      * @param Wishlist $wishlist
      * @param User|null $user
+     * @param int $page
      * @return JsonResource
      */
-    public function fetchWishlistItemsResource(Wishlist $wishlist, ?User $user): JsonResource
+    public function fetchWishlistItemsResource(Wishlist $wishlist, ?User $user, int $page = 1): JsonResource
     {
-        if ($user && $user->can('viewPurchased', $wishlist)){
-            $data =  $this->fetchWishlistItems($wishlist);
-        }
-        elseif ($user){
-            $data = $this->fetchAvailableWishlistItemsWithUser($wishlist, $user);
-        }
-        else {
-            $data = $this->fetchAvailableWishlistItems($wishlist);
+        // Determine cache key based on permissions and page
+        $permissionKey = $user && $user->can('viewPurchased', $wishlist) ? 'with_purchased' : 'without_purchased';
+        $cacheKey = "wishlist_{$wishlist->id}_{$permissionKey}_page_{$page}";
+
+        // Check if data is in cache
+        $cachedData = Cache::tags("wishlist_{$wishlist->id}")->get($cacheKey);
+
+        if (!$cachedData) {
+            if ($user && $user->can('viewPurchased', $wishlist)) {
+                $data = WishlistItemResource::collection($this->fetchWishlistItems($wishlist)->paginate($this->paginationLength, ['*'], 'page', $page));
+            } elseif ($user) {
+                $data = WishlistItemResource::collection($this->fetchAvailableWishlistItemsWithUser($wishlist, $user)->paginate($this->paginationLength, ['*'], 'page', $page));
+            } else {
+                $data = WishlistItemResource::collection($this->fetchAvailableWishlistItems($wishlist)->paginate($this->paginationLength, ['*'], 'page', $page));
+            }
+
+            // Store in cache indefinitely
+            Cache::tags("wishlist_{$wishlist->id}")->put($cacheKey, $data);
+            $cachedData = $data;
         }
 
-        // Return as a resource
-        return WishlistItemResource::collection($data->paginate($this->paginationLength));
+        // Return cached data
+        return $cachedData;
     }
 
     /**
@@ -169,7 +187,7 @@ class WishlistService
      * @param string $role
      * @return Wishlist
      */
-    public function storeWishlist(array $data, User $user, $role="owner"): Wishlist
+    public function storeWishlist(array $data, User $user, string $role="owner"): Wishlist
     {
         // Create a new wishlist
         $wishlist = Wishlist::create($data);
@@ -201,6 +219,10 @@ class WishlistService
     public function updateWishlist(Wishlist $wishlist, array $data): Wishlist
     {
         $wishlist->update($data);
+
+        // Invalidate cache
+        $this->invalidateCache($wishlist);
+
         return $wishlist;
     }
 
@@ -213,6 +235,10 @@ class WishlistService
     public function updateWishlistItem(WishlistItem $item, array $data): WishlistItem
     {
         $item->update($data);
+
+        // Invalidate cache
+        $this->invalidateCache($item->wishlist);
+
         return $item;
     }
 
@@ -223,6 +249,10 @@ class WishlistService
     public function deleteWishlist(Wishlist $wishlist): void
     {
         $wishlist->delete();
+
+        // Invalidate cache
+        $this->invalidateCache($wishlist);
+
     }
 
     /**
@@ -232,6 +262,9 @@ class WishlistService
     public function deleteWishlistItem(WishlistItem $item): void
     {
         $item->delete();
+
+        // Invalidate cache
+        $this->invalidateCache($item->wishlist);
     }
 
     /**
@@ -265,6 +298,9 @@ class WishlistService
         $reservation->quantity = $quantity;
         $reservation->user_id = $user->id;
         $reservation->save();
+
+        // Invalidate cache
+        $this->invalidateCache($item->wishlist);
 
         // Return success
         return MarkAsPurchasedStatusEnum::SUCCESS;
