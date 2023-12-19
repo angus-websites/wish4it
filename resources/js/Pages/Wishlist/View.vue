@@ -76,12 +76,13 @@
                         </li>
                       </ol>
                     </nav>
+
                     <!-- Number of items (desktop) -->
                     <div class="hidden sm:block">
                       <p class="text-center text-sm"><span class="font-bold" v-if="viewPurchased">{{list.itemCount}}</span><span class="font-bold" v-else>{{ list.unpurchasedItemCount }}</span> items</p>
                     </div>
 
-                    <div class="flex flex-row justify-between items-center space-x-8">
+                    <div v-if="can.viewPurchased" class="flex flex-row justify-between items-center space-x-8">
                         <div class="sm:hidden">
                           <p class="text-center text-sm"><span class="font-bold" v-if="viewPurchased">{{list.itemCount}}</span><span class="font-bold" v-else>{{ list.unpurchasedItemCount }}</span> items</p>
                         </div>
