@@ -32,7 +32,7 @@ Route::get('wishlists/{wishlist}', [WishlistController::class, 'show'])->name('w
 // Performance testing
 if (App::environment('testing')) {
     Route::get('/performance/load/{wishlist}', [PerformanceController::class, 'loadWishlist'])->name('performance.load-wishlist');
-    Route::get('/performance/load-without-binding/{$wishlist_id}', [PerformanceController::class, 'loadWishlistWithoutRouteModelBinding'])->name('performance.load-wishlist-without-route-model-binding');
+    Route::get('/performance/load-without-binding/{wishlist_id}', [PerformanceController::class, 'loadWishlistWithoutRouteModelBinding'])->name('performance.load-wishlist-without-route-model-binding');
 }
 
 Route::middleware([
