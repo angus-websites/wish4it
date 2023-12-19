@@ -203,6 +203,26 @@ class WishlistServiceTest extends TestCase
         ]);
     }
 
+    /*
+     * Test deleting a wishlist item
+     */
+    public function test_delete_wishlist_item()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Fetch the first wishlist item
+        $item = $wishlist->items()->first();
+
+        // Delete the wishlist item
+        $this->wishlistService->deleteWishlistItem($item);
+
+        // Assert it exists in the database
+        $this->assertDatabaseMissing('wishlist_items', [
+            'id' => $item->id,
+        ]);
+    }
+
     /**
      * Test fetching available wishlist items
      */

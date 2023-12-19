@@ -218,5 +218,13 @@ class WishlistService
         $wishlist->delete();
     }
 
+    /**
+     * @param WishlistItem $item
+     * Destroy a wishlist item in the database
+     */
+    public function deleteWishlistItem(WishlistItem $item): void
+    {
+        $item->delete();
+    }
 
 }
