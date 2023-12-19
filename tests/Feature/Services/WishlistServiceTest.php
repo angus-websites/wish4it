@@ -392,5 +392,71 @@ class WishlistServiceTest extends TestCase
         // Assert that the items are the same
         $this->assertEquals($wishlist->items()->count(), $items->get()->count());
     }
+
+    /**
+     * Test marking an item as purchased
+     */
+    public function test_mark_as_purchased()
+    {
+        // Use the user's wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Create a new item
+        $item = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'iPad',
+            'needs' => 1,
+        ]);
+
+        // New user
+        $user = User::factory()->create();
+
+        // Mark the item as purchased
+        $this->wishlistService->markAsPurchased($user, $item, 1, 0);
+
+
+        // Assert that the reservation has been created
+        $this->assertDatabaseHas('reservations', [
+            'wishlist_item_id' => $item->id,
+            'quantity' => 1,
+            'user_id' => $user->id,
+        ]);
+    }
+
+    /*
+     * Test marking an item as purchased that has already been purchased
+     */
+    public function test_mark_as_purchased_already_purchased()
+    {
+        // Use the user's wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Create a new item
+        $item = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'iPad',
+            'needs' => 1,
+        ]);
+
+        // New user
+        $user1 = User::factory()->create();
+
+        // Manually create a reservation
+        \DB::table('reservations')->insert([
+            'wishlist_item_id' => $item->id,
+            'quantity' => 1,
+            'user_id' => $user1->id,
+        ]);
+
+        // Create another user
+        $user2 = User::factory()->create();
+
+
+        // Mark the item as purchased
+        $response = $this->wishlistService->markAsPurchased($user2, $item, 1, 0);
+
+        // Assert the enum is correct
+        $this->assertEquals(\App\Enums\MarkAsPurchasedStatusEnum::ALREADY_PURCHASED, $response);
+    }
 }
 

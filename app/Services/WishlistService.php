@@ -2,16 +2,20 @@
 
 namespace App\Services;
 
+use App\Enums\MarkAsPurchasedStatusEnum;
 use App\Http\Resources\WishlistItemResource;
 use App\Http\Resources\WishlistResource;
+use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 
 /**
  * Used to fetch and cache the wishlist data
@@ -225,6 +229,42 @@ class WishlistService
     public function deleteWishlistItem(WishlistItem $item): void
     {
         $item->delete();
+    }
+
+    /**
+     * @param User $user - The user who is marking this item as purchased
+     * @param WishlistItem $item
+     * @param int $quantity - How many the user would like to mark as purchased
+     * @param int $has - How many of this item has been purchased according to the frontend
+     * Mark a wishlist item as purchased
+     * @return MarkAsPurchasedStatusEnum
+     */
+    public function markAsPurchased(User $user, WishlistItem $item, int $quantity, int $has=0): MarkAsPurchasedStatusEnum
+    {
+        $clientHas = $has;
+        $serverHas = $item->has;
+
+        if ($clientHas !== $serverHas)
+        {
+            // If the item is now marked as purchased, return an error
+            if ($serverHas >= $item->needs)
+            {
+                return MarkAsPurchasedStatusEnum::ALREADY_PURCHASED;
+            }
+
+            // Return an error
+            return MarkAsPurchasedStatusEnum::HAS_CHANGED;
+        }
+
+        // Create the new reservation
+        $reservation = new Reservation();
+        $reservation->wishlist_item_id = $item->id;
+        $reservation->quantity = $quantity;
+        $reservation->user_id = $user->id;
+        $reservation->save();
+
+        // Return success
+        return MarkAsPurchasedStatusEnum::SUCCESS;
     }
 
 }
