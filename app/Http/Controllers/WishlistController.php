@@ -5,17 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Resources\WishlistItemResource;
 use App\Http\Resources\WishlistResource;
 use App\Models\Wishlist;
+use App\Models\WishlistItem;
+use App\Services\WishlistService;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class WishlistController extends Controller
 {
-    public function __construct()
+    private WishlistService $wishlistService;
+
+    public function __construct(WishlistService $wishlistService)
     {
         $this->middleware('auth:sanctum')->except(['show']);
         $this->authorizeResource(Wishlist::class);
+        $this->wishlistService = $wishlistService;
     }
 
     /**
@@ -23,8 +30,12 @@ class WishlistController extends Controller
      */
     public function index(Request $request)
     {
+
+        $user = Auth::user();
+        $wishlists = $this->wishlistService->fetchUserWishlists($user);
+
         return Inertia::render('Wishlist/Index', [
-            'lists' => WishlistResource::collection(Auth::user()->wishlists()->get()),
+            'lists' => WishlistResource::collection($wishlists),
         ]);
     }
 
@@ -40,7 +51,7 @@ class WishlistController extends Controller
         ]);
 
         // Save
-        Auth::user()->createWishlist($data);
+        $this->wishlistService->storeWishlist($data, Auth::user());
 
         return Redirect::route('wishlists.index')->with('success', 'Wishlist created');
     }
@@ -51,25 +62,17 @@ class WishlistController extends Controller
     public function show(Wishlist $wishlist)
     {
 
-        $currentUserId = Auth::id();
-        $itemsQuery = $wishlist->items();
-        $itemsCollection = $itemsQuery->get();
+        $currentUser = Auth::user();
+        $currentUserId = $currentUser?->id;
 
-        // If the user is not logged in or the user is not the owner of the wishlist then remove purchased items
-        if (! Auth::check() || ($currentUserId && ! Auth::user()->can('viewPurchased', $wishlist))) {
-            $itemsCollection = $itemsCollection->filter(fn ($item) => $item->needs > $item->has);
-        }
-
-        // Create a resource collection from the items and paginate
-        $items = WishlistItemResource::collection(
-            $itemsCollection->isEmpty() ? $itemsQuery->paginate(16)->withQueryString() : $itemsCollection->toQuery()->orderBy('created_at', 'desc')->paginate(16)->withQueryString()
-        );
-
-        // Create a resource from the wishlist
-        $list = new WishlistResource($wishlist);
+        // Create json resources
+        $list = $this->wishlistService->fetchWishlistResource($wishlist);
+        $items = $this->wishlistService->fetchWishlistItemsResource($wishlist, $currentUser);
 
         // If the user is not logged in then show the public wishlist page
         if (! $currentUserId) {
+
+            // Store the intended url in the session to redirect after login
             session(['url.intended' => url()->current()]);
 
             return Inertia::render('Guest/WishlistPublic', [
@@ -78,16 +81,18 @@ class WishlistController extends Controller
             ]);
         }
 
+        $owner = $wishlist->owner();
+
         return Inertia::render('Wishlist/View', [
             'list' => $list,
             'items' => $items,
             'can' => [
-                'deleteList' => Auth::user()->can('delete', $wishlist),
-                'editList' => Auth::user()->can('update', $wishlist),
-                'createItems' => Auth::user()->can('create', [WishlistItem::class, $wishlist]),
-                'viewPurchased' => Auth::user()->can('viewPurchased', $wishlist),
+                'deleteList' => $currentUser->can('delete', $wishlist),
+                'editList' => $currentUser->can('update', $wishlist),
+                'createItems' => $currentUser->can('create', [WishlistItem::class, $wishlist]),
+                'viewPurchased' => $currentUser->can('viewPurchased', $wishlist),
             ],
-            'canAddFriend' => $currentUserId && ! Auth::user()->isFriends($list->owner()) && $currentUserId !== $list->owner()->id,
+            'canAddFriend' => $currentUserId && ! $currentUser->isFriends($owner) && $currentUserId !== $owner->id,
         ]);
     }
 
@@ -103,8 +108,7 @@ class WishlistController extends Controller
         ]);
 
         // Save
-        $wishlist->fill($data);
-        $wishlist->save();
+        $this->wishlistService->updateWishlist($wishlist, $data);
 
         // If we pass validation
         return Redirect::back()->with('success', 'Wishlist updated');
@@ -115,7 +119,7 @@ class WishlistController extends Controller
      */
     public function destroy(Wishlist $wishlist)
     {
-        $wishlist->delete();
+        $this->wishlistService->deleteWishlist($wishlist);
 
         return Redirect::route('wishlists.index')->with('info', 'Wishlist deleted');
     }

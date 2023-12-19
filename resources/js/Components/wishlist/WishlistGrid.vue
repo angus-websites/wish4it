@@ -5,9 +5,9 @@
   </EmptyState>
 
   <div v-else>
-    <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         <template v-for="item in displayedItems" :key="item.id">
-          <WishlistItem :item="item" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+          <WishlistItem :can="can" :item="item" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
         </template>
     </ul>
   </div>
@@ -19,6 +19,7 @@ import { defineEmits, computed } from 'vue';
 import EmptyState from '@/Components/EmptyState.vue'
 
 const props = defineProps({
+    can: Object,
     items: Object,
     showPurchased: {
       type: Boolean,

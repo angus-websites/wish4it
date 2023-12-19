@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\ProductScraperController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\WishlistController;
@@ -27,6 +28,12 @@ Route::get('/storage/{path}', [StorageController::class, 'storage'])->where('pat
 
 // Public wishlists
 Route::get('wishlists/{wishlist}', [WishlistController::class, 'show'])->name('wishlists.show');
+
+// Performance testing
+if (App::environment('testing')) {
+    Route::get('/performance/load/{wishlist}', [PerformanceController::class, 'loadWishlist'])->name('performance.load-wishlist');
+    Route::get('/performance/load-without-binding/{wishlist_id}', [PerformanceController::class, 'loadWishlistWithoutRouteModelBinding'])->name('performance.load-wishlist-without-route-model-binding');
+}
 
 Route::middleware([
     'auth:sanctum',

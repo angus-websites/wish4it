@@ -1,9 +1,9 @@
 <template>
     <AppLayout :title="list.title">
         <template #header>
-            <div class="flex flex-col space-y-5 sm:flex-row sm:space-y-0 justify-between items-center">
+            <div class="flex flex-col space-y-5 sm:flex-row sm:space-y-0 justify-between items-center overflow-hidden">
                 <div>
-                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight break-words">
                         {{ list.title }}
                     </h2>
                     <small v-if="$page.props.auth.user.id !== list.owner.id" class="text-sm">{{list.owner.name}}</small>
@@ -76,12 +76,13 @@
                         </li>
                       </ol>
                     </nav>
+
                     <!-- Number of items (desktop) -->
                     <div class="hidden sm:block">
                       <p class="text-center text-sm"><span class="font-bold" v-if="viewPurchased">{{list.itemCount}}</span><span class="font-bold" v-else>{{ list.unpurchasedItemCount }}</span> items</p>
                     </div>
 
-                    <div class="flex flex-row justify-between items-center space-x-8">
+                    <div v-if="can.viewPurchased" class="flex flex-row justify-between items-center space-x-8">
                         <div class="sm:hidden">
                           <p class="text-center text-sm"><span class="font-bold" v-if="viewPurchased">{{list.itemCount}}</span><span class="font-bold" v-else>{{ list.unpurchasedItemCount }}</span> items</p>
                         </div>
@@ -99,7 +100,7 @@
                 </div>
 
 
-                <WishlistGrid :itemCount="list.itemCount" :unpurchasedItemCount="list.unpurchasedItemCount" :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+                <WishlistGrid :can="list.can" :itemCount="list.itemCount" :unpurchasedItemCount="list.unpurchasedItemCount" :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
                 <div class="py-8">
                     <Pagination :model="items" />
                 </div>
@@ -142,6 +143,7 @@ const props = defineProps({
         default: false
     }
 })
+
 
 let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)

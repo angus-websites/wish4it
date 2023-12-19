@@ -10,7 +10,7 @@
     <div class=" p-4 sm:p-6 flex flex-col flex-1">
 
       <!-- Dropdown menu -->
-      <div v-if="item.can" class="flex items-center justify-end mb-3">
+      <div v-if="can" class="flex items-center justify-end mb-3">
         <Menu as="div" class="relative ml-auto">
           <MenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">
             <span class="sr-only">Open options</span>
@@ -19,19 +19,19 @@
           <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
             <MenuItems class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-light-light py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
 
-              <template v-if="item.can.update || item.can.delete">
-                <MenuItem v-if="item.can.update" v-slot="{ active }">
+              <template v-if="can.update || can.delete">
+                <MenuItem v-if="can.update" v-slot="{ active }">
                   <button @click="editItem" type="button" class="block w-full px-3 py-1 text-sm leading-6 text-gray-500 hover:text-gray-700"
                     >Edit</button
                   >
                 </MenuItem>
-                <MenuItem v-if="item.can.delete" v-slot="{ active }">
+                <MenuItem v-if="can.delete" v-slot="{ active }">
                   <button @click="deleteItem" type="button" class="block w-full px-3 py-1 text-sm leading-6 text-red-500 hover:text-red-700"
                     >Delete</button
                   >
                 </MenuItem>
               </template>
-              <MenuItem v-else-if="item.can.mark" v-slot="{ active }">
+              <MenuItem v-else-if="can.mark" v-slot="{ active }">
                 <button @click="markItem" type="button" class="block w-full px-3 py-1 text-xs leading-6 text-gray-500 hover:text-gray-700"
                   >Mark as purchased</button
                 >
@@ -104,6 +104,12 @@ import { computed } from 'vue';
 import { defineEmits } from 'vue';
 const props = defineProps({
     item: Object,
+    can: {
+      type: Object,
+      default: () => {
+        return null;
+      }
+    },
 })
 
 const emit = defineEmits(['edit', "delete", "mark"]);

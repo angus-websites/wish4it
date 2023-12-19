@@ -11,11 +11,11 @@
 
 @layer base {
     .h1 {
-        @apply mt-2 text-4xl font-bold leading-7 sm:truncate sm:text-5xl;
+        @apply mt-2 text-4xl font-bold leading-7 sm:text-5xl;
     }
 
     .h2 {
-        @apply mt-2 text-3xl font-semibold leading-7 sm:truncate sm:text-4xl;
+        @apply mt-2 text-3xl font-semibold leading-7 sm:text-4xl;
     }
 
     .h3 {

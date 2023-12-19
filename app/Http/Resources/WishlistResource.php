@@ -16,6 +16,7 @@ class WishlistResource extends JsonResource
     {
 
         $owner = $this->owner();
+        $user = $request->user();
 
         return [
             'id' => $this->id,
@@ -28,6 +29,13 @@ class WishlistResource extends JsonResource
             'public' => boolval($this->public),
             'itemCount' => $this->items()->count(),
             'unpurchasedItemCount' => $this->getUnpurchasedCount(),
+            'can' => $this->when($request->user(), function () use ($user) {
+                return [
+                    'update' => $user->can('update', $this->resource),
+                    'delete' => $user->can('delete', $this->resource),
+                    'mark' => $user->can('markAsPurchased', $this->resource),
+                ];
+            }),
         ];
     }
 }

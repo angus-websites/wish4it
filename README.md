@@ -95,6 +95,11 @@ Tests can be run using the following command...
 ./vendor/bin/sail php artisan test
 ```
 
+### Performance testing
+
+```bash
+./vendor/bin/sail php artisan test --configuration=phpunit.performance.xml
+```
 
 ## Tips
 
