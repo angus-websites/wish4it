@@ -50,7 +50,7 @@ class WishlistPerformanceTest extends TestCase
         $time = Benchmark::measure(function () use ($user, $wishlist) {
             $this->actingAs($user)
                 ->get(route('wishlists.show', $wishlist));
-        }, 50);
+        }, 25);
 
         $action = 'view random wishlist as user';
         $results[$action] = $time;
@@ -63,7 +63,7 @@ class WishlistPerformanceTest extends TestCase
         // Time how long it takes to load a random wishlist as guest with benchmark
         $time = Benchmark::measure(function () use ($wishlist) {
             $this->get(route('wishlists.show', $wishlist));
-        });
+        }, 25);
 
         $action = 'view random wishlist as guest';
         $results[$action] = $time;
@@ -80,6 +80,43 @@ class WishlistPerformanceTest extends TestCase
 
         $action = 'visit benchmark route';
         $results[$action] = $time;
+
+        $user = User::all()->random();
+
+        // Time how long it do a series of actions as a user
+        $time = Benchmark::measure(function () use ($user) {
+
+            $this->actingAs($user);
+
+            // Go to the create wishlist page
+            $this->get(route('wishlists.create'));
+
+            // Create a wishlist
+            $this->post(route('wishlists.store'), Wishlist::factory()->make()->toArray());
+
+        }, 25);
+
+        $action = 'create a wishlist as user';
+        $results[$action] = $time;
+
+        $user = User::all()->random();
+
+        // Time how long it do a series of actions as a user
+        $time = Benchmark::measure(function () use ($user) {
+
+            $this->actingAs($user);
+
+            // Go to the update wishlist page
+            $this->get(route('wishlists.edit', $user->wishlists->first()));
+
+            // Update a wishlist
+            $this->put(route('wishlists.update', $user->wishlists->first()), Wishlist::factory()->make()->toArray());
+
+        }, 25);
+
+        $action = 'update a wishlist as user';
+        $results[$action] = $time;
+
 
         $this->outputResults($results);
         return $results;
