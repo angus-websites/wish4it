@@ -119,6 +119,27 @@ class WishlistServiceTest extends TestCase
     }
 
     /**
+     * Test storing a wishlist item
+     */
+    public function test_store_wishlist_item()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Create a wishlist item
+        $this->wishlistService->storeWishlistItem($wishlist, [
+            'name' => 'Test Wishlist Item',
+            'needs' => 1,
+        ]);
+
+        // Assert it exists in the database
+        $this->assertDatabaseHas('wishlist_items', [
+            'name' => 'Test Wishlist Item',
+            'needs' => 1,
+        ]);
+    }
+
+    /**
      * Test updating a wishlist
      */
     public function test_update_wishlist()
@@ -141,6 +162,31 @@ class WishlistServiceTest extends TestCase
     }
 
     /**
+     * Test updating a wishlist item
+     */
+    public function test_update_wishlist_item()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Fetch the first wishlist item
+        $item = $wishlist->items()->first();
+
+        // Update the wishlist item
+        $this->wishlistService->updateWishlistItem($item, [
+            'name' => 'Updated Wishlist Item',
+            'needs' => 2,
+        ]);
+
+        // Assert it exists in the database
+        $this->assertDatabaseHas('wishlist_items', [
+            'name' => 'Updated Wishlist Item',
+            'needs' => 2,
+            'id' => $item->id,
+        ]);
+    }
+
+    /**
      * Test deleting a wishlist
      */
     public function test_delete_wishlist()
@@ -154,6 +200,26 @@ class WishlistServiceTest extends TestCase
         // Assert it exists in the database
         $this->assertDatabaseMissing('wishlists', [
             'id' => $wishlist->id,
+        ]);
+    }
+
+    /*
+     * Test deleting a wishlist item
+     */
+    public function test_delete_wishlist_item()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Fetch the first wishlist item
+        $item = $wishlist->items()->first();
+
+        // Delete the wishlist item
+        $this->wishlistService->deleteWishlistItem($item);
+
+        // Assert it exists in the database
+        $this->assertDatabaseMissing('wishlist_items', [
+            'id' => $item->id,
         ]);
     }
 
@@ -325,6 +391,72 @@ class WishlistServiceTest extends TestCase
 
         // Assert that the items are the same
         $this->assertEquals($wishlist->items()->count(), $items->get()->count());
+    }
+
+    /**
+     * Test marking an item as purchased
+     */
+    public function test_mark_as_purchased()
+    {
+        // Use the user's wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Create a new item
+        $item = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'iPad',
+            'needs' => 1,
+        ]);
+
+        // New user
+        $user = User::factory()->create();
+
+        // Mark the item as purchased
+        $this->wishlistService->markAsPurchased($user, $item, 1, 0);
+
+
+        // Assert that the reservation has been created
+        $this->assertDatabaseHas('reservations', [
+            'wishlist_item_id' => $item->id,
+            'quantity' => 1,
+            'user_id' => $user->id,
+        ]);
+    }
+
+    /*
+     * Test marking an item as purchased that has already been purchased
+     */
+    public function test_mark_as_purchased_already_purchased()
+    {
+        // Use the user's wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Create a new item
+        $item = WishlistItemFactory::new()->create([
+            'wishlist_id' => $wishlist->id,
+            'name' => 'iPad',
+            'needs' => 1,
+        ]);
+
+        // New user
+        $user1 = User::factory()->create();
+
+        // Manually create a reservation
+        \DB::table('reservations')->insert([
+            'wishlist_item_id' => $item->id,
+            'quantity' => 1,
+            'user_id' => $user1->id,
+        ]);
+
+        // Create another user
+        $user2 = User::factory()->create();
+
+
+        // Mark the item as purchased
+        $response = $this->wishlistService->markAsPurchased($user2, $item, 1, 0);
+
+        // Assert the enum is correct
+        $this->assertEquals(\App\Enums\MarkAsPurchasedStatusEnum::ALREADY_PURCHASED, $response);
     }
 }
 

@@ -2,21 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MarkAsPurchasedStatusEnum;
 use App\Models\Reservation;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
+use App\Services\WishlistService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 class WishlistItemController extends Controller
 {
-    public function __construct()
+    private WishlistService $wishlistService;
+
+    public function __construct(WishlistService $wishlistService)
     {
         $this->middleware('auth:sanctum');
 
-        // Authorize everyting through the parent wishlist
+        // Authorize everything through the parent wishlist
         $this->authorizeResource(Wishlist::class);
+
+        // Create a new wishlist service
+        $this->wishlistService = $wishlistService;
     }
 
     /**
@@ -40,7 +47,7 @@ class WishlistItemController extends Controller
         ]);
 
         // Save
-        $wishlist->items()->create($data);
+        $this->wishlistService->storeWishlistItem($wishlist, $data);
 
         return Redirect::route('wishlists.show', $wishlist)->with('success', 'Item added');
     }
@@ -62,9 +69,7 @@ class WishlistItemController extends Controller
         ]);
 
         // Save
-        $item->fill($data);
-        $item->wishlist_id = $wishlist->id;
-        $item->save();
+        $this->wishlistService->updateWishlistItem($item, $data);
 
         // If we pass validation
         return Redirect::back()->with('success', 'Item updated');
@@ -83,29 +88,16 @@ class WishlistItemController extends Controller
         ]);
 
         // Check the client has value matches the server value (to check for out of date data)
-        $clientHas = (int)$request->has ?? 0;
-        $serverHas = $item->has;
+        $response = $this->wishlistService->markAsPurchased(Auth::user(), $item, $request->quantity, $request->has ?? 0);
 
-        if ($clientHas !== $serverHas)
-        {
-            // If the item is now marked as purchased, return an error
-            if ($serverHas >= $item->needs)
-            {
-                return Redirect::back()->withErrors(['alreadyPurchased' => 'This item has already been marked as purchased and is no longer available.']);
-            }
+        // Deal with the response
+        return match ($response) {
+            MarkAsPurchasedStatusEnum::SUCCESS => Redirect::back()->with('success', 'Marked as purchased'),
+            MarkAsPurchasedStatusEnum::ALREADY_PURCHASED => Redirect::back()->withErrors(['alreadyPurchased' => 'This item has already been marked as purchased and is no longer available.']),
+            MarkAsPurchasedStatusEnum::HAS_CHANGED => Redirect::back()->withErrors(['hasChanged' => 'The number of purchases for this item has already changed. Please try again']),
+            default => Redirect::back()->withErrors(['error' => 'An unknown error occurred. Please try again']),
+        };
 
-            // Return an error
-            return Redirect::back()->withErrors(['hasChanged' => 'The number of purchases for this item has already changed. Please try again']);
-        }
-
-        // Create the new reservation
-        $reservation = new Reservation();
-        $reservation->wishlist_item_id = $item->id;
-        $reservation->quantity = $request->quantity;
-        $reservation->user_id = Auth::user()->id;  // Get the logged in user's ID
-        $reservation->save();
-
-        return Redirect::back()->with('success', 'Marked as purchased');
     }
 
     /**
@@ -113,7 +105,7 @@ class WishlistItemController extends Controller
      */
     public function destroy(Request $request, Wishlist $wishlist, WishlistItem $item)
     {
-        $item->delete();
+        $this->wishlistService->deleteWishlistItem($item);
 
         return Redirect::back()->with('success', 'Item deleted');
     }
