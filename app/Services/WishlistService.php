@@ -22,6 +22,7 @@ class WishlistService
 
     /**
      * @param string $wishlistId
+     * @return bool
      * Check a wishlist exists or not
      */
     public function checkWishlistExists(string $wishlistId): bool
@@ -32,6 +33,7 @@ class WishlistService
 
     /**
      * @param User $user
+     * @return Collection
      * Fetch all the wishlist for a given user
      */
     public function fetchUserWishlists(User $user): Collection
@@ -51,6 +53,8 @@ class WishlistService
 
     /**
      * Fetch a query builder for all the available wishlist items
+     * @param Wishlist $wishlist
+     * @return Builder
      */
     public function fetchAvailableWishlistItems(Wishlist $wishlist): Builder
     {
@@ -66,6 +70,9 @@ class WishlistService
     /**
      * Fetch a query builder for all the available wishlist items but with a user
      * so the query builder can be used to check if the user has reserved an item
+     * @param Wishlist $wishlist
+     * @param User $user
+     * @return Builder
      */
     public function fetchAvailableWishlistItemsWithUser(Wishlist $wishlist, User $user): Builder
     {
@@ -84,6 +91,8 @@ class WishlistService
 
     /**
      * Fetch a query builder for all the reserved wishlist items
+     * @param Wishlist $wishlist
+     * @return Builder
      */
     public function fetchReservedWishlistItems(Wishlist $wishlist): Builder
     {
@@ -100,6 +109,8 @@ class WishlistService
 
     /**
      * Fetch all the wishlist items for a given wishlist, purchased or not
+     * @param Wishlist $wishlist
+     * @return Builder
      */
     public function fetchWishlistItems(Wishlist $wishlist): Builder
     {
@@ -114,6 +125,9 @@ class WishlistService
 
     /**
      * Fetch all the wishlist items for a given wishlist as a resource
+     * @param Wishlist $wishlist
+     * @param User|null $user
+     * @return JsonResource
      */
     public function fetchWishlistItemsResource(Wishlist $wishlist, ?User $user): JsonResource
     {
@@ -133,6 +147,8 @@ class WishlistService
 
     /**
      * Fetch the wishlist itself as a resource
+     * @param Wishlist $wishlist
+     * @return WishlistResource
      */
     public function fetchWishlistResource(Wishlist $wishlist): WishlistResource
     {
@@ -141,6 +157,10 @@ class WishlistService
 
     /**
      * Store a wishlist in the database
+     * @param array $data
+     * @param User $user
+     * @param string $role
+     * @return Wishlist
      */
     public function storeWishlist(array $data, User $user, $role="owner"): Wishlist
     {
@@ -156,6 +176,9 @@ class WishlistService
 
     /**
      * Store a new wishlist item in the database
+     * @param Wishlist $wishlist
+     * @param array $data
+     * @return WishlistItem
      */
     public function storeWishlistItem(Wishlist $wishlist, array $data): WishlistItem
     {
@@ -172,6 +195,18 @@ class WishlistService
     {
         $wishlist->update($data);
         return $wishlist;
+    }
+
+    /**
+     * Update a wishlist item in the database
+     * @param WishlistItem $item
+     * @param array $data
+     * @return WishlistItem
+     */
+    public function updateWishlistItem(WishlistItem $item, array $data): WishlistItem
+    {
+        $item->update($data);
+        return $item;
     }
 
     /**

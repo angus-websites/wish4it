@@ -162,6 +162,31 @@ class WishlistServiceTest extends TestCase
     }
 
     /**
+     * Test updating a wishlist item
+     */
+    public function test_update_wishlist_item()
+    {
+        // Fetch the first wishlist
+        $wishlist = $this->public_wishlist;
+
+        // Fetch the first wishlist item
+        $item = $wishlist->items()->first();
+
+        // Update the wishlist item
+        $this->wishlistService->updateWishlistItem($item, [
+            'name' => 'Updated Wishlist Item',
+            'needs' => 2,
+        ]);
+
+        // Assert it exists in the database
+        $this->assertDatabaseHas('wishlist_items', [
+            'name' => 'Updated Wishlist Item',
+            'needs' => 2,
+            'id' => $item->id,
+        ]);
+    }
+
+    /**
      * Test deleting a wishlist
      */
     public function test_delete_wishlist()
