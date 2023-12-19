@@ -99,7 +99,7 @@
                 </div>
 
 
-                <WishlistGrid :itemCount="list.itemCount" :unpurchasedItemCount="list.unpurchasedItemCount" :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
+                <WishlistGrid :can="list.can" :itemCount="list.itemCount" :unpurchasedItemCount="list.unpurchasedItemCount" :items="items.data" :showPurchased="viewPurchased" @edit="editItem" @delete="deleteItem" @mark="markItem"/>
                 <div class="py-8">
                     <Pagination :model="items" />
                 </div>
@@ -142,6 +142,7 @@ const props = defineProps({
         default: false
     }
 })
+
 
 let newModalOpen = ref(false)
 let deleteModalOpen = ref(false)

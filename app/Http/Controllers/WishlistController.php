@@ -66,7 +66,7 @@ class WishlistController extends Controller
         $currentUserId = $currentUser?->id;
 
         // Create json resources
-        $list = $this->wishlistService->fetchWishlistResource($wishlist, $currentUser);
+        $list = $this->wishlistService->fetchWishlistResource($wishlist);
         $items = $this->wishlistService->fetchWishlistItemsResource($wishlist, $currentUser);
 
         // If the user is not logged in then show the public wishlist page
