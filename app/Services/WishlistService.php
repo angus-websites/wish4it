@@ -6,6 +6,7 @@ use App\Http\Resources\WishlistItemResource;
 use App\Http\Resources\WishlistResource;
 use App\Models\User;
 use App\Models\Wishlist;
+use App\Models\WishlistItem;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -151,6 +152,14 @@ class WishlistService
 
         return $wishlist;
 
+    }
+
+    /**
+     * Store a new wishlist item in the database
+     */
+    public function storeWishlistItem(Wishlist $wishlist, array $data): WishlistItem
+    {
+        return $wishlist->items()->create($data);
     }
 
     /**
