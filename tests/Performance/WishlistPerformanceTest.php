@@ -16,14 +16,7 @@ class WishlistPerformanceTest extends TestCase
     protected function runBenchmark($userCount, $wishlistCount, $itemCount): void
     {
         // Create users
-        User::factory()->count($userCount)
-            ->hasAttached(
-                Wishlist::factory()
-                    ->count($wishlistCount)
-                    ->public(true)
-                    ->hasItems($itemCount),
-                ['role' => 'owner'],
-            )->create();
+        $this->createData($userCount, $wishlistCount, $itemCount);
 
         // Create our test user
         $user = User::factory()->create();
@@ -72,7 +65,7 @@ class WishlistPerformanceTest extends TestCase
 
         // Assert it takes less than 1 second
         $this->assertTrue($time < 1000);
-        
+
 
     }
 
@@ -83,6 +76,19 @@ class WishlistPerformanceTest extends TestCase
         echo "\nTime taken to $action: $seconds seconds, $milliseconds milliseconds\n";
     }
 
+    private function createData($userCount, $wishlistCount, $itemCount): void
+    {
+        // Create users
+        User::factory()->count($userCount)
+            ->hasAttached(
+                Wishlist::factory()
+                    ->count($wishlistCount)
+                    ->public(true)
+                    ->hasItems($itemCount),
+                ['role' => 'owner'],
+            )->create();
+
+    }
 
     public function test_show_wishlist_with_fifteen_users(): void
     {
@@ -101,7 +107,7 @@ class WishlistPerformanceTest extends TestCase
     public function test_show_wishlist_with_five_hundred_users(): void
     {
 
-        // Takes around 2 minutes to generate 500 users
+        // Takes around 4 minutes to generate 500 users
         $this->runBenchmark(500, 10, 40);
 
     }
@@ -115,6 +121,39 @@ class WishlistPerformanceTest extends TestCase
 
     }
 
+    public function test_route_model_binding(): void
+    {
+        // Create 150 users
+        $this->createData(150, 5, 40);
 
+        // Choose a random wishlist
+        $wishlist = Wishlist::all()->random();
+
+        // Benchmark the performance routes
+        $time = Benchmark::measure(function () use ($wishlist) {
+            $this->get(route('performance.load-wishlist', $wishlist));
+        }, 50);
+
+        // Display the time taken
+        $this->outputTime($time, 'load wishlist with route model binding');
+
+        // Assert it takes less than 1 second
+        $this->assertTrue($time < 1000);
+
+        // Choose a random wishlist
+        $wishlist = Wishlist::all()->random();
+
+        // Benchmark the route without route model binding
+        $time = Benchmark::measure(function () use ($wishlist) {
+            $this->get(route('performance.load-wishlist-without-route-model-binding', $wishlist->id));
+        }, 50);
+
+        // Display the time taken
+        $this->outputTime($time, 'load wishlist without route model binding');
+
+        // Assert it takes less than 1 second
+        $this->assertTrue($time < 1000);
+
+    }
 
 }
