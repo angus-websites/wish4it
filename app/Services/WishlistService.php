@@ -23,9 +23,9 @@ class WishlistService
 {
     private int $paginationLength = 16;
 
-    private function invalidateCache(Wishlist $wishlist): void
+    private function invalidateCache($wishlist_id): void
     {
-        Cache::tags("wishlist_{$wishlist->id}")->flush();
+        Cache::tags("wishlist_{$wishlist_id}")->flush();
     }
 
     /**
@@ -221,7 +221,7 @@ class WishlistService
         $wishlist->update($data);
 
         // Invalidate cache
-        $this->invalidateCache($wishlist);
+        $this->invalidateCache($wishlist->id);
 
         return $wishlist;
     }
@@ -237,7 +237,7 @@ class WishlistService
         $item->update($data);
 
         // Invalidate cache
-        $this->invalidateCache($item->wishlist);
+        $this->invalidateCache($item->wishlist_id);
 
         return $item;
     }
@@ -251,7 +251,7 @@ class WishlistService
         $wishlist->delete();
 
         // Invalidate cache
-        $this->invalidateCache($wishlist);
+        $this->invalidateCache($wishlist->id);
 
     }
 
@@ -264,7 +264,7 @@ class WishlistService
         $item->delete();
 
         // Invalidate cache
-        $this->invalidateCache($item->wishlist);
+        $this->invalidateCache($item->wishlist_id);
     }
 
     /**
@@ -300,7 +300,7 @@ class WishlistService
         $reservation->save();
 
         // Invalidate cache
-        $this->invalidateCache($item->wishlist);
+        $this->invalidateCache($item->wishlist_id);
 
         // Return success
         return MarkAsPurchasedStatusEnum::SUCCESS;
