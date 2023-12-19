@@ -81,6 +81,8 @@ class WishlistController extends Controller
             ]);
         }
 
+        $owner = $wishlist->owner();
+
         return Inertia::render('Wishlist/View', [
             'list' => $list,
             'items' => $items,
@@ -90,7 +92,7 @@ class WishlistController extends Controller
                 'createItems' => $currentUser->can('create', [WishlistItem::class, $wishlist]),
                 'viewPurchased' => $currentUser->can('viewPurchased', $wishlist),
             ],
-            'canAddFriend' => $currentUserId && ! $currentUser->isFriends($list->owner()) && $currentUserId !== $list->owner()->id,
+            'canAddFriend' => $currentUserId && ! $currentUser->isFriends($owner) && $currentUserId !== $owner->id,
         ]);
     }
 
