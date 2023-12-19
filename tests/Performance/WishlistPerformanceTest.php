@@ -117,6 +117,32 @@ class WishlistPerformanceTest extends TestCase
         $action = 'update a wishlist as user';
         $results[$action] = $time;
 
+        $wishlist = Wishlist::all()->random();
+
+        // Time how long it takes to run the performance benchmark on iteration 1
+        $time = Benchmark::measure(function () use ($wishlist) {
+            $this->get(route('performance.load-wishlist', $wishlist));
+        });
+
+        $action = 'same random wishlist visit 1';
+        $results[$action] = $time;
+
+        // Time how long it takes to run the performance benchmark on iteration 2
+        $time = Benchmark::measure(function () use ($wishlist) {
+            $this->get(route('performance.load-wishlist', $wishlist));
+        });
+
+        $action = 'same random wishlist visit 2';
+        $results[$action] = $time;
+
+        // Time how long it takes to run the performance benchmark on iteration 3
+        $time = Benchmark::measure(function () use ($wishlist) {
+            $this->get(route('performance.load-wishlist', $wishlist));
+        });
+
+        $action = 'same random wishlist visit 3';
+        $results[$action] = $time;
+
 
         $this->outputResults($results);
         return $results;
