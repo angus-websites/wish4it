@@ -95,7 +95,8 @@ class WishlistService
             ->where('wi.wishlist_id', $wishlist->id)
             ->groupBy('wi.id', 'wi.wishlist_id', 'wi.needs')
             ->havingRaw('COALESCE(SUM(r.quantity), 0) < wi.needs')
-            ->setBindings([$user->id], 'select');
+            ->setBindings([$user->id], 'select')
+            ->orderBy('wi.created_at', 'desc');
     }
 
     /**
