@@ -162,8 +162,8 @@ class WishlistService
                 $data = WishlistItemResource::collection($this->fetchAvailableWishlistItems($wishlist)->paginate($this->paginationLength, ['*'], 'page', $page));
             }
 
-            // Store in cache indefinitely
-            Cache::tags("wishlist_{$wishlist->id}")->put($cacheKey, $data);
+            // Store in cache for an hour and a half
+            Cache::tags("wishlist_{$wishlist->id}")->put($cacheKey, $data, 60 * 90);
             $cachedData = $data;
         }
 
