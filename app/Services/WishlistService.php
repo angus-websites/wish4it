@@ -208,7 +208,12 @@ class WishlistService
      */
     public function storeWishlistItem(Wishlist $wishlist, array $data): WishlistItem
     {
-        return $wishlist->items()->create($data);
+        $item = $wishlist->items()->create($data);
+
+        // Invalidate cache
+        $this->invalidateCache($wishlist->id);
+
+        return $item;
     }
 
     /**
