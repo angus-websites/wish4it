@@ -34,6 +34,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+
+        $request->session()->flash('flash.banner', 'This site is using a FREE database so is slow');
+        $request->session()->flash('flash.bannerStyle', 'normal');
+
         return array_merge(parent::share($request), [
 
             // Synchronously
@@ -49,6 +53,8 @@ class HandleInertiaRequests extends Middleware
             'auth.user' => fn () => $request->user()
                 ? $request->user()->only('id', 'name', 'email', 'username')
                 : null,
+
+
 
             // Flash messages
             'flash' => function () use ($request) {
