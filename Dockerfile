@@ -33,12 +33,14 @@ RUN apk update && apk add --no-cache \
     oniguruma-dev \
     icu-dev \
     libzip-dev \
-    nginx
-
+    nginx \
+    postgresql-dev # Added for PostgreSQL support
 
 # Configure PHP extensions
 RUN docker-php-ext-install \
     pdo_mysql \
+    pdo_pgsql \
+    pgsql \
     mbstring \
     zip \
     intl
@@ -62,7 +64,6 @@ RUN chmod +x /start.sh
 # Remove the 'tests' directory (to ensure they are not in prod image, they can be added back later for testing)
 RUN rm -rf /var/www/html/tests
 
-
 #-----Setup permissions------
 RUN addgroup -g 1000 web
 
@@ -72,7 +73,6 @@ RUN addgroup nginx web && \
 RUN chown -R www-data:web /var/www/html && \
     chmod -R g+rwxs /var/www/html && \
     chmod -R 775 /var/www/html
-
 
 # Copy Nginx config file
 COPY nginx.conf /etc/nginx/http.d/default.conf
