@@ -1,12 +1,23 @@
+# Create a composer image to install dependencies
+FROM composer:2 as composer
+
 # ================ Stage 1: Composer dependencies =====================
-FROM composer:2 as composer_prod
+FROM php:8.2-cli as composer_prod
+
+# Copy composer binary
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
 WORKDIR /app
 COPY . .
 RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
 RUN rm -rf /root/.composer/cache
 
 # =============== Stage 1b: Composer for testing =======================
-FROM composer:2 as composer_test
+FROM php:8.2-cli as composer_test
+
+# Copy composer binary
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
 WORKDIR /app
 COPY . .
 RUN composer install --no-interaction
