@@ -6,6 +6,21 @@
           Purchased
         </p>
     </div>
+
+    <!-- Same shop banner -->
+    <div  v-if="linkedShops" class="text-center dark:bg-amber-800 bg-amber-500 px-6 py-2 sm:px-3.5 rounded-none sm:rounded-t-xl">
+        <p class="text-sm text-dark dark:text-light font-bold flex flex-row justify-around align-middle">
+          <span>Other items from this shop on wishlist</span>
+        </p>
+    </div>
+
+    <!-- Same brand banner -->
+    <div  v-else-if="linkedBrands" class="text-center dark:bg-emerald-800 bg-emerald-500 px-6 py-2 sm:px-3.5 rounded-none sm:rounded-t-xl">
+        <p class="text-sm text-dark dark:text-light font-bold flex flex-row justify-around align-middle">
+          <span>Other items from this brand on wishlist</span>
+        </p>
+    </div>
+
     <!-- Rest -->
     <div class=" p-4 sm:p-6 flex flex-col flex-1">
 
@@ -96,8 +111,7 @@
 
 <script setup>
 import PrimaryButton from "@/Components/buttons/PrimaryButton.vue"
-import SecondaryButton from "@/Components/buttons/SecondaryButton.vue"
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import {Menu, MenuButton, MenuItem, MenuItems, Popover, PopoverButton, PopoverPanel} from '@headlessui/vue'
 import { EllipsisHorizontalIcon } from '@heroicons/vue/20/solid'
 import { computed } from 'vue';
 
@@ -118,6 +132,13 @@ const itemPurchased = computed(() => {
   return props.item.has >= props.item.needs;
 });
 
+const linkedShops = computed(() => {
+  return props.item.linkedShops === true;
+});
+
+const linkedBrands = computed(() => {
+  return props.item.linkedBrands === true;
+});
 
 function editItem() {
   emit('edit', props.item);

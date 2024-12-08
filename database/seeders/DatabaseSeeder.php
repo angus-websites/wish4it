@@ -19,25 +19,36 @@ class DatabaseSeeder extends Seeder
         // Create the admin
         $this->call(AdminSeeder::class);
 
-        // Create 10 users with 3 wishlists each with 1-25 items
-        User::factory()->count(10)
-            ->hasAttached(
-                Wishlist::factory()->count(3)->create()->each(function ($wishlist){
-                    // For each wishlist, generate a random number of items
-                    $wishlist->items()->saveMany(WishlistItem::factory(rand(1, 25))->make());
-                }),
-                ['role' => 'owner'],
-            )
+        // Create the friend user first
+        $friend = User::factory()->create();
+
+        // Create the wishlists for the friend
+        Wishlist::factory()
+            ->count(3)
+            ->hasItems(5)
+            ->public(true)
+            ->forUser($friend)
             ->create();
 
-        User::factory()->count(10)
-            ->hasAttached(
-                Wishlist::factory()
-                    ->count(3)
-                    ->hasItems(25),
-                ['role' => 'owner'],
-            )
+        // Create another friend user
+        $friend2 = User::factory()->create();
+
+        // Create the wishlists for the friend
+        Wishlist::factory()
+            ->count(3)
+            ->hasItems(5)
+            ->public(true)
+            ->forUser($friend2)
             ->create();
+
+        // Make friends the owner of the wishlist
+
+        // Find the admin user
+        $admin = User::where('email', "=", config('admin.admin_email'))->first();
+
+        // Make the friend user a friend of the admin user
+        $admin->friends()->attach($friend);
+        $admin->friends()->attach($friend2);
 
     }
 }

@@ -458,5 +458,177 @@ class WishlistServiceTest extends TestCase
         // Assert the enum is correct
         $this->assertEquals(\App\Enums\MarkAsPurchasedStatusEnum::ALREADY_PURCHASED, $response);
     }
+
+    public function test_get_linked_items_info()
+    {
+
+        // Create an example collection of items
+
+        $items = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'Monitor',
+                'url' => 'https://www.argos.co.uk/product/3080618',
+                'brand' => "Asus",
+            ],
+            (object) [
+                'id' => 2,
+                'name' => 'Highland Cow',
+                'url' => 'https://www.argos.co.uk/product/6793878',
+                'brand' => "Jellycat",
+            ],
+            (object) [
+                'id' => 3,
+                'name' => 'T shirt',
+                'url' => 'https://downthelinesurf.co.uk/products/123',
+                'brand' => "Patagonia",
+            ],
+            (object) [
+                'id' => 4,
+                'name' => 'Sleeping bag',
+                'url' => 'https://eu.patagonia.com/products/sleeping-bag',
+                'brand' => "Patagonia",
+            ],
+        ]);
+
+        $expected = collect([
+            [
+                'id' => 1,
+                'linkedShops' => true,
+                'linkedBrands' => false,
+
+            ],
+            [
+                'id' => 2,
+                'linkedShops' => true,
+                'linkedBrands' => false,
+            ],
+            [
+                'id' => 3,
+                'linkedShops' => false,
+                'linkedBrands' => true,
+            ],
+            [
+                'id' => 4,
+                'linkedShops' => false,
+                'linkedBrands' => true,
+            ],
+        ]);
+
+        $result = $this->wishlistService->getLinkedItemsInfo($items);
+
+        $this->assertEquals($expected, $result);
+
+    }
+
+    public function test_get_specific_linked_item_info()
+    {
+
+        // Create an example collection of items
+
+        $items = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'Monitor',
+                'url' => 'https://www.argos.co.uk/product/3080618',
+                'brand' => "Asus",
+            ],
+            (object) [
+                'id' => 2,
+                'name' => 'Highland Cow',
+                'url' => 'https://www.argos.co.uk/product/6793878',
+                'brand' => "Jellycat",
+            ],
+            (object) [
+                'id' => 3,
+                'name' => 'T shirt',
+                'url' => 'https://downthelinesurf.co.uk/products/123',
+                'brand' => "Patagonia",
+            ],
+            (object) [
+                'id' => 4,
+                'name' => 'Sleeping bag',
+                'url' => 'https://eu.patagonia.com/products/sleeping-bag',
+                'brand' => "Patagonia",
+            ],
+        ]);
+
+        $expected = [
+            'id' => 3,
+            'linkedShops' => false,
+            'linkedBrands' => true,
+        ];
+
+        // We want just the Patagonia t shirt information
+        $result = $this->wishlistService->getSpecificLinkedItemInfo($items, 3);
+
+        $this->assertEquals($expected, $result);
+
+    }
+
+    public function test_get_specific_linked_item_info_without_all_fields()
+    {
+        // Create an example collection of items
+
+        $items = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'Monitor',
+                'brand' => "Asus",
+            ],
+            (object) [
+                'id' => 2,
+                'name' => 'Highland Cow',
+                'url' => 'https://www.argos.co.uk/product/6793878',
+            ],
+            (object) [
+                'id' => 3,
+                'name' => 'T shirt',
+                'url' => 'https://downthelinesurf.co.uk/products/123',
+                'brand' => "Patagonia",
+            ],
+        ]);
+
+
+        $expected = [
+            'id' => 3,
+            'linkedShops' => false,
+            'linkedBrands' => false,
+        ];
+
+        $result = $this->wishlistService->getSpecificLinkedItemInfo($items, 3);
+
+        $this->assertEquals($expected, $result);
+
+    }
+
+    public function test_get_specific_linked_item_info_different_case_on_brand()
+    {
+        $items = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'T shirt',
+                'url' => 'https://downthelinesurf.co.uk/products/123',
+                'brand' => "patagonia",
+            ],
+            (object) [
+                'id' => 2,
+                'name' => 'Sleeping bag',
+                'url' => 'https://eu.patagonia.com/products/sleeping-bag',
+                'brand' => "PatagOnia",
+            ],
+        ]);
+
+        $expected = [
+            'id' => 1,
+            'linkedShops' => false,
+            'linkedBrands' => true,
+        ];
+
+        // We want just the Patagonia t shirt information
+        $result = $this->wishlistService->getSpecificLinkedItemInfo($items, 1);
+
+        $this->assertEquals($expected, $result);
+    }
 }
 

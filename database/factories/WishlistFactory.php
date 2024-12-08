@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -39,6 +40,19 @@ class WishlistFactory extends Factory
         return $this->state([
             'public' => $isPublic,
         ]);
+    }
+
+    /**
+     * Associate a user with the wishlist.
+     *
+     * @return $this
+     */
+    public function forUser(User $user): self
+    {
+        return $this->afterCreating(function (Wishlist $wishlist) use ($user) {
+            // Assuming `wishlist_user` is the pivot table linking users and wishlists
+            $wishlist->users()->attach($user->id, ['role' => 'owner']);
+        });
     }
 
 
