@@ -1,11 +1,12 @@
-# Create a composer image to install dependencies
-FROM composer:2 as composer
-
 # ================ Stage 1: Composer dependencies =====================
-FROM php:8.2-cli as composer_prod
+FROM php:8.2-fpm-alpine as composer_prod
 
-# Copy composer binary
-COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+# Update the package lists and install git
+RUN apk update && apk add --no-cache git
+
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 
 WORKDIR /app
 COPY . .
@@ -13,10 +14,13 @@ RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoload
 RUN rm -rf /root/.composer/cache
 
 # =============== Stage 1b: Composer for testing =======================
-FROM php:8.2-cli as composer_test
+FROM php:8.2-fpm-alpine as composer_test
 
-# Copy composer binary
-COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+# Update the package lists and install git
+RUN apk update && apk add --no-cache git
+
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /app
 COPY . .
