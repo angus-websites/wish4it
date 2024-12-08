@@ -312,4 +312,13 @@ class WishlistService
         return MarkAsPurchasedStatusEnum::SUCCESS;
     }
 
+    /**
+     * Find if a wishlist has multiple items from the same
+     * shop or brand
+     */
+    public function getLinkedItemsInfo(Wishlist $wishlist)
+    {
+
+    }
+
 }

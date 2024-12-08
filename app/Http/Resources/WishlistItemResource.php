@@ -4,12 +4,22 @@ namespace App\Http\Resources;
 
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
+use App\Services\WishlistService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class WishlistItemResource extends JsonResource
 {
+    private WishlistService $service;
+
+    public function __construct(WishlistService $service, WishlistItem $resource)
+    {
+        parent::__construct($resource);
+
+        $this->service = $service;
+    }
+
     /**
      * Transform the resource into an array.
      */
@@ -31,6 +41,8 @@ class WishlistItemResource extends JsonResource
             'hasCurrentUserReservation' => $this->when(isset($this->has_user_reserved), function () use ($request) {
                 return $this->has_user_reserved;
             }),
+            'otherItemsFromShop' => (bool)random_int(0, 1),
+            'otherItemsFromBrand' => (bool)random_int(0, 1),
         ];
     }
 
