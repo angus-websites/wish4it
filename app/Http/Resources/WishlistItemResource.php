@@ -41,8 +41,8 @@ class WishlistItemResource extends JsonResource
             'hasCurrentUserReservation' => $this->when(isset($this->has_user_reserved), function () use ($request) {
                 return $this->has_user_reserved;
             }),
-            'otherItemsFromShop' => (bool)random_int(0, 1),
-            'otherItemsFromBrand' => (bool)random_int(0, 1),
+            'linkedShops' => (bool)random_int(0, 1),
+            'linkedBrands' => (bool)random_int(0, 1),
         ];
     }
 

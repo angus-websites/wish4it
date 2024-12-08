@@ -8,14 +8,14 @@
     </div>
 
     <!-- Same shop banner -->
-    <div  v-if="otherItemsFromShop" class="text-center dark:bg-amber-800 bg-amber-500 px-6 py-2 sm:px-3.5 rounded-none sm:rounded-t-xl">
+    <div  v-if="linkedShops" class="text-center dark:bg-amber-800 bg-amber-500 px-6 py-2 sm:px-3.5 rounded-none sm:rounded-t-xl">
         <p class="text-sm text-dark dark:text-light font-bold flex flex-row justify-around align-middle">
           <span>Other items from this shop on wishlist</span>
         </p>
     </div>
 
     <!-- Same brand banner -->
-    <div  v-else-if="otherItemsFromBrand" class="text-center dark:bg-emerald-800 bg-emerald-500 px-6 py-2 sm:px-3.5 rounded-none sm:rounded-t-xl">
+    <div  v-else-if="linkedBrands" class="text-center dark:bg-emerald-800 bg-emerald-500 px-6 py-2 sm:px-3.5 rounded-none sm:rounded-t-xl">
         <p class="text-sm text-dark dark:text-light font-bold flex flex-row justify-around align-middle">
           <span>Other items from this brand on wishlist</span>
         </p>
@@ -132,12 +132,12 @@ const itemPurchased = computed(() => {
   return props.item.has >= props.item.needs;
 });
 
-const otherItemsFromShop = computed(() => {
-  return props.item.otherItemsFromShop === true;
+const linkedShops = computed(() => {
+  return props.item.linkedShops === true;
 });
 
-const otherItemsFromBrand = computed(() => {
-  return props.item.otherItemsFromBrand === true;
+const linkedBrands = computed(() => {
+  return props.item.linkedBrands === true;
 });
 
 function editItem() {

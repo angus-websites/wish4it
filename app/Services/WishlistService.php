@@ -316,8 +316,15 @@ class WishlistService
      * Find if a wishlist has multiple items from the same
      * shop or brand
      */
-    public function getLinkedItemsInfo(Wishlist $wishlist)
+    public function getLinkedItemsInfo(Collection $items): Collection
     {
+
+        // We want to go through every item
+        // and for every item with the same url base or brand
+        // we want to set the otherItemsFromShop or otherItemsFromBrand to true
+
+
+
 
     }
 
