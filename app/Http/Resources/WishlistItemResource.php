@@ -11,20 +11,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class WishlistItemResource extends JsonResource
 {
-    private WishlistService $service;
 
-    public function __construct(WishlistService $service, WishlistItem $resource)
-    {
-        parent::__construct($resource);
-
-        $this->service = $service;
-    }
 
     /**
      * Transform the resource into an array.
      */
     public function toArray(Request $request): array
     {
+
+        $service = new WishlistService();
+
         // Fetch the wishlist item as an object (model instance)
         $wishlist = Wishlist::find($this->wishlist_id)->makeHidden(['created_at', 'updated_at']);
 
@@ -32,7 +28,7 @@ class WishlistItemResource extends JsonResource
         $wishlistCollection = collect([$wishlist]);
 
         // Fetch the linked items info
-        $linkedInfo = $this->service->getSpecificLinkedItemInfo($wishlistCollection, $this->id);
+        $linkedInfo = $service->getSpecificLinkedItemInfo($wishlistCollection, $this->id);
 
 
         return [

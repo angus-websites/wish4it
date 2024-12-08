@@ -52,7 +52,7 @@ class WishlistItemResourceTest extends TestCase
         );
 
         // Pass to the resource
-        $resource = new WishlistItemResource(new WishlistService(), $wishlist_item);
+        $resource = new WishlistItemResource($wishlist_item);
         $resource_array = $resource->toArray(request());
 
         // Assert that the structure is correct
@@ -104,7 +104,7 @@ class WishlistItemResourceTest extends TestCase
         );
 
         // Pass to the resource
-        $resource = new WishlistItemResource(new WishlistService(), $wishlist_item);
+        $resource = new WishlistItemResource($wishlist_item);
         $resource_array = $resource->toArray(request()->setUserResolver(fn () => $this->user));
 
         // Assert that the structure is correct
