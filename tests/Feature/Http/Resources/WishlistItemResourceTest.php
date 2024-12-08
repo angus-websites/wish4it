@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Resources;
 use App\Http\Resources\WishlistItemResource;
 use App\Models\User;
 use App\Models\Wishlist;
+use App\Services\WishlistService;
 use Database\Factories\WishlistItemFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Resources\MissingValue;
@@ -51,7 +52,7 @@ class WishlistItemResourceTest extends TestCase
         );
 
         // Pass to the resource
-        $resource = new WishlistItemResource($wishlist_item);
+        $resource = new WishlistItemResource(new WishlistService(), $wishlist_item);
         $resource_array = $resource->toArray(request());
 
         // Assert that the structure is correct
@@ -68,6 +69,8 @@ class WishlistItemResourceTest extends TestCase
             'created_at' => '2021-01-01',
             'image' => null,
             'hasCurrentUserReservation' => new MissingValue,
+            'linkedShops' => false,
+            'linkedBrands' => false
         ];
 
         $this->assertEquals($expected, $resource_array);
@@ -101,7 +104,7 @@ class WishlistItemResourceTest extends TestCase
         );
 
         // Pass to the resource
-        $resource = new WishlistItemResource($wishlist_item);
+        $resource = new WishlistItemResource(new WishlistService(), $wishlist_item);
         $resource_array = $resource->toArray(request()->setUserResolver(fn () => $this->user));
 
         // Assert that the structure is correct
@@ -118,6 +121,8 @@ class WishlistItemResourceTest extends TestCase
             'created_at' => '2021-01-01',
             'image' => null,
             'hasCurrentUserReservation' => new MissingValue,
+            'linkedShops' => false,
+            'linkedBrands' => false
         ];
 
         $this->assertEquals($expected, $resource_array);

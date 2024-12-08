@@ -25,6 +25,15 @@ class WishlistItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Fetch the wishlist item as an object (model instance)
+        $wishlist = Wishlist::find($this->wishlist_id)->makeHidden(['created_at', 'updated_at']);
+
+        // Convert to an array and wrap it in a collection
+        $wishlistCollection = collect([$wishlist]);
+
+        // Fetch the linked items info
+        $linkedInfo = $this->service->getSpecificLinkedItemInfo($wishlistCollection, $this->id);
+
 
         return [
             'id' => $this->id,
@@ -41,8 +50,8 @@ class WishlistItemResource extends JsonResource
             'hasCurrentUserReservation' => $this->when(isset($this->has_user_reserved), function () use ($request) {
                 return $this->has_user_reserved;
             }),
-            'linkedShops' => (bool)random_int(0, 1),
-            'linkedBrands' => (bool)random_int(0, 1),
+            'linkedShops' => $linkedInfo['linkedShops'] ?? false,
+            'linkedBrands' => $linkedInfo['linkedBrands'] ?? false,
         ];
     }
 

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\WishlistItem;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as BasicCollection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
@@ -316,16 +317,46 @@ class WishlistService
      * Find if a wishlist has multiple items from the same
      * shop or brand
      */
-    public function getLinkedItemsInfo(Collection $items): Collection
+    public function getLinkedItemsInfo(BasicCollection $items): BasicCollection
     {
+        // Group items by the base URL and brand for efficient lookups
+        $groupedByBaseUrl = $items->groupBy(function ($item) {
+            // Ensure the URL is present before parsing
+            return isset($item->url) ? parse_url($item->url, PHP_URL_HOST) : null;
+        });
 
-        // We want to go through every item
-        // and for every item with the same url base or brand
-        // we want to set the otherItemsFromShop or otherItemsFromBrand to true
+        $groupedByBrand = $items->groupBy('brand');
+
+        // Iterate through items to determine links
+        return $items->map(function ($item) use ($groupedByBaseUrl, $groupedByBrand) {
+            // Handle cases where url or brand may not exist
+            $baseUrl = isset($item->url) ? parse_url($item->url, PHP_URL_HOST) : null;
+            $brand = $item->brand ?? null; // Use null if brand is not set
+
+            // Check if there are other items with the same base URL
+            $linkedShops = $baseUrl !== null && isset($groupedByBaseUrl[$baseUrl]) && $groupedByBaseUrl[$baseUrl]->count() > 1;
+
+            // Check if there are other items with the same brand
+            $linkedBrands = $brand !== null && isset($groupedByBrand[$brand]) && $groupedByBrand[$brand]->count() > 1;
+
+            // Return an array with the item ID and the linked info
+            return [
+                'id' => $item->id,
+                'linkedShops' => $linkedShops,
+                'linkedBrands' => $linkedBrands
+            ];
+        });
+    }
 
 
 
+    public function getSpecificLinkedItemInfo(BasicCollection $items, string $wishlistItemId): BasicCollection
+    {
+        // Fetch the info for the whole wishlist collection
+        $linkedInfo = $this->getLinkedItemsInfo($items);
 
+        // Extract the info for the specific item
+        return $linkedInfo->where('id', $wishlistItemId)->values();
     }
 
 }
