@@ -318,6 +318,77 @@ class WishlistItemResourceTest extends TestCase
         $this->assertEquals($expected, $resource_array);
     }
 
+    /**
+     * Test that linked information is only fetched for
+     * items that have not been reserved / purchased
+     */
+    public function test_linked_info_shouldnt_appear_for_reserved_items()
+    {
+        // Mock current datetime now
+        Carbon::setTestNow(
+            Carbon::create(2021, 1, 1, 12, 0, 0)
+        );
+
+        // Create a wishlist
+        $wishlist = Wishlist::factory()->public(true)->forUser($this->user)->create();
+
+        // Create two items using the factory with the same brand
+        $oil = WishlistItem::factory()->create(
+             [
+                'wishlist_id' => $wishlist->id,
+                'needs' => 1,
+                'name' => 'Olive oil',
+                'brand' => 'Filippo Berio',
+                'url' => 'https://www.amazon.com/products/123',
+
+             ]
+        );
+
+        $charger = WishlistItem::factory()->create(
+             [
+                'wishlist_id' => $wishlist->id,
+                'needs' => 1,
+                'name' => 'Charger',
+                'brand' => 'Anker',
+                'url' => 'https://www.amazon.com/products/456',
+
+             ]
+        );
+
+        // Mark the charger as reserved
+        \DB::table('reservations')->insert([
+            'user_id' => $this->guest->id,
+            'wishlist_item_id' => $charger->id,
+            'quantity' => 1,
+        ]);
+
+        // Pass to the resource
+        $resource = new WishlistItemResource($oil);
+
+        $resource_array = $resource->toArray(request()->setUserResolver(fn () => $this->guest));
+
+        // Assert that the structure is correct
+        $expected = [
+            'id' => $oil->id,
+            'wishlist_id' => $oil->wishlist_id,
+            'needs' => $oil->needs,
+            'name' => $oil->name,
+            'brand' => $oil->brand,
+            'price' => $oil->price,
+            'url' => $oil->url,
+            'comment' => $oil->comment,
+            'has' => 0,
+            'created_at' => '2021-01-01',
+            'image' => null,
+            'hasCurrentUserReservation' => new MissingValue,
+            'linkedShops' => false,
+            'linkedBrands' => false
+        ];
+
+        $this->assertEquals($expected, $resource_array);
+
+    }
+
 
 
 }

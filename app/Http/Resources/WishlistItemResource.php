@@ -18,25 +18,33 @@ class WishlistItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
-        $service = new WishlistService();
-
         // Fetch the wishlist item as an object (model instance)
         $wishlist = Wishlist::find($this->wishlist_id)->makeHidden(['created_at', 'updated_at']);
 
-        // Convert to an array and wrap it in a collection
-        $wishlistCollection = collect($wishlist->items);
-
-        // Fetch the linked items info
-        $linkedInfo = $service->getSpecificLinkedItemInfo($wishlistCollection, $this->id);
+        // We only fetch linked info if the user is not the owner of the wishlist
+        $linkedInfo = [];
+        $fetchLinkedInfo = true;
 
         // First check we have a user in the request
         if ($request->user()) {
 
             // Check if the current user is owner, if so, hide the linked info
             if ($wishlist->users()->where('id', $request->user()->id)->exists()) {
-                $linkedInfo = [];
+                $fetchLinkedInfo = false;
             }
+        }
+
+        if ($fetchLinkedInfo) {
+            $service = new WishlistService();
+
+            // Fetch the wishlist item as an object (model instance)
+            $wishlist = Wishlist::find($this->wishlist_id)->makeHidden(['created_at', 'updated_at']);
+
+            // Convert to an array and wrap it in a collection
+            $wishlistCollection = collect($service->fetchAvailableWishlistItems($wishlist)->get());
+
+            // Fetch the linked items info
+            $linkedInfo = $service->getSpecificLinkedItemInfo($wishlistCollection, $this->id);
         }
 
 
