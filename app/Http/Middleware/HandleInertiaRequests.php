@@ -34,8 +34,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-
-        $request->session()->flash('flash.banner', 'This site is using a FREE database so is slow');
+        
         $request->session()->flash('flash.bannerStyle', 'normal');
 
         return array_merge(parent::share($request), [
