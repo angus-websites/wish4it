@@ -600,8 +600,35 @@ class WishlistServiceTest extends TestCase
 
         $this->assertEquals($expected, $result);
 
+    }
 
+    public function test_get_specific_linked_item_info_different_case_on_brand()
+    {
+        $items = collect([
+            (object) [
+                'id' => 1,
+                'name' => 'T shirt',
+                'url' => 'https://downthelinesurf.co.uk/products/123',
+                'brand' => "patagonia",
+            ],
+            (object) [
+                'id' => 2,
+                'name' => 'Sleeping bag',
+                'url' => 'https://eu.patagonia.com/products/sleeping-bag',
+                'brand' => "PatagOnia",
+            ],
+        ]);
 
+        $expected = [
+            'id' => 1,
+            'linkedShops' => false,
+            'linkedBrands' => true,
+        ];
+
+        // We want just the Patagonia t shirt information
+        $result = $this->wishlistService->getSpecificLinkedItemInfo($items, 1);
+
+        $this->assertEquals($expected, $result);
     }
 }
 

@@ -131,6 +131,7 @@ class WishlistItemResourceTest extends TestCase
 
     /**
      * Test Linked Brands
+     * These are items on the same wishlist with the same brand
      */
     public function test_wishlist_item_resource_with_linked_brands()
     {
@@ -190,6 +191,72 @@ class WishlistItemResourceTest extends TestCase
 
 
     }
+
+    /**
+     * Test linked shops
+     * These are items on the same wishlist that are from the same URL (shop)
+     */
+    public function test_wishlist_item_resource_with_linked_shops()
+    {
+        // Mock current datetime now
+        Carbon::setTestNow(
+            Carbon::create(2021, 1, 1, 12, 0, 0)
+        );
+
+        // Create a wishlist
+        $wishlist = Wishlist::factory()->public(true)->forUser($this->user)->create();
+
+        // Create two items using the factory with the same brand
+        $oil = WishlistItem::factory()->create(
+             [
+                'wishlist_id' => $wishlist->id,
+                'needs' => 1,
+                'name' => 'Olive oil',
+                'brand' => 'Filippo Berio',
+                'url' => 'https://www.amazon.com/products/123',
+
+             ]
+        );
+
+        WishlistItem::factory()->create(
+             [
+                'wishlist_id' => $wishlist->id,
+                'needs' => 1,
+                'name' => 'Charger',
+                'brand' => 'Anker',
+                'url' => 'https://www.amazon.com/products/456',
+
+             ]
+        );
+
+        // Pass to the resource
+        $resource = new WishlistItemResource($oil);
+
+        $resource_array = $resource->toArray(request()->setUserResolver(fn () => $this->user));
+
+        // Assert that the structure is correct
+        $expected = [
+            'id' => $oil->id,
+            'wishlist_id' => $oil->wishlist_id,
+            'needs' => $oil->needs,
+            'name' => $oil->name,
+            'brand' => $oil->brand,
+            'price' => $oil->price,
+            'url' => $oil->url,
+            'comment' => $oil->comment,
+            'has' => 0,
+            'created_at' => '2021-01-01',
+            'image' => null,
+            'hasCurrentUserReservation' => new MissingValue,
+            'linkedShops' => true,
+            'linkedBrands' => false
+        ];
+
+        $this->assertEquals($expected, $resource_array);
+
+
+    }
+
 
 
 }
