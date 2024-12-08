@@ -27,6 +27,7 @@ class AdminSeeder extends Seeder
                 'username' => config('admin.admin_username'),
                 'role_id' => $superAdminRole->id,
                 'password' => Hash::make(config('admin.admin_password')),
+                'email_verified_at' => now(),
             ]);
 
             // Create a Christmas wishlist
