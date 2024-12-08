@@ -318,40 +318,38 @@ class WishlistService
      * shop or brand
      */
     public function getLinkedItemsInfo(BasicCollection $items): BasicCollection
-{
-    // Group items by the base URL and brand for efficient lookups, ensuring case-insensitivity
-    $groupedByBaseUrl = $items->groupBy(function ($item) {
-        // Ensure the URL is present before parsing and make it case-insensitive
-        return isset($item->url) ? strtolower(parse_url($item->url, PHP_URL_HOST)) : null;
-    });
+    {
+        // Group items by the base URL and brand for efficient lookups, ensuring case-insensitivity
+        $groupedByBaseUrl = $items->groupBy(function ($item) {
+            // Ensure the URL is present before parsing and make it case-insensitive
+            return isset($item->url) ? strtolower(parse_url($item->url, PHP_URL_HOST)) : null;
+        });
 
-    $groupedByBrand = $items->groupBy(function ($item) {
-        // Make the brand comparison case-insensitive
-        return strtolower($item->brand ?? '');
-    });
+        $groupedByBrand = $items->groupBy(function ($item) {
+            // Make the brand comparison case-insensitive
+            return strtolower($item->brand ?? '');
+        });
 
-    // Iterate through items to determine links
-    return $items->map(function ($item) use ($groupedByBaseUrl, $groupedByBrand) {
-        // Handle cases where url or brand may not exist and make comparisons case-insensitive
-        $baseUrl = isset($item->url) ? strtolower(parse_url($item->url, PHP_URL_HOST)) : null;
-        $brand = isset($item->brand) ? strtolower($item->brand) : null;
+        // Iterate through items to determine links
+        return $items->map(function ($item) use ($groupedByBaseUrl, $groupedByBrand) {
+            // Handle cases where url or brand may not exist and make comparisons case-insensitive
+            $baseUrl = isset($item->url) ? strtolower(parse_url($item->url, PHP_URL_HOST)) : null;
+            $brand = isset($item->brand) ? strtolower($item->brand) : null;
 
-        // Check if there are other items with the same base URL (case-insensitive)
-        $linkedShops = $baseUrl !== null && isset($groupedByBaseUrl[$baseUrl]) && $groupedByBaseUrl[$baseUrl]->count() > 1;
+            // Check if there are other items with the same base URL (case-insensitive)
+            $linkedShops = $baseUrl !== null && isset($groupedByBaseUrl[$baseUrl]) && $groupedByBaseUrl[$baseUrl]->count() > 1;
 
-        // Check if there are other items with the same brand (case-insensitive)
-        $linkedBrands = $brand !== null && isset($groupedByBrand[$brand]) && $groupedByBrand[$brand]->count() > 1;
+            // Check if there are other items with the same brand (case-insensitive)
+            $linkedBrands = $brand !== null && isset($groupedByBrand[$brand]) && $groupedByBrand[$brand]->count() > 1;
 
-        // Return an array with the item ID and the linked info
-        return [
-            'id' => $item->id,
-            'linkedShops' => $linkedShops,
-            'linkedBrands' => $linkedBrands
-        ];
-    });
-}
-
-
+            // Return an array with the item ID and the linked info
+            return [
+                'id' => $item->id,
+                'linkedShops' => $linkedShops,
+                'linkedBrands' => $linkedBrands
+            ];
+        });
+    }
 
 
     public function getSpecificLinkedItemInfo(BasicCollection $items, string $wishlistItemId): Array

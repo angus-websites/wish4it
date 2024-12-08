@@ -30,6 +30,15 @@ class WishlistItemResource extends JsonResource
         // Fetch the linked items info
         $linkedInfo = $service->getSpecificLinkedItemInfo($wishlistCollection, $this->id);
 
+        // First check we have a user in the request
+        if ($request->user()) {
+
+            // Check if the current user is owner, if so, hide the linked info
+            if ($wishlist->users()->where('id', $request->user()->id)->exists()) {
+                $linkedInfo = [];
+            }
+        }
+
 
         return [
             'id' => $this->id,
