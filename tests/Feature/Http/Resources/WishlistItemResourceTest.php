@@ -8,6 +8,7 @@ use App\Models\Wishlist;
 use Database\Factories\WishlistItemFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Resources\MissingValue;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class WishlistItemResourceTest extends TestCase
@@ -29,6 +30,11 @@ class WishlistItemResourceTest extends TestCase
 
     public function test_wishlist_item_resource_as_guest()
     {
+        // Mock current datetime now
+        Carbon::setTestNow(
+            Carbon::create(2021, 1, 1, 12, 0, 0)
+        );
+
         // Create a wishlist
         $wishlist = Wishlist::factory()->public(true)->create();
         $this->user->wishlists()->attach($wishlist, ['role' => 'owner']);
@@ -59,7 +65,7 @@ class WishlistItemResourceTest extends TestCase
             'url' => $wishlist_item->url,
             'comment' => $wishlist_item->comment,
             'has' => 0,
-            'created_at' => $wishlist_item->created_at,
+            'created_at' => '2021-01-01',
             'image' => null,
             'hasCurrentUserReservation' => new MissingValue,
         ];
@@ -73,6 +79,12 @@ class WishlistItemResourceTest extends TestCase
      */
     public function test_wishlist_item_resource_with_user()
     {
+
+        // Mock current datetime now
+        Carbon::setTestNow(
+            Carbon::create(2021, 1, 1, 12, 0, 0)
+        );
+
         // Create a wishlist
         $wishlist = Wishlist::factory()->public(true)->create();
         $this->user->wishlists()->attach($wishlist, ['role' => 'owner']);
@@ -103,7 +115,7 @@ class WishlistItemResourceTest extends TestCase
             'url' => $wishlist_item->url,
             'comment' => $wishlist_item->comment,
             'has' => 0,
-            'created_at' => $wishlist_item->created_at,
+            'created_at' => '2021-01-01',
             'image' => null,
             'hasCurrentUserReservation' => new MissingValue,
         ];
