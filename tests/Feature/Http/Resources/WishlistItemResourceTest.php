@@ -153,7 +153,7 @@ class WishlistItemResourceTest extends TestCase
              ]
         );
 
-        $mac = WishlistItem::factory()->create(
+        WishlistItem::factory()->create(
              [
                 'wishlist_id' => $wishlist->id,
                 'needs' => 1,

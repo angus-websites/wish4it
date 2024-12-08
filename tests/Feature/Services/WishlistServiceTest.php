@@ -553,13 +553,11 @@ class WishlistServiceTest extends TestCase
             ],
         ]);
 
-        $expected = collect([
-            [
-                'id' => 3,
-                'linkedShops' => false,
-                'linkedBrands' => true,
-            ],
-        ]);
+        $expected = [
+            'id' => 3,
+            'linkedShops' => false,
+            'linkedBrands' => true,
+        ];
 
         // We want just the Patagonia t shirt information
         $result = $this->wishlistService->getSpecificLinkedItemInfo($items, 3);
@@ -591,13 +589,12 @@ class WishlistServiceTest extends TestCase
             ],
         ]);
 
-        $expected = collect([
-            [
-                'id' => 3,
-                'linkedShops' => false,
-                'linkedBrands' => false,
-            ],
-        ]);
+
+        $expected = [
+            'id' => 3,
+            'linkedShops' => false,
+            'linkedBrands' => false,
+        ];
 
         $result = $this->wishlistService->getSpecificLinkedItemInfo($items, 3);
 

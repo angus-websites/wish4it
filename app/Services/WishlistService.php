@@ -350,13 +350,13 @@ class WishlistService
 
 
 
-    public function getSpecificLinkedItemInfo(BasicCollection $items, string $wishlistItemId): BasicCollection
+    public function getSpecificLinkedItemInfo(BasicCollection $items, string $wishlistItemId): Array
     {
         // Fetch the info for the whole wishlist collection
         $linkedInfo = $this->getLinkedItemsInfo($items);
 
-        // Extract the info for the specific item
-        return $linkedInfo->where('id', $wishlistItemId)->values();
+        // Extract the info for the specific item and return as single array
+        return $linkedInfo->firstWhere('id', $wishlistItemId);
     }
 
 }
